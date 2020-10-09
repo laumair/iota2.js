@@ -50,3 +50,7 @@ run()
 * address(address)
 * addressOutputs(address)
 * milestone(index)
+
+## Other Examples
+
+Please find other examples in the [./examples](./examples) folder.
