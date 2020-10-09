@@ -35,7 +35,9 @@ run()
     .catch((err) => console.error(err));
 ```
 
-## Other Endpoints
+## Endpoints
+
+These methods are also implemented.
 
 * health()
 * info()
@@ -51,6 +53,6 @@ run()
 * addressOutputs(address)
 * milestone(index)
 
-## Other Examples
+## More Examples
 
 Please find other examples in the [./examples](./examples) folder.
