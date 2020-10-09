@@ -1,6 +1,6 @@
 # IOTA2.js
 
-Experimental client library for Chrysalis Part 2 and beyond.
+Experimental client library for Chrysalis Part 2 and beyond. Implemeted in TypeScript to strongly type the objects sent and received from the API.
 
 ## Installation
 
@@ -52,6 +52,10 @@ These methods are also implemented.
 * address(address)
 * addressOutputs(address)
 * milestone(index)
+
+## Models
+
+You can see the model definitions for the request and receive objects in the [typings](./typings/api/models) folder.
 
 ## More Examples
 
