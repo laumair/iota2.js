@@ -1,5 +1,5 @@
-import { IMessage } from "../api/models/IMessage";
-import { ITypeBase } from "../api/models/ITypeBase";
+import { IMessage } from "../models/IMessage";
+import { ITypeBase } from "../models/ITypeBase";
 /**
  * Log a message to the console.
  * @param prefix The prefix for the output.

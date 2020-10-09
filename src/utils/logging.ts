@@ -1,10 +1,10 @@
-import { IEd25519Address } from "../api/models/IEd25519Address";
-import { IEd25519Signature } from "../api/models/IEd25519Signature";
-import { IIndexationPayload } from "../api/models/IIndexationPayload";
-import { IMessage } from "../api/models/IMessage";
-import { IMilestonePayload } from "../api/models/IMilestonePayload";
-import { ITransactionPayload } from "../api/models/ITransactionPayload";
-import { ITypeBase } from "../api/models/ITypeBase";
+import { IEd25519Address } from "../models/IEd25519Address";
+import { IEd25519Signature } from "../models/IEd25519Signature";
+import { IIndexationPayload } from "../models/IIndexationPayload";
+import { IMessage } from "../models/IMessage";
+import { IMilestonePayload } from "../models/IMilestonePayload";
+import { ITransactionPayload } from "../models/ITransactionPayload";
+import { ITypeBase } from "../models/ITypeBase";
 
 /**
  * Log a message to the console.
@@ -13,8 +13,8 @@ import { ITypeBase } from "../api/models/ITypeBase";
  */
 export function logMessage(prefix: string, message: IMessage): void {
     console.log(`${prefix}\tVersion:`, message.version);
-    console.log(`${prefix}\tParent 1:`, message.parent1);
-    console.log(`${prefix}\tParent 2:`, message.parent2);
+    console.log(`${prefix}\tParent 1 Message Id:`, message.parent1MessageId);
+    console.log(`${prefix}\tParent 2 Message Id:`, message.parent2MessageId);
     logPayload(`${prefix}\t`, message.payload);
     if (message.nonce) {
         console.log(`${prefix}\tNonce:`, message.nonce);

@@ -1,4 +1,4 @@
-import { ISigLockedSingleOutput } from "./ISigLockedSingleOutput";
+import { ISigLockedSingleOutput } from "../../models/ISigLockedSingleOutput";
 
 /**
  * Details of an output.

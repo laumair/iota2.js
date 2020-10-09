@@ -1,10 +1,10 @@
 import fetch from "cross-fetch";
+import { IMessage } from "../models/IMessage";
 import { ClientError } from "./clientError";
 import { IAddress } from "./models/IAddress";
 import { IAddressOutputs } from "./models/IAddressOutputs";
 import { IChildren } from "./models/IChildren";
 import { IInfo } from "./models/IInfo";
-import { IMessage } from "./models/IMessage";
 import { IMessageMetadata } from "./models/IMessageMetadata";
 import { IMessages } from "./models/IMessages";
 import { IMilestone } from "./models/IMilestone";
@@ -65,21 +65,21 @@ export class Client {
     }
 
     /**
-     * Get the message metadata by id.
-     * @param messageId The message to get the metadata for.
-     * @returns The message metadata.
-     */
-    public async messageMetadata(messageId: string): Promise<IMessageMetadata> {
-        return this.fetchJson<never, IMessageMetadata>("get", `/api/v1/messages/${messageId}`);
-    }
-
-    /**
      * Get the message data by id.
      * @param messageId The message to get the data for.
      * @returns The message data.
      */
     public async message(messageId: string): Promise<IMessage> {
-        return this.fetchJson<never, IMessage>("get", `/api/v1/messages/${messageId}/data`);
+        return this.fetchJson<never, IMessage>("get", `/api/v1/messages/${messageId}`);
+    }
+
+    /**
+     * Get the message metadata by id.
+     * @param messageId The message to get the metadata for.
+     * @returns The message metadata.
+     */
+    public async messageMetadata(messageId: string): Promise<IMessageMetadata> {
+        return this.fetchJson<never, IMessageMetadata>("get", `/api/v1/messages/${messageId}/metadata`);
     }
 
     /**

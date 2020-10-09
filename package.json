@@ -15,7 +15,9 @@
     },
     "license": "MIT",
     "dependencies": {
-        "cross-fetch": "^3.0.6"
+        "blakejs": "^1.1.0",
+        "cross-fetch": "^3.0.6",
+        "tweetnacl": "^1.0.3"
     },
     "scripts": {
         "build-clean": "rimraf ./es/*",

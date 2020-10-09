@@ -1,9 +1,9 @@
 /// <reference types="node" />
+import { IMessage } from "../models/IMessage";
 import { IAddress } from "./models/IAddress";
 import { IAddressOutputs } from "./models/IAddressOutputs";
 import { IChildren } from "./models/IChildren";
 import { IInfo } from "./models/IInfo";
-import { IMessage } from "./models/IMessage";
 import { IMessageMetadata } from "./models/IMessageMetadata";
 import { IMessages } from "./models/IMessages";
 import { IMilestone } from "./models/IMilestone";
@@ -38,17 +38,17 @@ export declare class Client {
      */
     tips(): Promise<ITips>;
     /**
-     * Get the message metadata by id.
-     * @param messageId The message to get the metadata for.
-     * @returns The message metadata.
-     */
-    messageMetadata(messageId: string): Promise<IMessageMetadata>;
-    /**
      * Get the message data by id.
      * @param messageId The message to get the data for.
      * @returns The message data.
      */
     message(messageId: string): Promise<IMessage>;
+    /**
+     * Get the message metadata by id.
+     * @param messageId The message to get the metadata for.
+     * @returns The message metadata.
+     */
+    messageMetadata(messageId: string): Promise<IMessageMetadata>;
     /**
      * Get the message raw data by id.
      * @param messageId The message to get the data for.

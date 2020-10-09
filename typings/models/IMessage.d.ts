@@ -12,11 +12,11 @@ export interface IMessage {
     /**
      * The parent 1 message id.
      */
-    parent1: string;
+    parent1MessageId: string;
     /**
      * The parent 2 message id.
      */
-    parent2: string;
+    parent2MessageId: string;
     /**
      * The payload contents.
      */

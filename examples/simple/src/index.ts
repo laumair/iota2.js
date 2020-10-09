@@ -30,8 +30,8 @@ async function run() {
 
     const submitMessage: IMessage = {
         version: 1,
-        parent1: tips.tip1MessageId,
-        parent2: tips.tip2MessageId,
+        parent1MessageId: tips.tip1MessageId,
+        parent2MessageId: tips.tip2MessageId,
         payload: {
             type: 2,
             index: "Foo",
@@ -59,10 +59,10 @@ async function run() {
     console.log("\tShould Reattach:", messageMetadata.shouldReattach);
     console.log();
 
-    // const messageRaw = await client.messageRaw(messageId);
-    // console.log("Message Raw");
-    // console.log("\tRaw:", messageRaw.toString("hex"));
-    // console.log();
+    const messageRaw = await client.messageRaw(messageId);
+    console.log("Message Raw");
+    console.log("\tRaw:", messageRaw.toString("hex"));
+    console.log();
 
     const messages = await client.messagesFind("Foo");
     console.log("Messages");

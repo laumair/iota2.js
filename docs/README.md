@@ -7,6 +7,9 @@
 <dt><a href="#ClientError">ClientError</a></dt>
 <dd><p>Class to handle http errors.</p>
 </dd>
+<dt><a href="#ED25519">ED25519</a></dt>
+<dd><p>Class to help with ED25519 Signature scheme.</p>
+</dd>
 </dl>
 
 ## Functions
@@ -38,8 +41,8 @@ Client for API communication.
     * [.health()](#Client+health) ⇒
     * [.info()](#Client+info) ⇒
     * [.tips()](#Client+tips) ⇒
-    * [.messageMetadata(messageId)](#Client+messageMetadata) ⇒
     * [.message(messageId)](#Client+message) ⇒
+    * [.messageMetadata(messageId)](#Client+messageMetadata) ⇒
     * [.messageRaw(messageId)](#Client+messageRaw) ⇒
     * [.messageSubmit(message)](#Client+messageSubmit) ⇒
     * [.messagesFind(index)](#Client+messagesFind) ⇒
@@ -80,18 +83,6 @@ Get the tips from the node.
 
 **Kind**: instance method of [<code>Client</code>](#Client)  
 **Returns**: The tips.  
-<a name="Client+messageMetadata"></a>
-
-### client.messageMetadata(messageId) ⇒
-Get the message metadata by id.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The message metadata.  
-
-| Param | Description |
-| --- | --- |
-| messageId | The message to get the metadata for. |
-
 <a name="Client+message"></a>
 
 ### client.message(messageId) ⇒
@@ -103,6 +94,18 @@ Get the message data by id.
 | Param | Description |
 | --- | --- |
 | messageId | The message to get the data for. |
+
+<a name="Client+messageMetadata"></a>
+
+### client.messageMetadata(messageId) ⇒
+Get the message metadata by id.
+
+**Kind**: instance method of [<code>Client</code>](#Client)  
+**Returns**: The message metadata.  
+
+| Param | Description |
+| --- | --- |
+| messageId | The message to get the metadata for. |
 
 <a name="Client+messageRaw"></a>
 
@@ -218,6 +221,63 @@ Create a new instance of ClientError.
 | route | The route the request was made to. |
 | httpStatus | The http status code. |
 | code | The code in the payload. |
+
+<a name="ED25519"></a>
+
+## ED25519
+Class to help with ED25519 Signature scheme.
+
+**Kind**: global class  
+
+* [ED25519](#ED25519)
+    * [.VERSION](#ED25519.VERSION)
+    * [.PUBLIC_KEY_SIZE](#ED25519.PUBLIC_KEY_SIZE)
+    * [.SIGNATURE_SIZE](#ED25519.SIGNATURE_SIZE)
+    * [.keyPairFromSeed(seed)](#ED25519.keyPairFromSeed) ⇒
+    * [.privateSign(keyPair, buffer)](#ED25519.privateSign) ⇒
+
+<a name="ED25519.VERSION"></a>
+
+### ED25519.VERSION
+Version for signature scheme.
+
+**Kind**: static property of [<code>ED25519</code>](#ED25519)  
+<a name="ED25519.PUBLIC_KEY_SIZE"></a>
+
+### ED25519.PUBLIC\_KEY\_SIZE
+Public Key size.
+
+**Kind**: static property of [<code>ED25519</code>](#ED25519)  
+<a name="ED25519.SIGNATURE_SIZE"></a>
+
+### ED25519.SIGNATURE\_SIZE
+Signature size for signing scheme.
+
+**Kind**: static property of [<code>ED25519</code>](#ED25519)  
+<a name="ED25519.keyPairFromSeed"></a>
+
+### ED25519.keyPairFromSeed(seed) ⇒
+Generate a key pair from the seed.
+
+**Kind**: static method of [<code>ED25519</code>](#ED25519)  
+**Returns**: The key pair.  
+
+| Param | Description |
+| --- | --- |
+| seed | The seed to generate the key pair from. |
+
+<a name="ED25519.privateSign"></a>
+
+### ED25519.privateSign(keyPair, buffer) ⇒
+Privately sign the data.
+
+**Kind**: static method of [<code>ED25519</code>](#ED25519)  
+**Returns**: The signature.  
+
+| Param | Description |
+| --- | --- |
+| keyPair | The key pair to sign with. |
+| buffer | The data to sign. |
 
 <a name="logMessage"></a>
 
