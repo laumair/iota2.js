@@ -2,10 +2,16 @@
 
 Experimental client library for Chrysalis Part 2 and beyond.
 
+## Installation
+
+```shell
+npm install obany/iota2.js
+```
+
 ## Example
 
 ```js
-import { Client } from "@iota/iota2.js";
+const { Client } = require("@iota/iota2.js");
 
 async function run() {
     const client = new Client("http://localhost:14265");
