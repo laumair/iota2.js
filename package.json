@@ -1,0 +1,76 @@
+{
+    "name": "@iota/iota2.js",
+    "description": "IOTA JavaScript Library",
+    "version": "0.0.1",
+    "keywords": [
+        "iota",
+        "client"
+    ],
+    "authors": [
+        "Martyn Janes <martyn.janes@iota.org>"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/obany/iota2.js.git"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "cross-fetch": "^3.0.6"
+    },
+    "scripts": {
+        "build-clean": "rimraf ./es/*",
+        "build-lint": "eslint src --ext .tsx,.ts",
+        "build-compile": "tsc",
+        "build-watch": "tsc --watch",
+        "build": "run-s build-clean build-lint build-compile",
+        "test": "jest",
+        "umd": "rollup --config rollup.config.js",
+        "umd-min": "rollup --config rollup.config.js --environment MINIFY:true",
+        "dist-clean": "rimraf ./dist/* ./typings/*",
+        "typings": "tsc --emitDeclarationOnly --declaration true --declarationDir typings",
+        "docs-clean": "rimraf ./docs/*",
+        "docs-build": "jsdoc2md --no-cache --files ./es/**/*.js > ./docs/README.md",
+        "docs": "run-s docs-clean docs-build",
+        "dist": "run-s dist-clean build test umd umd-min typings docs"
+    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ],
+    "devDependencies": {
+        "@types/jest": "^26.0.14",
+        "@types/node": "^14.11.5",
+        "@typescript-eslint/eslint-plugin": "^4.4.0",
+        "@typescript-eslint/parser": "^4.4.0",
+        "cross-env": "^7.0.2",
+        "eslint": "^7.10.0",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-jsdoc": "^30.6.3",
+        "eslint-plugin-unicorn": "^22.0.0",
+        "jest": "^26.5.2",
+        "jsdoc-to-markdown": "^6.0.1",
+        "npm-run-all": "^4.1.5",
+        "rimraf": "^3.0.2",
+        "rollup": "^2.2.0",
+        "rollup-plugin-commonjs": "^10.1.0",
+        "rollup-plugin-node-resolve": "^5.1.0",
+        "rollup-plugin-terser": "^7.0.2",
+        "rollup-plugin-typescript": "^1.0.0",
+        "rollup-plugin-uglify": "^6.0.4",
+        "ts-jest": "^26.4.1",
+        "ts-node": "^9.0.0",
+        "typescript": "^4.0.3"
+    },
+    "main": "dist/iota2.js",
+    "module": "es/index.js",
+    "typings": "typings/index.d.ts",
+    "files": [
+        "dist",
+        "lib",
+        "es",
+        "src",
+        "typings"
+    ]
+}
