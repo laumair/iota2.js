@@ -1,5 +1,5 @@
 {
-  "name": "simple",
+  "name": "transaction",
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {

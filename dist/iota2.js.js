@@ -2851,22 +2851,14 @@
                         console.log(prefix + "\tInputs:", payload.essence.inputs.length);
                         for (var _i = 0, _a = payload.essence.inputs; _i < _a.length; _i++) {
                             var input = _a[_i];
-                            if (input.type === 0) {
-                                console.log(prefix + "\tUTXO Input");
-                                console.log(prefix + "\t\t\tTransaction Id:", input.transactionId);
-                                console.log(prefix + "\t\t\tTransaction Output Index:", input.transactionOutputIndex);
-                            }
+                            logInput(prefix + "\t\t", input);
                         }
                     }
                     if (payload.essence.outputs) {
                         console.log(prefix + "\tOutputs:", payload.essence.outputs.length);
                         for (var _b = 0, _c = payload.essence.outputs; _b < _c.length; _b++) {
                             var output = _c[_b];
-                            if (output.type === 0) {
-                                console.log(prefix + "\tSignature Locked Single Output");
-                                logAddress(prefix + "\t\t\t", output.address);
-                                console.log(prefix + "\t\t\tAmount:", output.amount);
-                            }
+                            logOutput(prefix + "\t\t", output);
                         }
                     }
                     logPayload(prefix + "\t", payload.essence.payload);
@@ -2875,14 +2867,7 @@
                     console.log(prefix + "\tUnlock Blocks:", payload.unlockBlocks.length);
                     for (var _d = 0, _e = payload.unlockBlocks; _d < _e.length; _d++) {
                         var unlockBlock = _e[_d];
-                        if (unlockBlock.type === 0) {
-                            console.log(prefix + "\tSignature Unlock Block");
-                            logSignature(prefix + "\t\t\t", unlockBlock.signature);
-                        }
-                        else if (unlockBlock.type === 1) {
-                            console.log(prefix + "\tReference Unlock Block");
-                            console.log(prefix + "\t\tReference:", unlockBlock.reference);
-                        }
+                        logUnlockBlock(prefix + "\t\t", unlockBlock);
                     }
                 }
             }
@@ -2931,14 +2916,66 @@
             }
         }
     }
+    /**
+     * Log input to the console.
+     * @param prefix The prefix for the output.
+     * @param unknownInput The signature to log.
+     */
+    function logInput(prefix, unknownInput) {
+        if (unknownInput) {
+            if (unknownInput.type === 0) {
+                var input = unknownInput;
+                console.log(prefix + "UTXO Input");
+                console.log(prefix + "\tTransaction Id:", input.transactionId);
+                console.log(prefix + "\tTransaction Output Index:", input.transactionOutputIndex);
+            }
+        }
+    }
+    /**
+     * Log output to the console.
+     * @param prefix The prefix for the output.
+     * @param unknownOutput The signature to log.
+     */
+    function logOutput(prefix, unknownOutput) {
+        if (unknownOutput) {
+            if (unknownOutput.type === 0) {
+                var output = unknownOutput;
+                console.log(prefix + "Signature Locked Single Output");
+                logAddress(prefix + "\t\t", output.address);
+                console.log(prefix + "\t\tAmount:", output.amount);
+            }
+        }
+    }
+    /**
+     * Log unlock block to the console.
+     * @param prefix The prefix for the output.
+     * @param unknownUnlockBlock The signature to log.
+     */
+    function logUnlockBlock(prefix, unknownUnlockBlock) {
+        if (unknownUnlockBlock) {
+            if (unknownUnlockBlock.type === 0) {
+                var unlockBlock = unknownUnlockBlock;
+                console.log(prefix + "\tSignature Unlock Block");
+                logSignature(prefix + "\t\t\t", unlockBlock.signature);
+            }
+            else if (unknownUnlockBlock.type === 1) {
+                var unlockBlock = unknownUnlockBlock;
+                console.log(prefix + "\tReference Unlock Block");
+                console.log(prefix + "\t\tReference:", unlockBlock.reference);
+            }
+        }
+    }
 
     exports.Client = Client;
     exports.ClientError = ClientError;
     exports.ED25519 = ED25519;
     exports.logAddress = logAddress;
+    exports.logInput = logInput;
     exports.logMessage = logMessage;
+    exports.logOutput = logOutput;
     exports.logPayload = logPayload;
     exports.logSignature = logSignature;
+    exports.logUnlockBlock = logUnlockBlock;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

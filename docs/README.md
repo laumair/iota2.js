@@ -27,6 +27,15 @@
 <dt><a href="#logSignature">logSignature(prefix, unknownSignature)</a></dt>
 <dd><p>Log signature to the console.</p>
 </dd>
+<dt><a href="#logInput">logInput(prefix, unknownInput)</a></dt>
+<dd><p>Log input to the console.</p>
+</dd>
+<dt><a href="#logOutput">logOutput(prefix, unknownOutput)</a></dt>
+<dd><p>Log output to the console.</p>
+</dd>
+<dt><a href="#logUnlockBlock">logUnlockBlock(prefix, unknownUnlockBlock)</a></dt>
+<dd><p>Log unlock block to the console.</p>
+</dd>
 </dl>
 
 <a name="Client"></a>
@@ -326,4 +335,40 @@ Log signature to the console.
 | --- | --- |
 | prefix | The prefix for the output. |
 | unknownSignature | The signature to log. |
+
+<a name="logInput"></a>
+
+## logInput(prefix, unknownInput)
+Log input to the console.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| prefix | The prefix for the output. |
+| unknownInput | The signature to log. |
+
+<a name="logOutput"></a>
+
+## logOutput(prefix, unknownOutput)
+Log output to the console.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| prefix | The prefix for the output. |
+| unknownOutput | The signature to log. |
+
+<a name="logUnlockBlock"></a>
+
+## logUnlockBlock(prefix, unknownUnlockBlock)
+Log unlock block to the console.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| prefix | The prefix for the output. |
+| unknownUnlockBlock | The signature to log. |
 

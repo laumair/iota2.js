@@ -3,8 +3,12 @@ import { IEd25519Signature } from "../models/IEd25519Signature";
 import { IIndexationPayload } from "../models/IIndexationPayload";
 import { IMessage } from "../models/IMessage";
 import { IMilestonePayload } from "../models/IMilestonePayload";
+import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
+import { ISigLockedSingleOutput } from "../models/ISigLockedSingleOutput";
+import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
 import { ITransactionPayload } from "../models/ITransactionPayload";
 import { ITypeBase } from "../models/ITypeBase";
+import { IUTXOInput } from "../models/IUTXOInput";
 
 /**
  * Log a message to the console.
@@ -35,21 +39,13 @@ export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>):
                 if (payload.essence.inputs) {
                     console.log(`${prefix}\tInputs:`, payload.essence.inputs.length);
                     for (const input of payload.essence.inputs) {
-                        if (input.type === 0) {
-                            console.log(`${prefix}\tUTXO Input`);
-                            console.log(`${prefix}\t\t\tTransaction Id:`, input.transactionId);
-                            console.log(`${prefix}\t\t\tTransaction Output Index:`, input.transactionOutputIndex);
-                        }
+                        logInput(`${prefix}\t\t`, input);
                     }
                 }
                 if (payload.essence.outputs) {
                     console.log(`${prefix}\tOutputs:`, payload.essence.outputs.length);
                     for (const output of payload.essence.outputs) {
-                        if (output.type === 0) {
-                            console.log(`${prefix}\tSignature Locked Single Output`);
-                            logAddress(`${prefix}\t\t\t`, output.address);
-                            console.log(`${prefix}\t\t\tAmount:`, output.amount);
-                        }
+                        logOutput(`${prefix}\t\t`, output);
                     }
                 }
                 logPayload(`${prefix}\t`, payload.essence.payload);
@@ -57,13 +53,7 @@ export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>):
             if (payload.unlockBlocks) {
                 console.log(`${prefix}\tUnlock Blocks:`, payload.unlockBlocks.length);
                 for (const unlockBlock of payload.unlockBlocks) {
-                    if (unlockBlock.type === 0) {
-                        console.log(`${prefix}\tSignature Unlock Block`);
-                        logSignature(`${prefix}\t\t\t`, unlockBlock.signature);
-                    } else if (unlockBlock.type === 1) {
-                        console.log(`${prefix}\tReference Unlock Block`);
-                        console.log(`${prefix}\t\tReference:`, unlockBlock.reference);
-                    }
+                    logUnlockBlock(`${prefix}\t\t`, unlockBlock);
                 }
             }
         } else if (unknownPayload.type === 1) {
@@ -109,6 +99,57 @@ export function logSignature(prefix: string, unknownSignature?: ITypeBase<unknow
             console.log(`${prefix}Ed25519 Signature`);
             console.log(`${prefix}\tPublic Key:`, signature.publicKey);
             console.log(`${prefix}\tAddress:`, signature.address);
+        }
+    }
+}
+
+/**
+ * Log input to the console.
+ * @param prefix The prefix for the output.
+ * @param unknownInput The signature to log.
+ */
+export function logInput(prefix: string, unknownInput?: ITypeBase<unknown>): void {
+    if (unknownInput) {
+        if (unknownInput.type === 0) {
+            const input = unknownInput as IUTXOInput;
+            console.log(`${prefix}UTXO Input`);
+            console.log(`${prefix}\tTransaction Id:`, input.transactionId);
+            console.log(`${prefix}\tTransaction Output Index:`, input.transactionOutputIndex);
+        }
+    }
+}
+
+/**
+ * Log output to the console.
+ * @param prefix The prefix for the output.
+ * @param unknownOutput The signature to log.
+ */
+export function logOutput(prefix: string, unknownOutput?: ITypeBase<unknown>): void {
+    if (unknownOutput) {
+        if (unknownOutput.type === 0) {
+            const output = unknownOutput as ISigLockedSingleOutput;
+            console.log(`${prefix}Signature Locked Single Output`);
+            logAddress(`${prefix}\t\t`, output.address);
+            console.log(`${prefix}\t\tAmount:`, output.amount);
+        }
+    }
+}
+
+/**
+ * Log unlock block to the console.
+ * @param prefix The prefix for the output.
+ * @param unknownUnlockBlock The signature to log.
+ */
+export function logUnlockBlock(prefix: string, unknownUnlockBlock?: ITypeBase<unknown>): void {
+    if (unknownUnlockBlock) {
+        if (unknownUnlockBlock.type === 0) {
+            const unlockBlock = unknownUnlockBlock as ISignatureUnlockBlock;
+            console.log(`${prefix}\tSignature Unlock Block`);
+            logSignature(`${prefix}\t\t\t`, unlockBlock.signature);
+        } else if (unknownUnlockBlock.type === 1) {
+            const unlockBlock = unknownUnlockBlock as IReferenceUnlockBlock;
+            console.log(`${prefix}\tReference Unlock Block`);
+            console.log(`${prefix}\t\tReference:`, unlockBlock.reference);
         }
     }
 }
