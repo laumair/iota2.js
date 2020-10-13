@@ -98,7 +98,7 @@ export function logSignature(prefix: string, unknownSignature?: ITypeBase<unknow
             const signature = unknownSignature as IEd25519Signature;
             console.log(`${prefix}Ed25519 Signature`);
             console.log(`${prefix}\tPublic Key:`, signature.publicKey);
-            console.log(`${prefix}\tAddress:`, signature.address);
+            console.log(`${prefix}\tSignature:`, signature.signature);
         }
     }
 }
@@ -106,7 +106,7 @@ export function logSignature(prefix: string, unknownSignature?: ITypeBase<unknow
 /**
  * Log input to the console.
  * @param prefix The prefix for the output.
- * @param unknownInput The signature to log.
+ * @param unknownInput The input to log.
  */
 export function logInput(prefix: string, unknownInput?: ITypeBase<unknown>): void {
     if (unknownInput) {
@@ -122,7 +122,7 @@ export function logInput(prefix: string, unknownInput?: ITypeBase<unknown>): voi
 /**
  * Log output to the console.
  * @param prefix The prefix for the output.
- * @param unknownOutput The signature to log.
+ * @param unknownOutput The output to log.
  */
 export function logOutput(prefix: string, unknownOutput?: ITypeBase<unknown>): void {
     if (unknownOutput) {
@@ -138,7 +138,7 @@ export function logOutput(prefix: string, unknownOutput?: ITypeBase<unknown>): v
 /**
  * Log unlock block to the console.
  * @param prefix The prefix for the output.
- * @param unknownUnlockBlock The signature to log.
+ * @param unknownUnlockBlock The unlock block to log.
  */
 export function logUnlockBlock(prefix: string, unknownUnlockBlock?: ITypeBase<unknown>): void {
     if (unknownUnlockBlock) {

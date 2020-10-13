@@ -62,6 +62,12 @@ export declare class Client {
      */
     messageSubmit(message: IMessage): Promise<string>;
     /**
+     * Submit message in raw format.
+     * @param message The message to submit.
+     * @returns The messageId.
+     */
+    messageSubmitRaw(message: Buffer): Promise<string>;
+    /**
      * Find messages by index.
      * @param index The index value.
      * @returns The messageId.
@@ -115,7 +121,9 @@ export declare class Client {
     private fetchJson;
     /**
      * Perform a request for binary data.
+     * @param method The http method.
      * @param route The route of the request.
+     * @param requestData Request to send to the endpoint.
      * @returns The response.
      * @private
      */

@@ -1,4 +1,5 @@
 import fetch from "cross-fetch";
+import { IMessageId } from "../api/models/IMessageId";
 import { IMessage } from "../models/IMessage";
 import { ClientError } from "./clientError";
 import { IAddress } from "./models/IAddress";
@@ -88,7 +89,7 @@ export class Client {
      * @returns The message raw data.
      */
     public async messageRaw(messageId: string): Promise<Buffer> {
-        return this.fetchBinary(`/api/v1/messages/${messageId}/raw`);
+        return this.fetchBinary("get", `/api/v1/messages/${messageId}/raw`);
     }
 
     /**
@@ -97,11 +98,20 @@ export class Client {
      * @returns The messageId.
      */
     public async messageSubmit(message: IMessage): Promise<string> {
-        const response = await this.fetchJson<IMessage, {
-            messageId: string;
-        }>("post", "/api/v1/messages", message);
+        const response = await this.fetchJson<IMessage, IMessageId>("post", "/api/v1/messages", message);
 
         return response.messageId;
+    }
+
+    /**
+     * Submit message in raw format.
+     * @param message The message to submit.
+     * @returns The messageId.
+     */
+    public async messageSubmitRaw(message: Buffer): Promise<string> {
+        const response = await this.fetchBinary<IMessageId>("post", "/api/v1/messages", message);
+
+        return (response as IMessageId).messageId;
     }
 
     /**
@@ -229,32 +239,45 @@ export class Client {
 
     /**
      * Perform a request for binary data.
+     * @param method The http method.
      * @param route The route of the request.
+     * @param requestData Request to send to the endpoint.
      * @returns The response.
      * @private
      */
-    private async fetchBinary(route: string): Promise<Buffer> {
+    private async fetchBinary<T>(method: "get" | "post", route: string, requestData?: Buffer): Promise<Buffer | T> {
         const response = await fetch(
             `${this._endpoint}${route}`,
             {
                 method: "get",
                 headers: {
                     "Content-Type": "application/octet-stream"
-                }
+                },
+                body: requestData
             }
         );
 
+        let responseData: IResponse<T> | undefined;
         if (response.ok) {
-            return Buffer.from(await response.arrayBuffer());
+            if (method === "get") {
+                return Buffer.from(await response.arrayBuffer());
+            }
+            responseData = await response.json();
+
+            if (!responseData?.error) {
+                return responseData?.data as T;
+            }
         }
 
-        const responseData = await response.json();
+        if (!responseData) {
+            responseData = await response.json();
+        }
 
         throw new ClientError(
-            responseData.error?.message ?? response.statusText,
+            responseData?.error?.message ?? response.statusText,
             route,
             response.status,
-            responseData.error?.code
+            responseData?.error?.code
         );
     }
 }

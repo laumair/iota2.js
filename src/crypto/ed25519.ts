@@ -1,5 +1,6 @@
 import * as nacl from "tweetnacl";
 import { ISignatureKeyPair } from "../models/ISignatureKeyPair";
+import { Blake2b } from "./blake2b";
 
 /**
  * Class to help with ED25519 Signature scheme.
@@ -19,6 +20,11 @@ export class ED25519 {
      * Signature size for signing scheme.
      */
     public static SIGNATURE_SIZE: number = 64;
+
+    /**
+     * Address size.
+     */
+    public static ADDRESS_LENGTH: number = Blake2b.SIZE_256;
 
     /**
      * Generate a key pair from the seed.

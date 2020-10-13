@@ -7,7 +7,7 @@ export interface IMilestonePayload extends ITypeBase<1> {
     /**
      * The index name.
      */
-    index: string;
+    index: number;
 
     /**
      * The timestamp of the milestone.

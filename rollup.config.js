@@ -19,7 +19,8 @@ if (process.env.MINIFY) {
 export default {
     input: './src/index.ts',
     external: [
-        "cross-fetch"
+        "cross-fetch",
+        "tweetnacl"
     ],
     output: {
         file: `dist/iota2.js${process.env.MINIFY ? '.min' : ''}.js`,
@@ -27,7 +28,8 @@ export default {
         name: 'Iota2',
         compact: process.env.MINIFY,
         globals: {
-            "cross-fetch": "cross-fetch"
+            "cross-fetch": "cross-fetch",
+            "tweetnacl": "tweetnacl"
         }
     },
     plugins

@@ -17,6 +17,10 @@ export declare class ED25519 {
      */
     static SIGNATURE_SIZE: number;
     /**
+     * Address size.
+     */
+    static ADDRESS_LENGTH: number;
+    /**
      * Generate a key pair from the seed.
      * @param seed The seed to generate the key pair from.
      * @returns The key pair.

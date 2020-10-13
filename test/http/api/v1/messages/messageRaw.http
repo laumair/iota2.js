@@ -1,5 +1,5 @@
 # Use https://marketplace.visualstudio.com/items?itemName=humao.rest-client to execute these in VSCode
 
 ### Message raw
-GET http://localhost:14265/api/v1/messages/af043d596f1ee85fb6baa2585270cfbec18686a872b71dd3a1d235c3df141d49/raw
+GET http://localhost:14265/api/v1/messages/b9ec783bb3326c059d171db81e421b158c96dff6135973ede0d261bdf7844818/raw
 Accept: application/octet-stream

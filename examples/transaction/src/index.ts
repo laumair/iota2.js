@@ -7,27 +7,27 @@ async function run() {
 
     const output = await client.output("00000000000000000000000000000000000000000000000000000000000000000000");
     console.log("Output");
-    console.log("Message Id:", output.messageId);
-    console.log("Transaction Id:", output.transactionId);
-    console.log("Output Index:", output.outputIndex);
-    console.log("Is Spent:", output.isSpent);
+    console.log("\tMessage Id:", output.messageId);
+    console.log("\tTransaction Id:", output.transactionId);
+    console.log("\tOutput Index:", output.outputIndex);
+    console.log("\tIs Spent:", output.isSpent);
     logOutput("\t", output.output);
     console.log();
 
     const address = await client.address(output.output.address.address);
     console.log("Address");
-    console.log("Address:", address.address);
-    console.log("Max Results:", address.maxResults);
-    console.log("Count:", address.count);
-    console.log("Balance:", address.balance);
+    console.log("\tAddress:", address.address);
+    console.log("\tMax Results:", address.maxResults);
+    console.log("\tCount:", address.count);
+    console.log("\tBalance:", address.balance);
     console.log();
 
     const addressOutputs = await client.addressOutputs(output.output.address.address);
     console.log("Address Outputs");
-    console.log("Address:", addressOutputs.address);
-    console.log("Max Results:", addressOutputs.maxResults);
-    console.log("Count:", addressOutputs.count);
-    console.log("Output Ids:", addressOutputs.outputIds);
+    console.log("\tAddress:", addressOutputs.address);
+    console.log("\tMax Results:", addressOutputs.maxResults);
+    console.log("\tCount:", addressOutputs.count);
+    console.log("\tOutput Ids:", addressOutputs.outputIds);
     console.log();
 }
 

@@ -27,18 +27,18 @@ export declare function logSignature(prefix: string, unknownSignature?: ITypeBas
 /**
  * Log input to the console.
  * @param prefix The prefix for the output.
- * @param unknownInput The signature to log.
+ * @param unknownInput The input to log.
  */
 export declare function logInput(prefix: string, unknownInput?: ITypeBase<unknown>): void;
 /**
  * Log output to the console.
  * @param prefix The prefix for the output.
- * @param unknownOutput The signature to log.
+ * @param unknownOutput The output to log.
  */
 export declare function logOutput(prefix: string, unknownOutput?: ITypeBase<unknown>): void;
 /**
  * Log unlock block to the console.
  * @param prefix The prefix for the output.
- * @param unknownUnlockBlock The signature to log.
+ * @param unknownUnlockBlock The unlock block to log.
  */
 export declare function logUnlockBlock(prefix: string, unknownUnlockBlock?: ITypeBase<unknown>): void;

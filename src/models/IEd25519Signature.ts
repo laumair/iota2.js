@@ -10,7 +10,7 @@ export interface IEd25519Signature extends ITypeBase<1> {
     publicKey: string;
 
     /**
-     * The address.
+     * The signature.
      */
-    address: string;
+    signature: string;
 }
