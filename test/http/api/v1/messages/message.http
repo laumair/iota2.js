@@ -1,5 +1,5 @@
 # Use https://marketplace.visualstudio.com/items?itemName=humao.rest-client to execute these in VSCode
 
 ### Message data
-GET http://localhost:14265/api/v1/messages/b9ec783bb3326c059d171db81e421b158c96dff6135973ede0d261bdf7844818
+GET http://localhost:14265/api/v1/messages/9959fc2d0c369d1cd65121e56de134ac213d997d6ecc7a2f8f3f2370762bca20
 Content-Type: application/json

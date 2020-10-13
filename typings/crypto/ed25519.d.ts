@@ -1,9 +1,8 @@
 /// <reference types="node" />
-import { ISignatureKeyPair } from "../models/ISignatureKeyPair";
 /**
- * Class to help with ED25519 Signature scheme.
+ * Class to help with Ed25519 Signature scheme.
  */
-export declare class ED25519 {
+export declare class Ed25519 {
     /**
      * Version for signature scheme.
      */
@@ -21,16 +20,31 @@ export declare class ED25519 {
      */
     static ADDRESS_LENGTH: number;
     /**
-     * Generate a key pair from the seed.
-     * @param seed The seed to generate the key pair from.
-     * @returns The key pair.
-     */
-    static keyPairFromSeed(seed: Buffer): ISignatureKeyPair;
-    /**
      * Privately sign the data.
-     * @param keyPair The key pair to sign with.
-     * @param buffer The data to sign.
+     * @param privateKey The private key to sign with.
+     * @param data The data to sign.
      * @returns The signature.
      */
-    static privateSign(keyPair: ISignatureKeyPair, buffer: Buffer): Buffer;
+    static signData(privateKey: string, data: Buffer): string;
+    /**
+     * Use the public key and signature to validate the data.
+     * @param publicKey The public key to verify with.
+     * @param signature The signature to verify.
+     * @param data The data to verify.
+     * @returns True if the data and address is verified.
+     */
+    static verifyData(publicKey: string, signature: string, data: Buffer): boolean;
+    /**
+     * Convert the public key to an address.
+     * @param publicKey The public key to convert.
+     * @returns The address.
+     */
+    static signAddress(publicKey: string): string;
+    /**
+     * Use the public key to validate the address.
+     * @param publicKey The public key to verify with.
+     * @param address The address to verify.
+     * @returns True if the data and address is verified.
+     */
+    static verifyAddress(publicKey: string, address: string): boolean;
 }

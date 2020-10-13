@@ -1,11 +1,11 @@
-import { ED25519 } from "../crypto/ed25519";
+import { Ed25519 } from "../crypto/ed25519";
 import { IEd25519Address } from "../models/IEd25519Address";
 import { ReadBuffer } from "../utils/readBuffer";
 import { WriteBuffer } from "../utils/writeBuffer";
 import { BYTE_SIZE } from "./common";
 
 export const MIN_ADDRESS_LENGTH: number = BYTE_SIZE;
-export const MIN_ED25519_ADDRESS_LENGTH: number = ED25519.ADDRESS_LENGTH;
+export const MIN_ED25519_ADDRESS_LENGTH: number = Ed25519.ADDRESS_LENGTH;
 
 /**
  * Deserialize the address from binary.
@@ -56,7 +56,7 @@ export function deserializeEd25519Address(readBuffer: ReadBuffer): IEd25519Addre
             } in length which is less than the minimimum size required of ${MIN_ED25519_ADDRESS_LENGTH}`);
     }
 
-    const address = readBuffer.readFixedBufferHex("ed25519Address.address", ED25519.ADDRESS_LENGTH);
+    const address = readBuffer.readFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH);
 
     return {
         type: 1,
@@ -70,5 +70,5 @@ export function deserializeEd25519Address(readBuffer: ReadBuffer): IEd25519Addre
  * @param object The object to serialize.
  */
 export function serializeEd25519Address(writeBuffer: WriteBuffer, object: IEd25519Address): void {
-    writeBuffer.writeFixedBufferHex("ed25519Address.address", ED25519.ADDRESS_LENGTH, object.address);
+    writeBuffer.writeFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH, object.address);
 }

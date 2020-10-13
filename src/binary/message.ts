@@ -30,7 +30,7 @@ export function deserializeMessage(readBuffer: ReadBuffer): IMessage {
 
     const payload = deserializePayload(readBuffer);
 
-    const nonce = readBuffer.readFixedBufferHex("message.nonce", UINT64_SIZE);
+    const nonce = readBuffer.readUInt64("message.nonce");
 
     const unused = readBuffer.unused();
     if (unused !== 0) {
@@ -43,7 +43,7 @@ export function deserializeMessage(readBuffer: ReadBuffer): IMessage {
         payload,
         parent1MessageId,
         parent2MessageId,
-        nonce
+        nonce: Number(nonce)
     };
 }
 
@@ -61,5 +61,5 @@ export function serializeMessage(writeBuffer: WriteBuffer,
 
     serializePayload(writeBuffer, object.payload);
 
-    writeBuffer.writeFixedBufferHex("message.nonce", UINT64_SIZE, object.nonce ?? "");
+    writeBuffer.writeUInt64("message.nonce", BigInt(object.nonce));
 }

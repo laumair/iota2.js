@@ -17,6 +17,7 @@
     "dependencies": {
         "blakejs": "^1.1.0",
         "cross-fetch": "^3.0.6",
+        "ed25519-hd-key": "^1.1.2",
         "tweetnacl": "^1.0.3"
     },
     "scripts": {

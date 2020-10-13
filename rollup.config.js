@@ -19,8 +19,10 @@ if (process.env.MINIFY) {
 export default {
     input: './src/index.ts',
     external: [
+        "blakejs",
         "cross-fetch",
-        "tweetnacl"
+        "ed25519-hd-key",
+        "tweetnacl",
     ],
     output: {
         file: `dist/iota2.js${process.env.MINIFY ? '.min' : ''}.js`,
@@ -28,7 +30,9 @@ export default {
         name: 'Iota2',
         compact: process.env.MINIFY,
         globals: {
+            "blakejs": "blakejs",
             "cross-fetch": "cross-fetch",
+            "ed25519-hd-key": "ed25519-hd-key",
             "tweetnacl": "tweetnacl"
         }
     },

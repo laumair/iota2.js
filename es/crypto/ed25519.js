@@ -1,49 +1,65 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ED25519 = void 0;
+exports.Ed25519 = void 0;
 const nacl = require("tweetnacl");
 const blake2b_1 = require("./blake2b");
 /**
- * Class to help with ED25519 Signature scheme.
+ * Class to help with Ed25519 Signature scheme.
  */
-class ED25519 {
-    /**
-     * Generate a key pair from the seed.
-     * @param seed The seed to generate the key pair from.
-     * @returns The key pair.
-     */
-    static keyPairFromSeed(seed) {
-        const signKeyPair = nacl.sign.keyPair.fromSeed(seed);
-        return {
-            publicKey: Buffer.from(signKeyPair.publicKey),
-            secretKey: Buffer.from(signKeyPair.secretKey)
-        };
-    }
+class Ed25519 {
     /**
      * Privately sign the data.
-     * @param keyPair The key pair to sign with.
-     * @param buffer The data to sign.
+     * @param privateKey The private key to sign with.
+     * @param data The data to sign.
      * @returns The signature.
      */
-    static privateSign(keyPair, buffer) {
-        return Buffer.from(nacl.sign.detached(buffer, keyPair.secretKey));
+    static signData(privateKey, data) {
+        return Buffer.from(nacl.sign.detached(data, Buffer.from(privateKey, "hex"))).toString("hex");
+    }
+    /**
+     * Use the public key and signature to validate the data.
+     * @param publicKey The public key to verify with.
+     * @param signature The signature to verify.
+     * @param data The data to verify.
+     * @returns True if the data and address is verified.
+     */
+    static verifyData(publicKey, signature, data) {
+        return nacl.sign.detached.verify(data, Buffer.from(signature, "hex"), Buffer.from(publicKey, "hex"));
+    }
+    /**
+     * Convert the public key to an address.
+     * @param publicKey The public key to convert.
+     * @returns The address.
+     */
+    static signAddress(publicKey) {
+        return blake2b_1.Blake2b.sum256(publicKey);
+    }
+    /**
+     * Use the public key to validate the address.
+     * @param publicKey The public key to verify with.
+     * @param address The address to verify.
+     * @returns True if the data and address is verified.
+     */
+    static verifyAddress(publicKey, address) {
+        const addressFromPublicKey = Ed25519.signAddress(publicKey);
+        return addressFromPublicKey === address;
     }
 }
-exports.ED25519 = ED25519;
+exports.Ed25519 = Ed25519;
 /**
  * Version for signature scheme.
  */
-ED25519.VERSION = 1;
+Ed25519.VERSION = 1;
 /**
  * Public Key size.
  */
-ED25519.PUBLIC_KEY_SIZE = 32;
+Ed25519.PUBLIC_KEY_SIZE = 32;
 /**
  * Signature size for signing scheme.
  */
-ED25519.SIGNATURE_SIZE = 64;
+Ed25519.SIGNATURE_SIZE = 64;
 /**
  * Address size.
  */
-ED25519.ADDRESS_LENGTH = blake2b_1.Blake2b.SIZE_256;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZWQyNTUxOS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jcnlwdG8vZWQyNTUxOS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBQSxrQ0FBa0M7QUFFbEMsdUNBQW9DO0FBRXBDOztHQUVHO0FBQ0gsTUFBYSxPQUFPO0lBcUJoQjs7OztPQUlHO0lBQ0ksTUFBTSxDQUFDLGVBQWUsQ0FBQyxJQUFZO1FBQ3RDLE1BQU0sV0FBVyxHQUFHLElBQUksQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLFFBQVEsQ0FBQyxJQUFJLENBQUMsQ0FBQztRQUVyRCxPQUFPO1lBQ0gsU0FBUyxFQUFFLE1BQU0sQ0FBQyxJQUFJLENBQUMsV0FBVyxDQUFDLFNBQVMsQ0FBQztZQUM3QyxTQUFTLEVBQUUsTUFBTSxDQUFDLElBQUksQ0FBQyxXQUFXLENBQUMsU0FBUyxDQUFDO1NBQ2hELENBQUM7SUFDTixDQUFDO0lBRUQ7Ozs7O09BS0c7SUFDSSxNQUFNLENBQUMsV0FBVyxDQUFDLE9BQTBCLEVBQUUsTUFBYztRQUNoRSxPQUFPLE1BQU0sQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsTUFBTSxFQUFFLE9BQU8sQ0FBQyxTQUFTLENBQUMsQ0FBQyxDQUFDO0lBQ3RFLENBQUM7O0FBM0NMLDBCQTRDQztBQTNDRzs7R0FFRztBQUNXLGVBQU8sR0FBVyxDQUFDLENBQUM7QUFFbEM7O0dBRUc7QUFDVyx1QkFBZSxHQUFXLEVBQUUsQ0FBQztBQUUzQzs7R0FFRztBQUNXLHNCQUFjLEdBQVcsRUFBRSxDQUFDO0FBRTFDOztHQUVHO0FBQ1csc0JBQWMsR0FBVyxpQkFBTyxDQUFDLFFBQVEsQ0FBQyJ9
+Ed25519.ADDRESS_LENGTH = blake2b_1.Blake2b.SIZE_256;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZWQyNTUxOS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9jcnlwdG8vZWQyNTUxOS50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBQSxrQ0FBa0M7QUFDbEMsdUNBQW9DO0FBRXBDOztHQUVHO0FBQ0gsTUFBYSxPQUFPO0lBcUJoQjs7Ozs7T0FLRztJQUNJLE1BQU0sQ0FBQyxRQUFRLENBQUMsVUFBa0IsRUFBRSxJQUFZO1FBQ25ELE9BQU8sTUFBTSxDQUFDLElBQUksQ0FBQyxJQUFJLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxJQUFJLEVBQUUsTUFBTSxDQUFDLElBQUksQ0FBQyxVQUFVLEVBQUUsS0FBSyxDQUFDLENBQUMsQ0FBQyxDQUFDLFFBQVEsQ0FBQyxLQUFLLENBQUMsQ0FBQztJQUNqRyxDQUFDO0lBRUQ7Ozs7OztPQU1HO0lBQ0ksTUFBTSxDQUFDLFVBQVUsQ0FBQyxTQUFpQixFQUFFLFNBQWlCLEVBQUUsSUFBWTtRQUN2RSxPQUFPLElBQUksQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLE1BQU0sQ0FBQyxJQUFJLEVBQUUsTUFBTSxDQUFDLElBQUksQ0FBQyxTQUFTLEVBQUUsS0FBSyxDQUFDLEVBQUUsTUFBTSxDQUFDLElBQUksQ0FBQyxTQUFTLEVBQUUsS0FBSyxDQUFDLENBQUMsQ0FBQztJQUN6RyxDQUFDO0lBRUQ7Ozs7T0FJRztJQUNJLE1BQU0sQ0FBQyxXQUFXLENBQUMsU0FBaUI7UUFDdkMsT0FBTyxpQkFBTyxDQUFDLE1BQU0sQ0FBQyxTQUFTLENBQUMsQ0FBQztJQUNyQyxDQUFDO0lBRUQ7Ozs7O09BS0c7SUFDSSxNQUFNLENBQUMsYUFBYSxDQUFDLFNBQWlCLEVBQUUsT0FBZTtRQUMxRCxNQUFNLG9CQUFvQixHQUFHLE9BQU8sQ0FBQyxXQUFXLENBQUMsU0FBUyxDQUFDLENBQUM7UUFDNUQsT0FBTyxvQkFBb0IsS0FBSyxPQUFPLENBQUM7SUFDNUMsQ0FBQzs7QUE1REwsMEJBNkRDO0FBNURHOztHQUVHO0FBQ1csZUFBTyxHQUFXLENBQUMsQ0FBQztBQUVsQzs7R0FFRztBQUNXLHVCQUFlLEdBQVcsRUFBRSxDQUFDO0FBRTNDOztHQUVHO0FBQ1csc0JBQWMsR0FBVyxFQUFFLENBQUM7QUFFMUM7O0dBRUc7QUFDVyxzQkFBYyxHQUFXLGlCQUFPLENBQUMsUUFBUSxDQUFDIn0=

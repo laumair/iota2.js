@@ -20,7 +20,7 @@ export function logMessage(prefix: string, message: IMessage): void {
     console.log(`${prefix}\tParent 1 Message Id:`, message.parent1MessageId);
     console.log(`${prefix}\tParent 2 Message Id:`, message.parent2MessageId);
     logPayload(`${prefix}\t`, message.payload);
-    if (message.nonce) {
+    if (message.nonce !== undefined) {
         console.log(`${prefix}\tNonce:`, message.nonce);
     }
 }

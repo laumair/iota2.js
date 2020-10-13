@@ -31,12 +31,12 @@ describe("Binary Message", () => {
         buffer.writeUInt32LE(2, 69); // Payload type
         buffer.writeUInt16LE(0, 73); // Indexation index length
         buffer.writeUInt32LE(0, 75); // Indexation data length
-        buffer.write("1234567890123456", 79, "hex");
+        buffer.writeBigUInt64LE(BigInt(0), 79); // Nonce
         const message = deserializeMessage(new ReadBuffer(buffer));
         expect(message.version).toEqual(1);
         expect(message.parent1MessageId).toEqual("4594267ca0446739d5e4c6dcf060d640aafb68ab929aa2bb8c2bcdce8b3bc89e");
         expect(message.parent2MessageId).toEqual("6901c7b37adbddfc3fc170773632489f263af4decc9ed5813c849a07319ecd73");
-        expect(message.nonce).toEqual("1234567890123456");
+        expect(message.nonce).toEqual(0);
     });
 
     test("Can fail with additional data", () => {
@@ -48,7 +48,7 @@ describe("Binary Message", () => {
         buffer.writeUInt32LE(2, 69); // Payload type
         buffer.writeUInt16LE(0, 73); // Indexation index length
         buffer.writeUInt32LE(0, 75); // Indexation data length
-        buffer.write("1234567890123456", 79, "hex");
+        buffer.writeBigUInt64LE(BigInt(0), 79); // Nonce
         expect(() => deserializeMessage(new ReadBuffer(buffer))).toThrow("unused data");
     });
 
@@ -64,7 +64,7 @@ describe("Binary Message", () => {
         expect(payload.timestamp).toEqual(1602503132);
         expect(payload.inclusionMerkleProof).toEqual("786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce");
         expect(payload.signature).toEqual("2c59d43952bda7ca60d3c2288ebc00703b4b60c928d277382cad5f57b02a90825f2d3a8509d6594498e0488f086d8fa3f13d9636d20e759eb5806ffe663bac0d");
-        expect(message.nonce).toEqual("0000000000000000");
+        expect(message.nonce).toEqual(0);
     });
 
     test("Can succeed with indexation data", () => {
@@ -77,7 +77,7 @@ describe("Binary Message", () => {
         expect(payload.type).toEqual(2);
         expect(payload.index).toEqual("Foo");
         expect(Buffer.from(payload.data, "hex").toString()).toEqual("Bar");
-        expect(message.nonce).toEqual("0000000000000000");
+        expect(message.nonce).toEqual(0);
     });
 
     test("Can succeed with milestone data", () => {
@@ -101,6 +101,6 @@ describe("Binary Message", () => {
         expect(payload.type).toEqual(2);
         expect(payload.index).toEqual("Foo");
         expect(Buffer.from(payload.data, "hex").toString()).toEqual("Bar");
-        expect(message.nonce).toEqual("0000000000000000");
+        expect(message.nonce).toEqual(0);
     });
 });

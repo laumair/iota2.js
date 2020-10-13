@@ -1,11 +1,10 @@
 import * as nacl from "tweetnacl";
-import { ISignatureKeyPair } from "../models/ISignatureKeyPair";
 import { Blake2b } from "./blake2b";
 
 /**
- * Class to help with ED25519 Signature scheme.
+ * Class to help with Ed25519 Signature scheme.
  */
-export class ED25519 {
+export class Ed25519 {
     /**
      * Version for signature scheme.
      */
@@ -27,26 +26,43 @@ export class ED25519 {
     public static ADDRESS_LENGTH: number = Blake2b.SIZE_256;
 
     /**
-     * Generate a key pair from the seed.
-     * @param seed The seed to generate the key pair from.
-     * @returns The key pair.
+     * Privately sign the data.
+     * @param privateKey The private key to sign with.
+     * @param data The data to sign.
+     * @returns The signature.
      */
-    public static keyPairFromSeed(seed: Buffer): ISignatureKeyPair {
-        const signKeyPair = nacl.sign.keyPair.fromSeed(seed);
-
-        return {
-            publicKey: Buffer.from(signKeyPair.publicKey),
-            secretKey: Buffer.from(signKeyPair.secretKey)
-        };
+    public static signData(privateKey: string, data: Buffer): string {
+        return Buffer.from(nacl.sign.detached(data, Buffer.from(privateKey, "hex"))).toString("hex");
     }
 
     /**
-     * Privately sign the data.
-     * @param keyPair The key pair to sign with.
-     * @param buffer The data to sign.
-     * @returns The signature.
+     * Use the public key and signature to validate the data.
+     * @param publicKey The public key to verify with.
+     * @param signature The signature to verify.
+     * @param data The data to verify.
+     * @returns True if the data and address is verified.
      */
-    public static privateSign(keyPair: ISignatureKeyPair, buffer: Buffer): Buffer {
-        return Buffer.from(nacl.sign.detached(buffer, keyPair.secretKey));
+    public static verifyData(publicKey: string, signature: string, data: Buffer): boolean {
+        return nacl.sign.detached.verify(data, Buffer.from(signature, "hex"), Buffer.from(publicKey, "hex"));
+    }
+
+    /**
+     * Convert the public key to an address.
+     * @param publicKey The public key to convert.
+     * @returns The address.
+     */
+    public static signAddress(publicKey: string): string {
+        return Blake2b.sum256(publicKey);
+    }
+
+    /**
+     * Use the public key to validate the address.
+     * @param publicKey The public key to verify with.
+     * @param address The address to verify.
+     * @returns True if the data and address is verified.
+     */
+    public static verifyAddress(publicKey: string, address: string): boolean {
+        const addressFromPublicKey = Ed25519.signAddress(publicKey);
+        return addressFromPublicKey === address;
     }
 }

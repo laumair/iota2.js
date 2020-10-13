@@ -29,5 +29,5 @@ export interface IMessage {
     /**
      * The nonce for the message.
      */
-    nonce?: string;
+    nonce?: number;
 }

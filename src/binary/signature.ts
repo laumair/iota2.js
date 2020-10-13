@@ -1,11 +1,11 @@
-import { ED25519 } from "../crypto/ed25519";
+import { Ed25519 } from "../crypto/ed25519";
 import { IEd25519Signature } from "../models/IEd25519Signature";
 import { ReadBuffer } from "../utils/readBuffer";
 import { WriteBuffer } from "../utils/writeBuffer";
 import { BYTE_SIZE } from "./common";
 
 export const MIN_SIGNATURE_LENGTH: number = BYTE_SIZE;
-export const MIN_ED25519_SIGNATURE_LENGTH: number = ED25519.SIGNATURE_SIZE + ED25519.PUBLIC_KEY_SIZE;
+export const MIN_ED25519_SIGNATURE_LENGTH: number = Ed25519.SIGNATURE_SIZE + Ed25519.PUBLIC_KEY_SIZE;
 
 /**
  * Deserialize the signature from binary.
@@ -57,8 +57,8 @@ export function deserializeEd25519Signature(readBuffer: ReadBuffer): IEd25519Sig
             } in length which is less than the minimimum size required of ${MIN_ED25519_SIGNATURE_LENGTH}`);
     }
 
-    const publicKey = readBuffer.readFixedBufferHex("ed25519Signature.publicKey", ED25519.PUBLIC_KEY_SIZE);
-    const signature = readBuffer.readFixedBufferHex("ed25519Signature.signature", ED25519.SIGNATURE_SIZE);
+    const publicKey = readBuffer.readFixedBufferHex("ed25519Signature.publicKey", Ed25519.PUBLIC_KEY_SIZE);
+    const signature = readBuffer.readFixedBufferHex("ed25519Signature.signature", Ed25519.SIGNATURE_SIZE);
 
     return {
         type: 1,
@@ -74,6 +74,6 @@ export function deserializeEd25519Signature(readBuffer: ReadBuffer): IEd25519Sig
  */
 export function serializeEd25519Signature(writeBuffer: WriteBuffer,
     object: IEd25519Signature): void {
-    writeBuffer.writeFixedBufferHex("ed25519Signature.publicKey", ED25519.PUBLIC_KEY_SIZE, object.publicKey);
-    writeBuffer.writeFixedBufferHex("ed25519Signature.signature", ED25519.SIGNATURE_SIZE, object.signature);
+    writeBuffer.writeFixedBufferHex("ed25519Signature.publicKey", Ed25519.PUBLIC_KEY_SIZE, object.publicKey);
+    writeBuffer.writeFixedBufferHex("ed25519Signature.signature", Ed25519.SIGNATURE_SIZE, object.signature);
 }

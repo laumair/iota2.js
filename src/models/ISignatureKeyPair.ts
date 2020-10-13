@@ -5,9 +5,9 @@ export interface ISignatureKeyPair {
     /**
      * The public key.
      */
-    publicKey: Buffer;
+    publicKey: string;
     /**
      * The private key.
      */
-    secretKey: Buffer;
+    privateKey: string;
 }

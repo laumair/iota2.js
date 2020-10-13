@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "build-watch": "tsc --watch"
   },
   "dependencies": {
     "@iota/iota2.js": "file:../..",

@@ -1,8 +1,8 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('cross-fetch'), require('tweetnacl')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'cross-fetch', 'tweetnacl'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Iota2 = {}, global['cross-fetch'], global.tweetnacl));
-}(this, (function (exports, fetch, nacl) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('cross-fetch'), require('tweetnacl'), require('blakejs'), require('ed25519-hd-key')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'cross-fetch', 'tweetnacl', 'blakejs', 'ed25519-hd-key'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Iota2 = {}, global['cross-fetch'], global.tweetnacl, global.blakejs, global['ed25519-hd-key']));
+}(this, (function (exports, fetch, nacl, blakejs, ed25519HdKey) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -411,56 +411,80 @@
         function Blake2b() {
         }
         /**
-         * Public Key size.
+         * Perform Sum 256 on the data.
+         * @param data The data to operate on.
+         * @returns The sum 256 of the data.
+         */
+        Blake2b.sum256 = function (data) {
+            return Buffer.from(blakejs.blake2b(Buffer.from(data, "hex"), undefined, Blake2b.SIZE_256)).toString("hex");
+        };
+        /**
+         * Blake2b 256.
          */
         Blake2b.SIZE_256 = 32;
         return Blake2b;
     }());
 
     /**
-     * Class to help with ED25519 Signature scheme.
+     * Class to help with Ed25519 Signature scheme.
      */
-    var ED25519 = /** @class */ (function () {
-        function ED25519() {
+    var Ed25519 = /** @class */ (function () {
+        function Ed25519() {
         }
         /**
-         * Generate a key pair from the seed.
-         * @param seed The seed to generate the key pair from.
-         * @returns The key pair.
-         */
-        ED25519.keyPairFromSeed = function (seed) {
-            var signKeyPair = nacl.sign.keyPair.fromSeed(seed);
-            return {
-                publicKey: Buffer.from(signKeyPair.publicKey),
-                secretKey: Buffer.from(signKeyPair.secretKey)
-            };
-        };
-        /**
          * Privately sign the data.
-         * @param keyPair The key pair to sign with.
-         * @param buffer The data to sign.
+         * @param privateKey The private key to sign with.
+         * @param data The data to sign.
          * @returns The signature.
          */
-        ED25519.privateSign = function (keyPair, buffer) {
-            return Buffer.from(nacl.sign.detached(buffer, keyPair.secretKey));
+        Ed25519.signData = function (privateKey, data) {
+            return Buffer.from(nacl.sign.detached(data, Buffer.from(privateKey, "hex"))).toString("hex");
+        };
+        /**
+         * Use the public key and signature to validate the data.
+         * @param publicKey The public key to verify with.
+         * @param signature The signature to verify.
+         * @param data The data to verify.
+         * @returns True if the data and address is verified.
+         */
+        Ed25519.verifyData = function (publicKey, signature, data) {
+            return nacl.sign.detached.verify(data, Buffer.from(signature, "hex"), Buffer.from(publicKey, "hex"));
+        };
+        /**
+         * Convert the public key to an address.
+         * @param publicKey The public key to convert.
+         * @returns The address.
+         */
+        Ed25519.signAddress = function (publicKey) {
+            return Blake2b.sum256(publicKey);
+        };
+        /**
+         * Use the public key to validate the address.
+         * @param publicKey The public key to verify with.
+         * @param address The address to verify.
+         * @returns True if the data and address is verified.
+         */
+        Ed25519.verifyAddress = function (publicKey, address) {
+            var addressFromPublicKey = Ed25519.signAddress(publicKey);
+            return addressFromPublicKey === address;
         };
         /**
          * Version for signature scheme.
          */
-        ED25519.VERSION = 1;
+        Ed25519.VERSION = 1;
         /**
          * Public Key size.
          */
-        ED25519.PUBLIC_KEY_SIZE = 32;
+        Ed25519.PUBLIC_KEY_SIZE = 32;
         /**
          * Signature size for signing scheme.
          */
-        ED25519.SIGNATURE_SIZE = 64;
+        Ed25519.SIGNATURE_SIZE = 64;
         /**
          * Address size.
          */
-        ED25519.ADDRESS_LENGTH = Blake2b.SIZE_256;
-        return ED25519;
+        Ed25519.ADDRESS_LENGTH = Blake2b.SIZE_256;
+        return Ed25519;
     }());
 
     var BYTE_SIZE = 1;
@@ -485,7 +509,7 @@
     }
 
     var MIN_ADDRESS_LENGTH = BYTE_SIZE;
-    var MIN_ED25519_ADDRESS_LENGTH = ED25519.ADDRESS_LENGTH;
+    var MIN_ED25519_ADDRESS_LENGTH = Ed25519.ADDRESS_LENGTH;
     /**
      * Deserialize the address from binary.
      * @param readBuffer The buffer to read the data from.
@@ -528,7 +552,7 @@
         if (!readBuffer.hasRemaining(MIN_ED25519_ADDRESS_LENGTH)) {
             throw new Error("Ed25519 address data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_ED25519_ADDRESS_LENGTH);
         }
-        var address = readBuffer.readFixedBufferHex("ed25519Address.address", ED25519.ADDRESS_LENGTH);
+        var address = readBuffer.readFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH);
         return {
             type: 1,
             address: address
@@ -540,7 +564,7 @@
      * @param object The object to serialize.
      */
     function serializeEd25519Address(writeBuffer, object) {
-        writeBuffer.writeFixedBufferHex("ed25519Address.address", ED25519.ADDRESS_LENGTH, object.address);
+        writeBuffer.writeFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH, object.address);
     }
 
     var MIN_INPUT_LENGTH = BYTE_SIZE;
@@ -750,7 +774,7 @@
     }
 
     var MIN_SIGNATURE_LENGTH = BYTE_SIZE;
-    var MIN_ED25519_SIGNATURE_LENGTH = ED25519.SIGNATURE_SIZE + ED25519.PUBLIC_KEY_SIZE;
+    var MIN_ED25519_SIGNATURE_LENGTH = Ed25519.SIGNATURE_SIZE + Ed25519.PUBLIC_KEY_SIZE;
     /**
      * Deserialize the signature from binary.
      * @param readBuffer The buffer to read the data from.
@@ -793,8 +817,8 @@
         if (!readBuffer.hasRemaining(MIN_ED25519_SIGNATURE_LENGTH)) {
             throw new Error("Ed25519 signature data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_ED25519_SIGNATURE_LENGTH);
         }
-        var publicKey = readBuffer.readFixedBufferHex("ed25519Signature.publicKey", ED25519.PUBLIC_KEY_SIZE);
-        var signature = readBuffer.readFixedBufferHex("ed25519Signature.signature", ED25519.SIGNATURE_SIZE);
+        var publicKey = readBuffer.readFixedBufferHex("ed25519Signature.publicKey", Ed25519.PUBLIC_KEY_SIZE);
+        var signature = readBuffer.readFixedBufferHex("ed25519Signature.signature", Ed25519.SIGNATURE_SIZE);
         return {
             type: 1,
             publicKey: publicKey,
@@ -807,8 +831,8 @@
      * @param object The object to serialize.
      */
     function serializeEd25519Signature(writeBuffer, object) {
-        writeBuffer.writeFixedBufferHex("ed25519Signature.publicKey", ED25519.PUBLIC_KEY_SIZE, object.publicKey);
-        writeBuffer.writeFixedBufferHex("ed25519Signature.signature", ED25519.SIGNATURE_SIZE, object.signature);
+        writeBuffer.writeFixedBufferHex("ed25519Signature.publicKey", Ed25519.PUBLIC_KEY_SIZE, object.publicKey);
+        writeBuffer.writeFixedBufferHex("ed25519Signature.signature", Ed25519.SIGNATURE_SIZE, object.signature);
     }
 
     var MIN_UNLOCK_BLOCK_LENGTH = BYTE_SIZE;
@@ -1111,7 +1135,7 @@
         var parent1MessageId = readBuffer.readFixedBufferHex("message.parent1MessageId", MESSAGE_ID_LENGTH);
         var parent2MessageId = readBuffer.readFixedBufferHex("message.parent2MessageId", MESSAGE_ID_LENGTH);
         var payload = deserializePayload(readBuffer);
-        var nonce = readBuffer.readFixedBufferHex("message.nonce", UINT64_SIZE);
+        var nonce = readBuffer.readUInt64("message.nonce");
         var unused = readBuffer.unused();
         if (unused !== 0) {
             throw new Error("Message data length " + readBuffer.length() + " has unused data " + unused);
@@ -1121,7 +1145,7 @@
             payload: payload,
             parent1MessageId: parent1MessageId,
             parent2MessageId: parent2MessageId,
-            nonce: nonce
+            nonce: Number(nonce)
         };
     }
     /**
@@ -1130,13 +1154,135 @@
      * @param object The object to serialize.
      */
     function serializeMessage(writeBuffer, object) {
-        var _a;
         writeBuffer.writeByte("message.version", object.version);
         writeBuffer.writeFixedBufferHex("message.parent1MessageId", MESSAGE_ID_LENGTH, object.parent1MessageId);
         writeBuffer.writeFixedBufferHex("message.parent2MessageId", MESSAGE_ID_LENGTH, object.parent2MessageId);
         serializePayload(writeBuffer, object.payload);
-        writeBuffer.writeFixedBufferHex("message.nonce", UINT64_SIZE, (_a = object.nonce) !== null && _a !== void 0 ? _a : "");
+        writeBuffer.writeUInt64("message.nonce", BigInt(object.nonce));
     }
+
+    /**
+     * Class to help with bip32 paths.
+     */
+    var Bip32Path = /** @class */ (function () {
+        /**
+         * Create a new instance of Bip32Path.
+         * @param initialPath Initial path to create.
+         */
+        function Bip32Path(initialPath) {
+            this._path = [];
+            if (initialPath) {
+                if (!/^m((?:\/\d+')*)$/.test(initialPath)) {
+                    throw new Error("Bip32 Path is not in correct format");
+                }
+                this._path = initialPath
+                    .slice(2)
+                    .replace(/'/g, "")
+                    .split("/")
+                    .map(function (p) { return Number.parseInt(p, 10); });
+            }
+        }
+        /**
+         * Converts the path to a string.
+         * @returns The path as a string.
+         */
+        Bip32Path.prototype.toString = function () {
+            return "m/" + this._path.map(function (v) { return v + "'"; }).join("/");
+        };
+        /**
+         * Push a new index on to the path.
+         * @param index The index to add to the path.
+         */
+        Bip32Path.prototype.push = function (index) {
+            this._path.push(index);
+        };
+        /**
+         * Pop an index from the path.
+         * @returns The popped index
+         */
+        Bip32Path.prototype.pop = function () {
+            return this._path.pop();
+        };
+        return Bip32Path;
+    }());
+
+    /**
+     * Class to help with seeds.
+     */
+    var Ed25519Seed = /** @class */ (function () {
+        function Ed25519Seed() {
+            /**
+             * The secret key for the seed.
+             */
+            this._secretKey = Buffer.alloc(0);
+        }
+        /**
+         * Create a seed from the bytes.
+         * @param buffer The binary representation of the seed.
+         * @returns The seed.
+         */
+        Ed25519Seed.fromBytes = function (buffer) {
+            var seed = new Ed25519Seed();
+            seed._secretKey = buffer;
+            return seed;
+        };
+        /**
+         * Create a seed from the hex string.
+         * @param hex The hex representation of the seed.
+         * @returns The seed.
+         */
+        Ed25519Seed.fromString = function (hex) {
+            var seed = new Ed25519Seed();
+            seed._secretKey = Buffer.from(hex, "hex");
+            return seed;
+        };
+        /**
+         * Generate a new random seed.
+         * @returns The random seed.
+         */
+        Ed25519Seed.random = function () {
+            return Ed25519Seed.fromBytes(Buffer.from(nacl.randomBytes(Ed25519Seed.SEED_SIZE_BYTES)));
+        };
+        /**
+         * Generate a key pair from the seed.
+         * @returns The key pair.
+         */
+        Ed25519Seed.prototype.generateKeyPair = function () {
+            var signKeyPair = nacl.sign.keyPair.fromSeed(this._secretKey);
+            return {
+                publicKey: Buffer.from(signKeyPair.publicKey).toString("hex"),
+                privateKey: Buffer.from(signKeyPair.secretKey).toString("hex")
+            };
+        };
+        /**
+         * Generate the subseeed from bip32 path.
+         * @param path The path of the subseed to generate.
+         * @returns The private key.
+         */
+        Ed25519Seed.prototype.generateSubseed = function (path) {
+            var key = ed25519HdKey.derivePath(path.toString(), this._secretKey.toString("hex")).key;
+            return Ed25519Seed.fromBytes(key);
+        };
+        /**
+         * Return the key as bytes.
+         * @returns The key as bytes.
+         */
+        Ed25519Seed.prototype.toBytes = function () {
+            return this._secretKey;
+        };
+        /**
+         * Return the key as string.
+         * @returns The key as string.
+         */
+        Ed25519Seed.prototype.toString = function () {
+            return this._secretKey.toString("hex");
+        };
+        /**
+         * SeedSize is the size, in bytes, of private key seeds.
+         */
+        Ed25519Seed.SEED_SIZE_BYTES = 32;
+        return Ed25519Seed;
+    }());
 
     /**
      * Log a message to the console.
@@ -1148,7 +1294,7 @@
         console.log(prefix + "\tParent 1 Message Id:", message.parent1MessageId);
         console.log(prefix + "\tParent 2 Message Id:", message.parent2MessageId);
         logPayload(prefix + "\t", message.payload);
-        if (message.nonce) {
+        if (message.nonce !== undefined) {
             console.log(prefix + "\tNonce:", message.nonce);
         }
     }
@@ -1407,11 +1553,153 @@
         return ReadBuffer;
     }());
 
+    /**
+     * Keep track of the write index within a buffer.
+     */
+    var WriteBuffer = /** @class */ (function () {
+        /**
+         * Create a new instance of ReadBuffer.
+         */
+        function WriteBuffer() {
+            this._buffer = Buffer.alloc(WriteBuffer.CHUNK_SIZE);
+            this._writeIndex = 0;
+        }
+        /**
+         * Get the length of the buffer.
+         * @returns The buffer length.
+         */
+        WriteBuffer.prototype.length = function () {
+            return this._buffer.length;
+        };
+        /**
+         * How much unused data is there.
+         * @returns The amount of unused data.
+         */
+        WriteBuffer.prototype.unused = function () {
+            return this._buffer.length - this._writeIndex;
+        };
+        /**
+         * Get the final buffer.
+         * @returns The final buffer.
+         */
+        WriteBuffer.prototype.finalBuffer = function () {
+            return this._buffer.slice(0, this._writeIndex);
+        };
+        /**
+         * Get the current write index.
+         * @returns The current write index.
+         */
+        WriteBuffer.prototype.getWriteIndex = function () {
+            return this._writeIndex;
+        };
+        /**
+         * Set the current write index.
+         * @param writeIndex The current write index.
+         */
+        WriteBuffer.prototype.setWriteIndex = function (writeIndex) {
+            this._writeIndex = writeIndex;
+        };
+        /**
+         * Write fixed length buffer.
+         * @param name The name of the data we are trying to write.
+         * @param length The length of the data to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeFixedBufferHex = function (name, length, val) {
+            if (!isHex(val)) {
+                throw new Error("The " + val + " should be in hex format");
+            }
+            // Hex should be twice the length as each byte is 2 ascii characters
+            if (length * 2 !== val.length) {
+                throw new Error(name + " length " + length * 2 + " does not match value length " + val.length);
+            }
+            this.expand(length);
+            this._buffer.write(val, this._writeIndex, "hex");
+            this._writeIndex += length;
+            // console.log(name, data);
+        };
+        /**
+         * Write a byte to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeByte = function (name, val) {
+            this.expand(1);
+            this._buffer.writeUInt8(val, this._writeIndex);
+            this._writeIndex += 1;
+            // console.log(name, val);
+        };
+        /**
+         * Write a UInt16 to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeUInt16 = function (name, val) {
+            this.expand(2);
+            this._buffer.writeUInt16LE(val, this._writeIndex);
+            this._writeIndex += 2;
+            // console.log(name, val);
+        };
+        /**
+         * Write a UInt32 to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeUInt32 = function (name, val) {
+            this.expand(4);
+            this._buffer.writeUInt32LE(val, this._writeIndex);
+            this._writeIndex += 4;
+            // console.log(name, val);
+        };
+        /**
+         * Write a UInt64 to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeUInt64 = function (name, val) {
+            this.expand(8);
+            this._buffer.writeBigUInt64LE(val, this._writeIndex);
+            this._writeIndex += 8;
+            // console.log(name, val);
+        };
+        /**
+         * Write a string to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         * @returns The string.
+         */
+        WriteBuffer.prototype.writeString = function (name, val) {
+            this.writeUInt16(name, val.length);
+            this.expand(val.length);
+            this._buffer.write(val, this._writeIndex);
+            this._writeIndex += val.length;
+            // console.log(name, val);
+            return val;
+        };
+        /**
+         * Expand the buffer if there is not enough spave.
+         * @param additional The amount of space needed.
+         */
+        WriteBuffer.prototype.expand = function (additional) {
+            if (this._writeIndex + additional > this._buffer.byteLength) {
+                this._buffer = Buffer.concat([this._buffer, Buffer.alloc(WriteBuffer.CHUNK_SIZE)]);
+            }
+        };
+        /**
+         * Chunk size to expand the buffer.
+         */
+        WriteBuffer.CHUNK_SIZE = 4096;
+        return WriteBuffer;
+    }());
+
     exports.ARRAY_LENGTH = ARRAY_LENGTH;
     exports.BYTE_SIZE = BYTE_SIZE;
+    exports.Bip32Path = Bip32Path;
+    exports.Blake2b = Blake2b;
     exports.Client = Client;
     exports.ClientError = ClientError;
-    exports.ED25519 = ED25519;
+    exports.Ed25519 = Ed25519;
+    exports.Ed25519Seed = Ed25519Seed;
     exports.MESSAGE_ID_LENGTH = MESSAGE_ID_LENGTH;
     exports.MIN_ADDRESS_LENGTH = MIN_ADDRESS_LENGTH;
     exports.MIN_ED25519_ADDRESS_LENGTH = MIN_ED25519_ADDRESS_LENGTH;
@@ -1436,6 +1724,7 @@
     exports.UINT16_SIZE = UINT16_SIZE;
     exports.UINT32_SIZE = UINT32_SIZE;
     exports.UINT64_SIZE = UINT64_SIZE;
+    exports.WriteBuffer = WriteBuffer;
     exports.deserializeAddress = deserializeAddress;
     exports.deserializeEd25519Address = deserializeEd25519Address;
     exports.deserializeEd25519Signature = deserializeEd25519Signature;

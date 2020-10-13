@@ -3,7 +3,13 @@
  */
 export declare class Blake2b {
     /**
-     * Public Key size.
+     * Blake2b 256.
      */
     static SIZE_256: number;
+    /**
+     * Perform Sum 256 on the data.
+     * @param data The data to operate on.
+     * @returns The sum 256 of the data.
+     */
+    static sum256(data: string): string;
 }

@@ -7,11 +7,17 @@
 <dt><a href="#ClientError">ClientError</a></dt>
 <dd><p>Class to handle http errors.</p>
 </dd>
+<dt><a href="#Bip32Path">Bip32Path</a></dt>
+<dd><p>Class to help with bip32 paths.</p>
+</dd>
 <dt><a href="#Blake2b">Blake2b</a></dt>
 <dd><p>Class to help with Blake2B Signature scheme.</p>
 </dd>
-<dt><a href="#ED25519">ED25519</a></dt>
-<dd><p>Class to help with ED25519 Signature scheme.</p>
+<dt><a href="#Ed25519">Ed25519</a></dt>
+<dd><p>Class to help with Ed25519 Signature scheme.</p>
+</dd>
+<dt><a href="#Ed25519Seed">Ed25519Seed</a></dt>
+<dd><p>Class to help with seeds.</p>
 </dd>
 <dt><a href="#ReadBuffer">ReadBuffer</a></dt>
 <dd><p>Keep track of the read index within a buffer.</p>
@@ -146,9 +152,6 @@
 </dd>
 <dt><a href="#serializeReferenceUnlockBlock">serializeReferenceUnlockBlock(writeBuffer, object)</a></dt>
 <dd><p>Serialize the reference unlock block to binary.</p>
-</dd>
-<dt><a href="#signMessage">signMessage(message)</a></dt>
-<dd><p>Sign the message.</p>
 </dd>
 <dt><a href="#logMessage">logMessage(prefix, message)</a></dt>
 <dd><p>Log a message to the console.</p>
@@ -379,82 +382,272 @@ Create a new instance of ClientError.
 | httpStatus | The http status code. |
 | code | The code in the payload. |
 
+<a name="Bip32Path"></a>
+
+## Bip32Path
+Class to help with bip32 paths.
+
+**Kind**: global class  
+
+* [Bip32Path](#Bip32Path)
+    * [new Bip32Path(initialPath)](#new_Bip32Path_new)
+    * [.toString()](#Bip32Path+toString) ⇒
+    * [.push(index)](#Bip32Path+push)
+    * [.pop()](#Bip32Path+pop) ⇒
+
+<a name="new_Bip32Path_new"></a>
+
+### new Bip32Path(initialPath)
+Create a new instance of Bip32Path.
+
+
+| Param | Description |
+| --- | --- |
+| initialPath | Initial path to create. |
+
+<a name="Bip32Path+toString"></a>
+
+### bip32Path.toString() ⇒
+Converts the path to a string.
+
+**Kind**: instance method of [<code>Bip32Path</code>](#Bip32Path)  
+**Returns**: The path as a string.  
+<a name="Bip32Path+push"></a>
+
+### bip32Path.push(index)
+Push a new index on to the path.
+
+**Kind**: instance method of [<code>Bip32Path</code>](#Bip32Path)  
+
+| Param | Description |
+| --- | --- |
+| index | The index to add to the path. |
+
+<a name="Bip32Path+pop"></a>
+
+### bip32Path.pop() ⇒
+Pop an index from the path.
+
+**Kind**: instance method of [<code>Bip32Path</code>](#Bip32Path)  
+**Returns**: The popped index  
 <a name="Blake2b"></a>
 
 ## Blake2b
 Class to help with Blake2B Signature scheme.
 
 **Kind**: global class  
+
+* [Blake2b](#Blake2b)
+    * [.SIZE_256](#Blake2b.SIZE_256)
+    * [.sum256(data)](#Blake2b.sum256) ⇒
+
 <a name="Blake2b.SIZE_256"></a>
 
 ### Blake2b.SIZE\_256
-Public Key size.
+Blake2b 256.
 
 **Kind**: static property of [<code>Blake2b</code>](#Blake2b)  
-<a name="ED25519"></a>
+<a name="Blake2b.sum256"></a>
 
-## ED25519
-Class to help with ED25519 Signature scheme.
+### Blake2b.sum256(data) ⇒
+Perform Sum 256 on the data.
 
-**Kind**: global class  
-
-* [ED25519](#ED25519)
-    * [.VERSION](#ED25519.VERSION)
-    * [.PUBLIC_KEY_SIZE](#ED25519.PUBLIC_KEY_SIZE)
-    * [.SIGNATURE_SIZE](#ED25519.SIGNATURE_SIZE)
-    * [.ADDRESS_LENGTH](#ED25519.ADDRESS_LENGTH)
-    * [.keyPairFromSeed(seed)](#ED25519.keyPairFromSeed) ⇒
-    * [.privateSign(keyPair, buffer)](#ED25519.privateSign) ⇒
-
-<a name="ED25519.VERSION"></a>
-
-### ED25519.VERSION
-Version for signature scheme.
-
-**Kind**: static property of [<code>ED25519</code>](#ED25519)  
-<a name="ED25519.PUBLIC_KEY_SIZE"></a>
-
-### ED25519.PUBLIC\_KEY\_SIZE
-Public Key size.
-
-**Kind**: static property of [<code>ED25519</code>](#ED25519)  
-<a name="ED25519.SIGNATURE_SIZE"></a>
-
-### ED25519.SIGNATURE\_SIZE
-Signature size for signing scheme.
-
-**Kind**: static property of [<code>ED25519</code>](#ED25519)  
-<a name="ED25519.ADDRESS_LENGTH"></a>
-
-### ED25519.ADDRESS\_LENGTH
-Address size.
-
-**Kind**: static property of [<code>ED25519</code>](#ED25519)  
-<a name="ED25519.keyPairFromSeed"></a>
-
-### ED25519.keyPairFromSeed(seed) ⇒
-Generate a key pair from the seed.
-
-**Kind**: static method of [<code>ED25519</code>](#ED25519)  
-**Returns**: The key pair.  
+**Kind**: static method of [<code>Blake2b</code>](#Blake2b)  
+**Returns**: The sum 256 of the data.  
 
 | Param | Description |
 | --- | --- |
-| seed | The seed to generate the key pair from. |
+| data | The data to operate on. |
 
-<a name="ED25519.privateSign"></a>
+<a name="Ed25519"></a>
 
-### ED25519.privateSign(keyPair, buffer) ⇒
+## Ed25519
+Class to help with Ed25519 Signature scheme.
+
+**Kind**: global class  
+
+* [Ed25519](#Ed25519)
+    * [.VERSION](#Ed25519.VERSION)
+    * [.PUBLIC_KEY_SIZE](#Ed25519.PUBLIC_KEY_SIZE)
+    * [.SIGNATURE_SIZE](#Ed25519.SIGNATURE_SIZE)
+    * [.ADDRESS_LENGTH](#Ed25519.ADDRESS_LENGTH)
+    * [.signData(privateKey, data)](#Ed25519.signData) ⇒
+    * [.verifyData(publicKey, signature, data)](#Ed25519.verifyData) ⇒
+    * [.signAddress(publicKey)](#Ed25519.signAddress) ⇒
+    * [.verifyAddress(publicKey, address)](#Ed25519.verifyAddress) ⇒
+
+<a name="Ed25519.VERSION"></a>
+
+### Ed25519.VERSION
+Version for signature scheme.
+
+**Kind**: static property of [<code>Ed25519</code>](#Ed25519)  
+<a name="Ed25519.PUBLIC_KEY_SIZE"></a>
+
+### Ed25519.PUBLIC\_KEY\_SIZE
+Public Key size.
+
+**Kind**: static property of [<code>Ed25519</code>](#Ed25519)  
+<a name="Ed25519.SIGNATURE_SIZE"></a>
+
+### Ed25519.SIGNATURE\_SIZE
+Signature size for signing scheme.
+
+**Kind**: static property of [<code>Ed25519</code>](#Ed25519)  
+<a name="Ed25519.ADDRESS_LENGTH"></a>
+
+### Ed25519.ADDRESS\_LENGTH
+Address size.
+
+**Kind**: static property of [<code>Ed25519</code>](#Ed25519)  
+<a name="Ed25519.signData"></a>
+
+### Ed25519.signData(privateKey, data) ⇒
 Privately sign the data.
 
-**Kind**: static method of [<code>ED25519</code>](#ED25519)  
+**Kind**: static method of [<code>Ed25519</code>](#Ed25519)  
 **Returns**: The signature.  
 
 | Param | Description |
 | --- | --- |
-| keyPair | The key pair to sign with. |
-| buffer | The data to sign. |
+| privateKey | The private key to sign with. |
+| data | The data to sign. |
 
+<a name="Ed25519.verifyData"></a>
+
+### Ed25519.verifyData(publicKey, signature, data) ⇒
+Use the public key and signature to validate the data.
+
+**Kind**: static method of [<code>Ed25519</code>](#Ed25519)  
+**Returns**: True if the data and address is verified.  
+
+| Param | Description |
+| --- | --- |
+| publicKey | The public key to verify with. |
+| signature | The signature to verify. |
+| data | The data to verify. |
+
+<a name="Ed25519.signAddress"></a>
+
+### Ed25519.signAddress(publicKey) ⇒
+Convert the public key to an address.
+
+**Kind**: static method of [<code>Ed25519</code>](#Ed25519)  
+**Returns**: The address.  
+
+| Param | Description |
+| --- | --- |
+| publicKey | The public key to convert. |
+
+<a name="Ed25519.verifyAddress"></a>
+
+### Ed25519.verifyAddress(publicKey, address) ⇒
+Use the public key to validate the address.
+
+**Kind**: static method of [<code>Ed25519</code>](#Ed25519)  
+**Returns**: True if the data and address is verified.  
+
+| Param | Description |
+| --- | --- |
+| publicKey | The public key to verify with. |
+| address | The address to verify. |
+
+<a name="Ed25519Seed"></a>
+
+## Ed25519Seed
+Class to help with seeds.
+
+**Kind**: global class  
+
+* [Ed25519Seed](#Ed25519Seed)
+    * _instance_
+        * [._secretKey](#Ed25519Seed+_secretKey)
+        * [.generateKeyPair()](#Ed25519Seed+generateKeyPair) ⇒
+        * [.generateSubseed(path)](#Ed25519Seed+generateSubseed) ⇒
+        * [.toBytes()](#Ed25519Seed+toBytes) ⇒
+        * [.toString()](#Ed25519Seed+toString) ⇒
+    * _static_
+        * [.SEED_SIZE_BYTES](#Ed25519Seed.SEED_SIZE_BYTES)
+        * [.fromBytes(buffer)](#Ed25519Seed.fromBytes) ⇒
+        * [.fromString(hex)](#Ed25519Seed.fromString) ⇒
+        * [.random()](#Ed25519Seed.random) ⇒
+
+<a name="Ed25519Seed+_secretKey"></a>
+
+### ed25519Seed.\_secretKey
+The secret key for the seed.
+
+**Kind**: instance property of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+<a name="Ed25519Seed+generateKeyPair"></a>
+
+### ed25519Seed.generateKeyPair() ⇒
+Generate a key pair from the seed.
+
+**Kind**: instance method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+**Returns**: The key pair.  
+<a name="Ed25519Seed+generateSubseed"></a>
+
+### ed25519Seed.generateSubseed(path) ⇒
+Generate the subseeed from bip32 path.
+
+**Kind**: instance method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+**Returns**: The private key.  
+
+| Param | Description |
+| --- | --- |
+| path | The path of the subseed to generate. |
+
+<a name="Ed25519Seed+toBytes"></a>
+
+### ed25519Seed.toBytes() ⇒
+Return the key as bytes.
+
+**Kind**: instance method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+**Returns**: The key as bytes.  
+<a name="Ed25519Seed+toString"></a>
+
+### ed25519Seed.toString() ⇒
+Return the key as string.
+
+**Kind**: instance method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+**Returns**: The key as string.  
+<a name="Ed25519Seed.SEED_SIZE_BYTES"></a>
+
+### Ed25519Seed.SEED\_SIZE\_BYTES
+SeedSize is the size, in bytes, of private key seeds.
+
+**Kind**: static property of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+<a name="Ed25519Seed.fromBytes"></a>
+
+### Ed25519Seed.fromBytes(buffer) ⇒
+Create a seed from the bytes.
+
+**Kind**: static method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+**Returns**: The seed.  
+
+| Param | Description |
+| --- | --- |
+| buffer | The binary representation of the seed. |
+
+<a name="Ed25519Seed.fromString"></a>
+
+### Ed25519Seed.fromString(hex) ⇒
+Create a seed from the hex string.
+
+**Kind**: static method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+**Returns**: The seed.  
+
+| Param | Description |
+| --- | --- |
+| hex | The hex representation of the seed. |
+
+<a name="Ed25519Seed.random"></a>
+
+### Ed25519Seed.random() ⇒
+Generate a new random seed.
+
+**Kind**: static method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
+**Returns**: The random seed.  
 <a name="ReadBuffer"></a>
 
 ## ReadBuffer
@@ -1235,17 +1428,6 @@ Serialize the reference unlock block to binary.
 | --- | --- |
 | writeBuffer | The buffer to write the data to. |
 | object | The object to serialize. |
-
-<a name="signMessage"></a>
-
-## signMessage(message)
-Sign the message.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| message | The message to sign. |
 
 <a name="logMessage"></a>
 
