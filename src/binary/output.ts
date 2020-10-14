@@ -3,10 +3,10 @@ import { ITypeBase } from "../models/ITypeBase";
 import { ReadBuffer } from "../utils/readBuffer";
 import { WriteBuffer } from "../utils/writeBuffer";
 import { deserializeAddress, MIN_ADDRESS_LENGTH, MIN_ED25519_ADDRESS_LENGTH, serializeAddress } from "./address";
-import { BYTE_SIZE } from "./common";
+import { SMALL_TYPE_LENGTH } from "./common";
 
-export const MIN_OUTPUT_LENGTH: number = BYTE_SIZE;
-export const MIN_SIG_LOCKED_OUTPUT_LENGTH: number = BYTE_SIZE + MIN_ADDRESS_LENGTH + MIN_ED25519_ADDRESS_LENGTH;
+export const MIN_OUTPUT_LENGTH: number = SMALL_TYPE_LENGTH;
+export const MIN_SIG_LOCKED_OUTPUT_LENGTH: number = MIN_OUTPUT_LENGTH + MIN_ADDRESS_LENGTH + MIN_ED25519_ADDRESS_LENGTH;
 
 /**
  * Deserialize the outputs from binary.
@@ -49,7 +49,7 @@ export function deserializeOutput(readBuffer: ReadBuffer): ISigLockedSingleOutpu
             } in length which is less than the minimimum size required of ${MIN_OUTPUT_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("output.type");
+    const type = readBuffer.readByte("output.type", false);
     let input;
 
     if (type === 0) {
@@ -68,8 +68,6 @@ export function deserializeOutput(readBuffer: ReadBuffer): ISigLockedSingleOutpu
  */
 export function serializeOutput(writeBuffer: WriteBuffer,
     object: ISigLockedSingleOutput): void {
-    writeBuffer.writeByte("output.type", object.type);
-
     if (object.type === 0) {
         serializeSigLockedSingleOutput(writeBuffer, object);
     } else {
@@ -88,11 +86,16 @@ export function deserializeSigLockedSingleOutput(readBuffer: ReadBuffer): ISigLo
             } in length which is less than the minimimum size required of ${MIN_SIG_LOCKED_OUTPUT_LENGTH}`);
     }
 
+    const type = readBuffer.readByte("sigLockedSingleOutput.type");
+    if (type !== 0) {
+        throw new Error(`Type mismatch in sigLockedSingleOutput ${type}`);
+    }
+
     const address = deserializeAddress(readBuffer);
-    const amount = readBuffer.readUInt64("address.amount");
+    const amount = readBuffer.readUInt64("sigLockedSingleOutput.amount");
 
     return {
-        type: 0,
+        type,
         address,
         amount: Number(amount)
     };
@@ -106,6 +109,7 @@ export function deserializeSigLockedSingleOutput(readBuffer: ReadBuffer): ISigLo
  */
 export function serializeSigLockedSingleOutput(writeBuffer: WriteBuffer,
     object: ISigLockedSingleOutput): void {
+    writeBuffer.writeByte("sigLockedSingleOutput.type", object.type);
     serializeAddress(writeBuffer, object.address);
-    writeBuffer.writeUInt64("address.amount", BigInt(object.amount));
+    writeBuffer.writeUInt64("sigLockedSingleOutput.amount", BigInt(object.amount));
 }

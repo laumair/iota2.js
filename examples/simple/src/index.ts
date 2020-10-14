@@ -55,6 +55,8 @@ async function run() {
     console.log("\tParent 1 Message Id:", messageMetadata.parent1MessageId);
     console.log("\tParent 2 Message Id:", messageMetadata.parent2MessageId);
     console.log("\tIs Solid:", messageMetadata.isSolid);
+    console.log("\tReferenced By Milestone Index:", messageMetadata.referencedByMilestoneIndex);
+    console.log("\tLedger Inclusion State:", messageMetadata.ledgerInclusionState);
     console.log("\tShould Promote:", messageMetadata.shouldPromote);
     console.log("\tShould Reattach:", messageMetadata.shouldReattach);
     console.log();

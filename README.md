@@ -35,7 +35,7 @@ run()
     .catch((err) => console.error(err));
 ```
 
-## Endpoints
+## API Endpoints
 
 These methods are also implemented.
 
@@ -53,6 +53,13 @@ These methods are also implemented.
 * addressOutputs(address)
 * milestone(index)
 
+## High level operations
+
+There are also high level operations:
+
+* sendTransfer
+* sendData
+
 ## Models
 
 You can see the model definitions for the request and receive objects in the [typings](./typings/api/models) folder.
@@ -60,3 +67,5 @@ You can see the model definitions for the request and receive objects in the [ty
 ## More Examples
 
 Please find other examples in the [./examples](./examples) folder.
+* Simple - Performs basic API operations.
+* Transaction - Demonstrates how to send a transaction.

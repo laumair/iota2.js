@@ -80,14 +80,13 @@ export class WriteBuffer {
 
         // Hex should be twice the length as each byte is 2 ascii characters
         if (length * 2 !== val.length) {
-            throw new Error(`${name} length ${length * 2} does not match value length ${val.length}`);
+            throw new Error(`${name} length ${val.length} does not match expected length ${length * 2}`);
         }
 
         this.expand(length);
 
         this._buffer.write(val, this._writeIndex, "hex");
         this._writeIndex += length;
-        // console.log(name, data);
     }
 
     /**
@@ -100,7 +99,6 @@ export class WriteBuffer {
 
         this._buffer.writeUInt8(val, this._writeIndex);
         this._writeIndex += 1;
-        // console.log(name, val);
     }
 
     /**
@@ -113,7 +111,6 @@ export class WriteBuffer {
 
         this._buffer.writeUInt16LE(val, this._writeIndex);
         this._writeIndex += 2;
-        // console.log(name, val);
     }
 
     /**
@@ -126,7 +123,6 @@ export class WriteBuffer {
 
         this._buffer.writeUInt32LE(val, this._writeIndex);
         this._writeIndex += 4;
-        // console.log(name, val);
     }
 
     /**
@@ -139,7 +135,6 @@ export class WriteBuffer {
 
         this._buffer.writeBigUInt64LE(val, this._writeIndex);
         this._writeIndex += 8;
-        // console.log(name, val);
     }
 
     /**
@@ -154,8 +149,6 @@ export class WriteBuffer {
         this.expand(val.length);
         this._buffer.write(val, this._writeIndex);
         this._writeIndex += val.length;
-
-        // console.log(name, val);
 
         return val;
     }

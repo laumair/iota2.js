@@ -153,6 +153,15 @@
 <dt><a href="#serializeReferenceUnlockBlock">serializeReferenceUnlockBlock(writeBuffer, object)</a></dt>
 <dd><p>Serialize the reference unlock block to binary.</p>
 </dd>
+<dt><a href="#sendData">sendData(client, index, data)</a> ⇒</dt>
+<dd><p>Send a data transfer.</p>
+</dd>
+<dt><a href="#sendTransfer">sendTransfer(client, seed, outputs, index, data)</a> ⇒</dt>
+<dd><p>Send a transfer from the balance on the seed.</p>
+</dd>
+<dt><a href="#generateAddressKeyPairs">generateAddressKeyPairs(seed, startIndex, count)</a> ⇒</dt>
+<dd><p>Generate a list of address key pairs.</p>
+</dd>
 <dt><a href="#logMessage">logMessage(prefix, message)</a></dt>
 <dd><p>Log a message to the console.</p>
 </dd>
@@ -660,12 +669,12 @@ Keep track of the read index within a buffer.
     * [.length()](#ReadBuffer+length) ⇒
     * [.hasRemaining(remaining)](#ReadBuffer+hasRemaining) ⇒
     * [.unused()](#ReadBuffer+unused) ⇒
-    * [.readFixedBufferHex(name, length)](#ReadBuffer+readFixedBufferHex) ⇒
-    * [.readByte(name)](#ReadBuffer+readByte) ⇒
-    * [.readUInt16(name)](#ReadBuffer+readUInt16) ⇒
-    * [.readUInt32(name)](#ReadBuffer+readUInt32) ⇒
-    * [.readUInt64(name)](#ReadBuffer+readUInt64) ⇒
-    * [.readString(name)](#ReadBuffer+readString) ⇒
+    * [.readFixedBufferHex(name, length, moveIndex)](#ReadBuffer+readFixedBufferHex) ⇒
+    * [.readByte(name, moveIndex)](#ReadBuffer+readByte) ⇒
+    * [.readUInt16(name, moveIndex)](#ReadBuffer+readUInt16) ⇒
+    * [.readUInt32(name, moveIndex)](#ReadBuffer+readUInt32) ⇒
+    * [.readUInt64(name, moveIndex)](#ReadBuffer+readUInt64) ⇒
+    * [.readString(name, moveIndex)](#ReadBuffer+readString) ⇒
 
 <a name="new_ReadBuffer_new"></a>
 
@@ -706,76 +715,82 @@ How much unused data is there.
 **Returns**: The amount of unused data.  
 <a name="ReadBuffer+readFixedBufferHex"></a>
 
-### readBuffer.readFixedBufferHex(name, length) ⇒
+### readBuffer.readFixedBufferHex(name, length, moveIndex) ⇒
 Read fixed length buffer.
 
 **Kind**: instance method of [<code>ReadBuffer</code>](#ReadBuffer)  
 **Returns**: The buffer.  
 
-| Param | Description |
-| --- | --- |
-| name | The name of the data we are trying to read. |
-| length | The length of the data to read. |
+| Param | Default | Description |
+| --- | --- | --- |
+| name |  | The name of the data we are trying to read. |
+| length |  | The length of the data to read. |
+| moveIndex | <code>true</code> | Move the index pointer on. |
 
 <a name="ReadBuffer+readByte"></a>
 
-### readBuffer.readByte(name) ⇒
+### readBuffer.readByte(name, moveIndex) ⇒
 Read a byte from the buffer.
 
 **Kind**: instance method of [<code>ReadBuffer</code>](#ReadBuffer)  
 **Returns**: The value.  
 
-| Param | Description |
-| --- | --- |
-| name | The name of the data we are trying to read. |
+| Param | Default | Description |
+| --- | --- | --- |
+| name |  | The name of the data we are trying to read. |
+| moveIndex | <code>true</code> | Move the index pointer on. |
 
 <a name="ReadBuffer+readUInt16"></a>
 
-### readBuffer.readUInt16(name) ⇒
+### readBuffer.readUInt16(name, moveIndex) ⇒
 Read a UInt16 from the buffer.
 
 **Kind**: instance method of [<code>ReadBuffer</code>](#ReadBuffer)  
 **Returns**: The value.  
 
-| Param | Description |
-| --- | --- |
-| name | The name of the data we are trying to read. |
+| Param | Default | Description |
+| --- | --- | --- |
+| name |  | The name of the data we are trying to read. |
+| moveIndex | <code>true</code> | Move the index pointer on. |
 
 <a name="ReadBuffer+readUInt32"></a>
 
-### readBuffer.readUInt32(name) ⇒
+### readBuffer.readUInt32(name, moveIndex) ⇒
 Read a UInt32 from the buffer.
 
 **Kind**: instance method of [<code>ReadBuffer</code>](#ReadBuffer)  
 **Returns**: The value.  
 
-| Param | Description |
-| --- | --- |
-| name | The name of the data we are trying to read. |
+| Param | Default | Description |
+| --- | --- | --- |
+| name |  | The name of the data we are trying to read. |
+| moveIndex | <code>true</code> | Move the index pointer on. |
 
 <a name="ReadBuffer+readUInt64"></a>
 
-### readBuffer.readUInt64(name) ⇒
+### readBuffer.readUInt64(name, moveIndex) ⇒
 Read a UInt64 from the buffer.
 
 **Kind**: instance method of [<code>ReadBuffer</code>](#ReadBuffer)  
 **Returns**: The value.  
 
-| Param | Description |
-| --- | --- |
-| name | The name of the data we are trying to read. |
+| Param | Default | Description |
+| --- | --- | --- |
+| name |  | The name of the data we are trying to read. |
+| moveIndex | <code>true</code> | Move the index pointer on. |
 
 <a name="ReadBuffer+readString"></a>
 
-### readBuffer.readString(name) ⇒
+### readBuffer.readString(name, moveIndex) ⇒
 Read a string from the buffer.
 
 **Kind**: instance method of [<code>ReadBuffer</code>](#ReadBuffer)  
 **Returns**: The string.  
 
-| Param | Description |
-| --- | --- |
-| name | The name of the data we are trying to read. |
+| Param | Default | Description |
+| --- | --- | --- |
+| name |  | The name of the data we are trying to read. |
+| moveIndex | <code>true</code> | Move the index pointer on. |
 
 <a name="WriteBuffer"></a>
 
@@ -1428,6 +1443,50 @@ Serialize the reference unlock block to binary.
 | --- | --- |
 | writeBuffer | The buffer to write the data to. |
 | object | The object to serialize. |
+
+<a name="sendData"></a>
+
+## sendData(client, index, data) ⇒
+Send a data transfer.
+
+**Kind**: global function  
+**Returns**: The id of the message created.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| index | The index name. |
+| data | The index data. |
+
+<a name="sendTransfer"></a>
+
+## sendTransfer(client, seed, outputs, index, data) ⇒
+Send a transfer from the balance on the seed.
+
+**Kind**: global function  
+**Returns**: The id of the message created and the remainder address if one was needed.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| seed | The seed to use for address generation. |
+| outputs | The outputs to send. |
+| index | Optional index name. |
+| data | Optional index data. |
+
+<a name="generateAddressKeyPairs"></a>
+
+## generateAddressKeyPairs(seed, startIndex, count) ⇒
+Generate a list of address key pairs.
+
+**Kind**: global function  
+**Returns**: A list of the signature key pairs for the addresses.  
+
+| Param | Description |
+| --- | --- |
+| seed | The seed. |
+| startIndex | The start index to generate from. |
+| count | The number of address seeds |
 
 <a name="logMessage"></a>
 

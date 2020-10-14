@@ -2,10 +2,10 @@ import { ITypeBase } from "../models/ITypeBase";
 import { IUTXOInput } from "../models/IUTXOInput";
 import { ReadBuffer } from "../utils/readBuffer";
 import { WriteBuffer } from "../utils/writeBuffer";
-import { BYTE_SIZE, TRANSACTION_ID_LENGTH, UINT16_SIZE } from "./common";
+import { SMALL_TYPE_LENGTH, TRANSACTION_ID_LENGTH, UINT16_SIZE } from "./common";
 
-export const MIN_INPUT_LENGTH: number = BYTE_SIZE;
-export const MIN_UTXO_INPUT_LENGTH: number = TRANSACTION_ID_LENGTH + UINT16_SIZE;
+export const MIN_INPUT_LENGTH: number = SMALL_TYPE_LENGTH;
+export const MIN_UTXO_INPUT_LENGTH: number = MIN_INPUT_LENGTH + TRANSACTION_ID_LENGTH + UINT16_SIZE;
 
 /**
  * Deserialize the inputs from binary.
@@ -48,7 +48,7 @@ export function deserializeInput(readBuffer: ReadBuffer): IUTXOInput {
             } in length which is less than the minimimum size required of ${MIN_INPUT_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("input.type");
+    const type = readBuffer.readByte("input.type", false);
     let input;
 
     if (type === 0) {
@@ -67,8 +67,6 @@ export function deserializeInput(readBuffer: ReadBuffer): IUTXOInput {
  */
 export function serializeInput(writeBuffer: WriteBuffer,
     object: IUTXOInput): void {
-    writeBuffer.writeByte("input.type", object.type);
-
     if (object.type === 0) {
         serializeUTXOInput(writeBuffer, object);
     } else {
@@ -87,11 +85,16 @@ export function deserializeUTXOInput(readBuffer: ReadBuffer): IUTXOInput {
             } in length which is less than the minimimum size required of ${MIN_UTXO_INPUT_LENGTH}`);
     }
 
+    const type = readBuffer.readByte("utxoInput.type");
+    if (type !== 0) {
+        throw new Error(`Type mismatch in utxoInput ${type}`);
+    }
+
     const transactionId = readBuffer.readFixedBufferHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH);
     const transactionOutputIndex = readBuffer.readUInt16("utxoInput.transactionOutputIndex");
 
     return {
-        type: 0,
+        type,
         transactionId,
         transactionOutputIndex
     };
@@ -104,6 +107,7 @@ export function deserializeUTXOInput(readBuffer: ReadBuffer): IUTXOInput {
  */
 export function serializeUTXOInput(writeBuffer: WriteBuffer,
     object: IUTXOInput): void {
+    writeBuffer.writeByte("utxoInput.type", object.type);
     writeBuffer.writeFixedBufferHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH, object.transactionId);
     writeBuffer.writeUInt16("utxoInput.transactionOutputIndex", object.transactionOutputIndex);
 }

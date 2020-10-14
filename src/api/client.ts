@@ -249,7 +249,7 @@ export class Client {
         const response = await fetch(
             `${this._endpoint}${route}`,
             {
-                method: "get",
+                method,
                 headers: {
                     "Content-Type": "application/octet-stream"
                 },

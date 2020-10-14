@@ -51,89 +51,100 @@ export class ReadBuffer {
      * Read fixed length buffer.
      * @param name The name of the data we are trying to read.
      * @param length The length of the data to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The buffer.
      */
-    public readFixedBufferHex(name: string, length: number): string {
+    public readFixedBufferHex(name: string, length: number, moveIndex: boolean = true): string {
         if (!this.hasRemaining(length)) {
             throw new Error(`${name} length ${length
                 } exceeds the remaining data ${this.unused()}`);
         }
         const val = this._buffer.slice(this._readIndex, this._readIndex + length);
-        this._readIndex += length;
-        // console.log(name, val.toString("hex"));
+        if (moveIndex) {
+            this._readIndex += length;
+        }
         return val.toString("hex");
     }
 
     /**
      * Read a byte from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    public readByte(name: string): number {
+    public readByte(name: string, moveIndex: boolean = true): number {
         if (!this.hasRemaining(1)) {
             throw new Error(`${name} length ${1
                 } exceeds the remaining data ${this.unused()}`);
         }
         const val = this._buffer.readUInt8(this._readIndex);
-        this._readIndex += 1;
-        // console.log(name, val);
+        if (moveIndex) {
+            this._readIndex += 1;
+        }
         return val;
     }
 
     /**
      * Read a UInt16 from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    public readUInt16(name: string): number {
+    public readUInt16(name: string, moveIndex: boolean = true): number {
         if (!this.hasRemaining(2)) {
             throw new Error(`${name} length ${2
                 } exceeds the remaining data ${this.unused()}`);
         }
         const val = this._buffer.readUInt16LE(this._readIndex);
-        this._readIndex += 2;
-        // console.log(name, val);
+        if (moveIndex) {
+            this._readIndex += 2;
+        }
         return val;
     }
 
     /**
      * Read a UInt32 from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    public readUInt32(name: string): number {
+    public readUInt32(name: string, moveIndex: boolean = true): number {
         if (!this.hasRemaining(4)) {
             throw new Error(`${name} length ${4
                 } exceeds the remaining data ${this.unused()}`);
         }
         const val = this._buffer.readUInt32LE(this._readIndex);
-        this._readIndex += 4;
-        // console.log(name, val);
+        if (moveIndex) {
+            this._readIndex += 4;
+        }
         return val;
     }
 
     /**
      * Read a UInt64 from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    public readUInt64(name: string): bigint {
+    public readUInt64(name: string, moveIndex: boolean = true): bigint {
         if (!this.hasRemaining(8)) {
             throw new Error(`${name} length ${8
                 } exceeds the remaining data ${this.unused()}`);
         }
         const val = this._buffer.readBigUInt64LE(this._readIndex);
-        this._readIndex += 8;
-        // console.log(name, val);
+        if (moveIndex) {
+            this._readIndex += 8;
+        }
         return val;
     }
 
     /**
      * Read a string from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The string.
      */
-    public readString(name: string): string {
+    public readString(name: string, moveIndex: boolean = true): string {
         const stringLength = this.readUInt16(name);
 
         if (!this.hasRemaining(stringLength)) {
@@ -141,8 +152,9 @@ export class ReadBuffer {
                 } exceeds the remaining data ${this.unused()}`);
         }
         const val = this._buffer.slice(this._readIndex, this._readIndex + stringLength);
-        this._readIndex += stringLength;
-        // console.log(name, val);
+        if (moveIndex) {
+            this._readIndex += stringLength;
+        }
 
         return val.toString();
     }

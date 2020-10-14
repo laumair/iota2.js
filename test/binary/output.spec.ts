@@ -75,7 +75,7 @@ describe("Binary Output", () => {
         const serialized = new WriteBuffer();
         serializeSigLockedSingleOutput(serialized, object);
         const hex = serialized.finalBuffer().toString("hex");
-        expect(hex).toEqual("016920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f9240e2010000000000");
+        expect(hex).toEqual("00016920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f9240e2010000000000");
         const deserialized = deserializeSigLockedSingleOutput(new ReadBuffer(Buffer.from(hex, "hex")));
         expect(deserialized.type).toEqual(0);
         expect(deserialized.address.type).toEqual(1);

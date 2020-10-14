@@ -37,37 +37,43 @@ export declare class ReadBuffer {
      * Read fixed length buffer.
      * @param name The name of the data we are trying to read.
      * @param length The length of the data to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The buffer.
      */
-    readFixedBufferHex(name: string, length: number): string;
+    readFixedBufferHex(name: string, length: number, moveIndex?: boolean): string;
     /**
      * Read a byte from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    readByte(name: string): number;
+    readByte(name: string, moveIndex?: boolean): number;
     /**
      * Read a UInt16 from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    readUInt16(name: string): number;
+    readUInt16(name: string, moveIndex?: boolean): number;
     /**
      * Read a UInt32 from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    readUInt32(name: string): number;
+    readUInt32(name: string, moveIndex?: boolean): number;
     /**
      * Read a UInt64 from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The value.
      */
-    readUInt64(name: string): bigint;
+    readUInt64(name: string, moveIndex?: boolean): bigint;
     /**
      * Read a string from the buffer.
      * @param name The name of the data we are trying to read.
+     * @param moveIndex Move the index pointer on.
      * @returns The string.
      */
-    readString(name: string): string;
+    readString(name: string, moveIndex?: boolean): string;
 }

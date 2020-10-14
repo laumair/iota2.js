@@ -6,7 +6,7 @@ import { deserializeInputs, serializeInputs } from "./input";
 import { deserializeOutputs, serializeOutputs } from "./output";
 import { deserializePayload, serializePayload } from "./payload";
 
-export const MIN_TRANSACTION_ESSENCE_LENGTH: number = (2 * ARRAY_LENGTH) + UINT32_SIZE;
+export const MIN_TRANSACTION_ESSENCE_LENGTH: number = UINT32_SIZE + (2 * ARRAY_LENGTH) + UINT32_SIZE;
 
 /**
  * Deserialize the transaction essence from binary.
@@ -19,6 +19,11 @@ export function deserializeTransactionEssence(readBuffer: ReadBuffer): ITransact
             } in length which is less than the minimimum size required of ${MIN_TRANSACTION_ESSENCE_LENGTH}`);
     }
 
+    const type = readBuffer.readUInt32("transactionEssence.type");
+    if (type !== 0) {
+        throw new Error(`Type mismatch in transactionEssence ${type}`);
+    }
+
     const inputs = deserializeInputs(readBuffer);
     const outputs = deserializeOutputs(readBuffer);
 
@@ -28,7 +33,7 @@ export function deserializeTransactionEssence(readBuffer: ReadBuffer): ITransact
     }
 
     return {
-        type: 0,
+        type,
         inputs,
         outputs,
         payload
@@ -42,6 +47,7 @@ export function deserializeTransactionEssence(readBuffer: ReadBuffer): ITransact
  */
 export function serializeTransactionEssence(writeBuffer: WriteBuffer,
     object: ITransactionEssence): void {
+    writeBuffer.writeUInt32("transactionEssence.type", object.type);
     serializeInputs(writeBuffer, object.inputs);
     serializeOutputs(writeBuffer, object.outputs);
     serializePayload(writeBuffer, object.payload);

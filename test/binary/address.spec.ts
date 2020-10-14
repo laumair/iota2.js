@@ -28,7 +28,7 @@ describe("Binary Address", () => {
         const serialized = new WriteBuffer();
         serializeEd25519Address(serialized, object);
         const hex = serialized.finalBuffer().toString("hex");
-        expect(hex).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
+        expect(hex).toEqual("016920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
         const deserialized = deserializeEd25519Address(new ReadBuffer(Buffer.from(hex, "hex")));
         expect(deserialized.type).toEqual(1);
         expect(deserialized.address).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");

@@ -9,9 +9,9 @@ import { deserializeTransactionEssence, serializeTransactionEssence } from "./tr
 import { deserializeUnlockBlocks, serializeUnlockBlocks } from "./unlockBlock";
 
 export const MIN_PAYLOAD_LENGTH: number = TYPE_LENGTH;
-export const MIN_MILESTONE_PAYLOAD_LENGTH: number = (2 * UINT64_SIZE) + (2 * 64);
-export const MIN_INDEXATION_PAYLOAD_LENGTH: number = STRING_LENGTH + STRING_LENGTH;
-export const MIN_TRANSACTION_PAYLOAD_LENGTH: number = UINT32_SIZE;
+export const MIN_MILESTONE_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + (2 * UINT64_SIZE) + (2 * 64);
+export const MIN_INDEXATION_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + STRING_LENGTH + STRING_LENGTH;
+export const MIN_TRANSACTION_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + UINT32_SIZE;
 
 /**
  * Deserialize the payload from binary.
@@ -35,7 +35,7 @@ export function deserializePayload(readBuffer: ReadBuffer):
     let payload: IIndexationPayload | IMilestonePayload | ITransactionPayload | undefined;
 
     if (payloadLength > 0) {
-        const payloadType = readBuffer.readUInt32("payload.type");
+        const payloadType = readBuffer.readUInt32("payload.type", false);
 
         if (payloadType === 0) {
             payload = deserializeTransactionPayload(readBuffer);
@@ -66,13 +66,10 @@ export function serializePayload(writeBuffer: WriteBuffer,
     if (!object) {
         // No other data to write
     } else if (object.type === 0) {
-        writeBuffer.writeUInt32("payload.type", object.type);
         serializeTransactionPayload(writeBuffer, object);
     } else if (object.type === 1) {
-        writeBuffer.writeUInt32("payload.type", object.type);
         serializeMilestonePayload(writeBuffer, object);
     } else if (object.type === 2) {
-        writeBuffer.writeUInt32("payload.type", object.type);
         serializeIndexationPayload(writeBuffer, object);
     } else {
         throw new Error(`Unrecognized transaction type ${(object as ITypeBase<unknown>).type}`);
@@ -96,18 +93,23 @@ export function deserializeTransactionPayload(readBuffer: ReadBuffer): ITransact
     }
 
     const type = readBuffer.readUInt32("payloadTransaction.type");
+    if (type !== 0) {
+        throw new Error(`Type mismatch in payloadTransaction ${type}`);
+    }
+
+    const essenceType = readBuffer.readUInt32("payloadTransaction.essenceType", false);
     let essence;
     let unlockBlocks;
 
-    if (type === 0) {
+    if (essenceType === 0) {
         essence = deserializeTransactionEssence(readBuffer);
         unlockBlocks = deserializeUnlockBlocks(readBuffer);
     } else {
-        throw new Error(`Unrecognized transaction type ${type}`);
+        throw new Error(`Unrecognized transaction essence type ${type}`);
     }
 
     return {
-        type: 0,
+        type,
         essence,
         unlockBlocks
     };
@@ -120,7 +122,7 @@ export function deserializeTransactionPayload(readBuffer: ReadBuffer): ITransact
  */
 export function serializeTransactionPayload(writeBuffer: WriteBuffer,
     object: ITransactionPayload): void {
-    writeBuffer.writeUInt32("payloadTransaction.type", object.type);
+    writeBuffer.writeUInt32("payloadMilestone.type", object.type);
 
     if (object.type === 0) {
         serializeTransactionEssence(writeBuffer, object.essence);
@@ -141,13 +143,17 @@ export function deserializeMilestonePayload(readBuffer: ReadBuffer): IMilestoneP
             } in length which is less than the minimimum size required of ${MIN_MILESTONE_PAYLOAD_LENGTH}`);
     }
 
+    const type = readBuffer.readUInt32("payloadMilestone.type");
+    if (type !== 1) {
+        throw new Error(`Type mismatch in payloadMilestone ${type}`);
+    }
     const index = readBuffer.readUInt64("payloadMilestone.index");
     const timestamp = readBuffer.readUInt64("payloadMilestone.timestamp");
     const inclusionMerkleProof = readBuffer.readFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64);
     const signature = readBuffer.readFixedBufferHex("payloadMilestone.signature", 64);
 
     return {
-        type: 1,
+        type,
         index: Number(index),
         timestamp: Number(timestamp),
         inclusionMerkleProof,
@@ -162,10 +168,11 @@ export function deserializeMilestonePayload(readBuffer: ReadBuffer): IMilestoneP
  */
 export function serializeMilestonePayload(writeBuffer: WriteBuffer,
     object: IMilestonePayload): void {
+    writeBuffer.writeUInt32("payloadMilestone.type", object.type);
     writeBuffer.writeUInt64("payloadMilestone.index", BigInt(object.index));
-    writeBuffer.writeUInt64("payloadMilestone.dataLength", BigInt(object.timestamp));
-    writeBuffer.writeFixedBufferHex("payloadMilestone.data", 64, object.inclusionMerkleProof);
-    writeBuffer.writeFixedBufferHex("payloadMilestone.data", 64, object.signature);
+    writeBuffer.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
+    writeBuffer.writeFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64, object.inclusionMerkleProof);
+    writeBuffer.writeFixedBufferHex("payloadMilestone.signature", 64, object.signature);
 }
 
 /**
@@ -179,6 +186,10 @@ export function deserializeIndexationPayload(readBuffer: ReadBuffer): IIndexatio
             } in length which is less than the minimimum size required of ${MIN_INDEXATION_PAYLOAD_LENGTH}`);
     }
 
+    const type = readBuffer.readUInt32("payloadIndexation.type");
+    if (type !== 2) {
+        throw new Error(`Type mismatch in payloadIndexation ${type}`);
+    }
     const index = readBuffer.readString("payloadIndexation.index");
     const dataLength = readBuffer.readUInt32("payloadIndexation.dataLength");
     const data = readBuffer.readFixedBufferHex("payloadIndexation.data", dataLength);
@@ -197,6 +208,7 @@ export function deserializeIndexationPayload(readBuffer: ReadBuffer): IIndexatio
  */
 export function serializeIndexationPayload(writeBuffer: WriteBuffer,
     object: IIndexationPayload): void {
+    writeBuffer.writeUInt32("payloadIndexation.type", object.type);
     writeBuffer.writeString("payloadIndexation.index", object.index);
     writeBuffer.writeUInt32("payloadIndexation.dataLength", object.data.length / 2);
     writeBuffer.writeFixedBufferHex("payloadIndexation.data", object.data.length / 2, object.data);

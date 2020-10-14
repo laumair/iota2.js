@@ -370,7 +370,7 @@
                 return __generator(this, function (_f) {
                     switch (_f.label) {
                         case 0: return [4 /*yield*/, fetch__default['default']("" + this._endpoint + route, {
-                                method: "get",
+                                method: method,
                                 headers: {
                                     "Content-Type": "application/octet-stream"
                                 },
@@ -494,6 +494,7 @@
     var MESSAGE_ID_LENGTH = Blake2b.SIZE_256;
     var TRANSACTION_ID_LENGTH = Blake2b.SIZE_256;
     var TYPE_LENGTH = UINT32_SIZE;
+    var SMALL_TYPE_LENGTH = BYTE_SIZE;
     var STRING_LENGTH = UINT16_SIZE;
     var ARRAY_LENGTH = UINT16_SIZE;
     /**
@@ -508,8 +509,8 @@
         return /[\da-f]/gi.test(value);
     }
 
-    var MIN_ADDRESS_LENGTH = BYTE_SIZE;
-    var MIN_ED25519_ADDRESS_LENGTH = Ed25519.ADDRESS_LENGTH;
+    var MIN_ADDRESS_LENGTH = SMALL_TYPE_LENGTH;
+    var MIN_ED25519_ADDRESS_LENGTH = MIN_ADDRESS_LENGTH + Ed25519.ADDRESS_LENGTH;
     /**
      * Deserialize the address from binary.
      * @param readBuffer The buffer to read the data from.
@@ -519,7 +520,7 @@
         if (!readBuffer.hasRemaining(MIN_ADDRESS_LENGTH)) {
             throw new Error("Address data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_ADDRESS_LENGTH);
         }
-        var type = readBuffer.readByte("address.type");
+        var type = readBuffer.readByte("address.type", false);
         var address;
         if (type === 1) {
             address = deserializeEd25519Address(readBuffer);
@@ -535,7 +536,6 @@
      * @param object The object to serialize.
      */
     function serializeAddress(writeBuffer, object) {
-        writeBuffer.writeByte("address.type", object.type);
         if (object.type === 1) {
             serializeEd25519Address(writeBuffer, object);
         }
@@ -552,9 +552,13 @@
         if (!readBuffer.hasRemaining(MIN_ED25519_ADDRESS_LENGTH)) {
             throw new Error("Ed25519 address data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_ED25519_ADDRESS_LENGTH);
         }
+        var type = readBuffer.readByte("ed25519Address.type");
+        if (type !== 1) {
+            throw new Error("Type mismatch in ed25519Address " + type);
+        }
         var address = readBuffer.readFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH);
         return {
-            type: 1,
+            type: type,
             address: address
         };
     }
@@ -564,11 +568,12 @@
      * @param object The object to serialize.
      */
     function serializeEd25519Address(writeBuffer, object) {
+        writeBuffer.writeByte("ed25519Address.type", object.type);
         writeBuffer.writeFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH, object.address);
     }
 
-    var MIN_INPUT_LENGTH = BYTE_SIZE;
-    var MIN_UTXO_INPUT_LENGTH = TRANSACTION_ID_LENGTH + UINT16_SIZE;
+    var MIN_INPUT_LENGTH = SMALL_TYPE_LENGTH;
+    var MIN_UTXO_INPUT_LENGTH = MIN_INPUT_LENGTH + TRANSACTION_ID_LENGTH + UINT16_SIZE;
     /**
      * Deserialize the inputs from binary.
      * @param readBuffer The buffer to read the data from.
@@ -602,7 +607,7 @@
         if (!readBuffer.hasRemaining(MIN_INPUT_LENGTH)) {
             throw new Error("Input data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_INPUT_LENGTH);
         }
-        var type = readBuffer.readByte("input.type");
+        var type = readBuffer.readByte("input.type", false);
         var input;
         if (type === 0) {
             input = deserializeUTXOInput(readBuffer);
@@ -618,7 +623,6 @@
      * @param object The object to serialize.
      */
     function serializeInput(writeBuffer, object) {
-        writeBuffer.writeByte("input.type", object.type);
         if (object.type === 0) {
             serializeUTXOInput(writeBuffer, object);
         }
@@ -635,10 +639,14 @@
         if (!readBuffer.hasRemaining(MIN_UTXO_INPUT_LENGTH)) {
             throw new Error("UTXO Input data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_UTXO_INPUT_LENGTH);
         }
+        var type = readBuffer.readByte("utxoInput.type");
+        if (type !== 0) {
+            throw new Error("Type mismatch in utxoInput " + type);
+        }
         var transactionId = readBuffer.readFixedBufferHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH);
         var transactionOutputIndex = readBuffer.readUInt16("utxoInput.transactionOutputIndex");
         return {
-            type: 0,
+            type: type,
             transactionId: transactionId,
             transactionOutputIndex: transactionOutputIndex
         };
@@ -649,12 +657,13 @@
      * @param object The object to serialize.
      */
     function serializeUTXOInput(writeBuffer, object) {
+        writeBuffer.writeByte("utxoInput.type", object.type);
         writeBuffer.writeFixedBufferHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH, object.transactionId);
         writeBuffer.writeUInt16("utxoInput.transactionOutputIndex", object.transactionOutputIndex);
     }
 
-    var MIN_OUTPUT_LENGTH = BYTE_SIZE;
-    var MIN_SIG_LOCKED_OUTPUT_LENGTH = BYTE_SIZE + MIN_ADDRESS_LENGTH + MIN_ED25519_ADDRESS_LENGTH;
+    var MIN_OUTPUT_LENGTH = SMALL_TYPE_LENGTH;
+    var MIN_SIG_LOCKED_OUTPUT_LENGTH = MIN_OUTPUT_LENGTH + MIN_ADDRESS_LENGTH + MIN_ED25519_ADDRESS_LENGTH;
     /**
      * Deserialize the outputs from binary.
      * @param readBuffer The buffer to read the data from.
@@ -688,7 +697,7 @@
         if (!readBuffer.hasRemaining(MIN_OUTPUT_LENGTH)) {
             throw new Error("Output data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_OUTPUT_LENGTH);
         }
-        var type = readBuffer.readByte("output.type");
+        var type = readBuffer.readByte("output.type", false);
         var input;
         if (type === 0) {
             input = deserializeSigLockedSingleOutput(readBuffer);
@@ -704,7 +713,6 @@
      * @param object The object to serialize.
      */
     function serializeOutput(writeBuffer, object) {
-        writeBuffer.writeByte("output.type", object.type);
         if (object.type === 0) {
             serializeSigLockedSingleOutput(writeBuffer, object);
         }
@@ -721,10 +729,14 @@
         if (!readBuffer.hasRemaining(MIN_SIG_LOCKED_OUTPUT_LENGTH)) {
             throw new Error("Signature Locked Single Output data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_SIG_LOCKED_OUTPUT_LENGTH);
         }
+        var type = readBuffer.readByte("sigLockedSingleOutput.type");
+        if (type !== 0) {
+            throw new Error("Type mismatch in sigLockedSingleOutput " + type);
+        }
         var address = deserializeAddress(readBuffer);
-        var amount = readBuffer.readUInt64("address.amount");
+        var amount = readBuffer.readUInt64("sigLockedSingleOutput.amount");
         return {
-            type: 0,
+            type: type,
             address: address,
             amount: Number(amount)
         };
@@ -735,11 +747,12 @@
      * @param object The object to serialize.
      */
     function serializeSigLockedSingleOutput(writeBuffer, object) {
+        writeBuffer.writeByte("sigLockedSingleOutput.type", object.type);
         serializeAddress(writeBuffer, object.address);
-        writeBuffer.writeUInt64("address.amount", BigInt(object.amount));
+        writeBuffer.writeUInt64("sigLockedSingleOutput.amount", BigInt(object.amount));
     }
 
-    var MIN_TRANSACTION_ESSENCE_LENGTH = (2 * ARRAY_LENGTH) + UINT32_SIZE;
+    var MIN_TRANSACTION_ESSENCE_LENGTH = UINT32_SIZE + (2 * ARRAY_LENGTH) + UINT32_SIZE;
     /**
      * Deserialize the transaction essence from binary.
      * @param readBuffer The buffer to read the data from.
@@ -749,6 +762,10 @@
         if (!readBuffer.hasRemaining(MIN_TRANSACTION_ESSENCE_LENGTH)) {
             throw new Error("Transaction essence data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_TRANSACTION_ESSENCE_LENGTH);
         }
+        var type = readBuffer.readUInt32("transactionEssence.type");
+        if (type !== 0) {
+            throw new Error("Type mismatch in transactionEssence " + type);
+        }
         var inputs = deserializeInputs(readBuffer);
         var outputs = deserializeOutputs(readBuffer);
         var payload = deserializePayload(readBuffer);
@@ -756,7 +773,7 @@
             throw new Error("Transaction essence can only contain embedded Indexation Payload");
         }
         return {
-            type: 0,
+            type: type,
             inputs: inputs,
             outputs: outputs,
             payload: payload
@@ -768,13 +785,14 @@
      * @param object The object to serialize.
      */
     function serializeTransactionEssence(writeBuffer, object) {
+        writeBuffer.writeUInt32("transactionEssence.type", object.type);
         serializeInputs(writeBuffer, object.inputs);
         serializeOutputs(writeBuffer, object.outputs);
         serializePayload(writeBuffer, object.payload);
     }
 
-    var MIN_SIGNATURE_LENGTH = BYTE_SIZE;
-    var MIN_ED25519_SIGNATURE_LENGTH = Ed25519.SIGNATURE_SIZE + Ed25519.PUBLIC_KEY_SIZE;
+    var MIN_SIGNATURE_LENGTH = SMALL_TYPE_LENGTH;
+    var MIN_ED25519_SIGNATURE_LENGTH = MIN_SIGNATURE_LENGTH + Ed25519.SIGNATURE_SIZE + Ed25519.PUBLIC_KEY_SIZE;
     /**
      * Deserialize the signature from binary.
      * @param readBuffer The buffer to read the data from.
@@ -784,7 +802,7 @@
         if (!readBuffer.hasRemaining(MIN_SIGNATURE_LENGTH)) {
             throw new Error("Signature data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_SIGNATURE_LENGTH);
         }
-        var type = readBuffer.readByte("signature.type");
+        var type = readBuffer.readByte("signature.type", false);
         var input;
         if (type === 1) {
             input = deserializeEd25519Signature(readBuffer);
@@ -800,7 +818,6 @@
      * @param object The object to serialize.
      */
     function serializeSignature(writeBuffer, object) {
-        writeBuffer.writeByte("signature.type", object.type);
         if (object.type === 1) {
             serializeEd25519Signature(writeBuffer, object);
         }
@@ -817,10 +834,14 @@
         if (!readBuffer.hasRemaining(MIN_ED25519_SIGNATURE_LENGTH)) {
             throw new Error("Ed25519 signature data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_ED25519_SIGNATURE_LENGTH);
         }
+        var type = readBuffer.readByte("ed25519Signature.type");
+        if (type !== 1) {
+            throw new Error("Type mismatch in ed25519Signature " + type);
+        }
         var publicKey = readBuffer.readFixedBufferHex("ed25519Signature.publicKey", Ed25519.PUBLIC_KEY_SIZE);
         var signature = readBuffer.readFixedBufferHex("ed25519Signature.signature", Ed25519.SIGNATURE_SIZE);
         return {
-            type: 1,
+            type: type,
             publicKey: publicKey,
             signature: signature
         };
@@ -831,13 +852,14 @@
      * @param object The object to serialize.
      */
     function serializeEd25519Signature(writeBuffer, object) {
+        writeBuffer.writeByte("ed25519Signature.type", object.type);
         writeBuffer.writeFixedBufferHex("ed25519Signature.publicKey", Ed25519.PUBLIC_KEY_SIZE, object.publicKey);
         writeBuffer.writeFixedBufferHex("ed25519Signature.signature", Ed25519.SIGNATURE_SIZE, object.signature);
     }
 
-    var MIN_UNLOCK_BLOCK_LENGTH = BYTE_SIZE;
-    var MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH = MIN_SIGNATURE_LENGTH + MIN_ED25519_SIGNATURE_LENGTH;
-    var MIN_REFERENCE_UNLOCK_BLOCK_LENGTH = UINT16_SIZE;
+    var MIN_UNLOCK_BLOCK_LENGTH = SMALL_TYPE_LENGTH;
+    var MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH = MIN_UNLOCK_BLOCK_LENGTH + MIN_SIGNATURE_LENGTH;
+    var MIN_REFERENCE_UNLOCK_BLOCK_LENGTH = MIN_UNLOCK_BLOCK_LENGTH + UINT16_SIZE;
     /**
      * Deserialize the unlock blocks from binary.
      * @param readBuffer The buffer to read the data from.
@@ -871,7 +893,7 @@
         if (!readBuffer.hasRemaining(MIN_UNLOCK_BLOCK_LENGTH)) {
             throw new Error("Unlock Block data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_UNLOCK_BLOCK_LENGTH);
         }
-        var type = readBuffer.readByte("unlockBlock.type");
+        var type = readBuffer.readByte("unlockBlock.type", false);
         var unlockBlock;
         if (type === 0) {
             unlockBlock = deserializeSignatureUnlockBlock(readBuffer);
@@ -890,7 +912,6 @@
      * @param object The object to serialize.
      */
     function serializeUnlockBlock(writeBuffer, object) {
-        writeBuffer.writeByte("unlockBlock.type", object.type);
         if (object.type === 0) {
             serializeSignatureUnlockBlock(writeBuffer, object);
         }
@@ -910,9 +931,13 @@
         if (!readBuffer.hasRemaining(MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH)) {
             throw new Error("Signature Unlock Block data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH);
         }
+        var type = readBuffer.readByte("signatureUnlockBlock.type");
+        if (type !== 0) {
+            throw new Error("Type mismatch in signatureUnlockBlock " + type);
+        }
         var signature = deserializeSignature(readBuffer);
         return {
-            type: 0,
+            type: type,
             signature: signature
         };
     }
@@ -922,6 +947,7 @@
      * @param object The object to serialize.
      */
     function serializeSignatureUnlockBlock(writeBuffer, object) {
+        writeBuffer.writeByte("signatureUnlockBlock.type", object.type);
         serializeSignature(writeBuffer, object.signature);
     }
     /**
@@ -933,9 +959,13 @@
         if (!readBuffer.hasRemaining(MIN_REFERENCE_UNLOCK_BLOCK_LENGTH)) {
             throw new Error("Reference Unlock Block data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_REFERENCE_UNLOCK_BLOCK_LENGTH);
         }
+        var type = readBuffer.readByte("referenceUnlockBlock.type");
+        if (type !== 1) {
+            throw new Error("Type mismatch in referenceUnlockBlock " + type);
+        }
         var reference = readBuffer.readUInt16("referenceUnlockBlock.reference");
         return {
-            type: 1,
+            type: type,
             reference: reference
         };
     }
@@ -945,13 +975,14 @@
      * @param object The object to serialize.
      */
     function serializeReferenceUnlockBlock(writeBuffer, object) {
+        writeBuffer.writeByte("referenceUnlockBlock.type", object.type);
         writeBuffer.writeUInt16("referenceUnlockBlock.reference", object.reference);
     }
 
     var MIN_PAYLOAD_LENGTH = TYPE_LENGTH;
-    var MIN_MILESTONE_PAYLOAD_LENGTH = (2 * UINT64_SIZE) + (2 * 64);
-    var MIN_INDEXATION_PAYLOAD_LENGTH = STRING_LENGTH + STRING_LENGTH;
-    var MIN_TRANSACTION_PAYLOAD_LENGTH = UINT32_SIZE;
+    var MIN_MILESTONE_PAYLOAD_LENGTH = MIN_PAYLOAD_LENGTH + (2 * UINT64_SIZE) + (2 * 64);
+    var MIN_INDEXATION_PAYLOAD_LENGTH = MIN_PAYLOAD_LENGTH + STRING_LENGTH + STRING_LENGTH;
+    var MIN_TRANSACTION_PAYLOAD_LENGTH = MIN_PAYLOAD_LENGTH + UINT32_SIZE;
     /**
      * Deserialize the payload from binary.
      * @param readBuffer The buffer to read the data from.
@@ -967,7 +998,7 @@
         }
         var payload;
         if (payloadLength > 0) {
-            var payloadType = readBuffer.readUInt32("payload.type");
+            var payloadType = readBuffer.readUInt32("payload.type", false);
             if (payloadType === 0) {
                 payload = deserializeTransactionPayload(readBuffer);
             }
@@ -995,15 +1026,12 @@
         writeBuffer.writeUInt32("payload.length", 0);
         if (!object) ;
         else if (object.type === 0) {
-            writeBuffer.writeUInt32("payload.type", object.type);
             serializeTransactionPayload(writeBuffer, object);
         }
         else if (object.type === 1) {
-            writeBuffer.writeUInt32("payload.type", object.type);
             serializeMilestonePayload(writeBuffer, object);
         }
         else if (object.type === 2) {
-            writeBuffer.writeUInt32("payload.type", object.type);
             serializeIndexationPayload(writeBuffer, object);
         }
         else {
@@ -1024,17 +1052,21 @@
             throw new Error("Transaction Payload data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_TRANSACTION_PAYLOAD_LENGTH);
         }
         var type = readBuffer.readUInt32("payloadTransaction.type");
+        if (type !== 0) {
+            throw new Error("Type mismatch in payloadTransaction " + type);
+        }
+        var essenceType = readBuffer.readUInt32("payloadTransaction.essenceType", false);
         var essence;
         var unlockBlocks;
-        if (type === 0) {
+        if (essenceType === 0) {
             essence = deserializeTransactionEssence(readBuffer);
             unlockBlocks = deserializeUnlockBlocks(readBuffer);
         }
         else {
-            throw new Error("Unrecognized transaction type " + type);
+            throw new Error("Unrecognized transaction essence type " + type);
         }
         return {
-            type: 0,
+            type: type,
             essence: essence,
             unlockBlocks: unlockBlocks
         };
@@ -1045,7 +1077,7 @@
      * @param object The object to serialize.
      */
     function serializeTransactionPayload(writeBuffer, object) {
-        writeBuffer.writeUInt32("payloadTransaction.type", object.type);
+        writeBuffer.writeUInt32("payloadMilestone.type", object.type);
         if (object.type === 0) {
             serializeTransactionEssence(writeBuffer, object.essence);
             serializeUnlockBlocks(writeBuffer, object.unlockBlocks);
@@ -1063,12 +1095,16 @@
         if (!readBuffer.hasRemaining(MIN_MILESTONE_PAYLOAD_LENGTH)) {
             throw new Error("Milestone Payload data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_MILESTONE_PAYLOAD_LENGTH);
         }
+        var type = readBuffer.readUInt32("payloadMilestone.type");
+        if (type !== 1) {
+            throw new Error("Type mismatch in payloadMilestone " + type);
+        }
         var index = readBuffer.readUInt64("payloadMilestone.index");
         var timestamp = readBuffer.readUInt64("payloadMilestone.timestamp");
         var inclusionMerkleProof = readBuffer.readFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64);
         var signature = readBuffer.readFixedBufferHex("payloadMilestone.signature", 64);
         return {
-            type: 1,
+            type: type,
             index: Number(index),
             timestamp: Number(timestamp),
             inclusionMerkleProof: inclusionMerkleProof,
@@ -1081,10 +1117,11 @@
      * @param object The object to serialize.
      */
     function serializeMilestonePayload(writeBuffer, object) {
+        writeBuffer.writeUInt32("payloadMilestone.type", object.type);
         writeBuffer.writeUInt64("payloadMilestone.index", BigInt(object.index));
-        writeBuffer.writeUInt64("payloadMilestone.dataLength", BigInt(object.timestamp));
-        writeBuffer.writeFixedBufferHex("payloadMilestone.data", 64, object.inclusionMerkleProof);
-        writeBuffer.writeFixedBufferHex("payloadMilestone.data", 64, object.signature);
+        writeBuffer.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
+        writeBuffer.writeFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64, object.inclusionMerkleProof);
+        writeBuffer.writeFixedBufferHex("payloadMilestone.signature", 64, object.signature);
     }
     /**
      * Deserialize the indexation payload from binary.
@@ -1094,6 +1131,10 @@
     function deserializeIndexationPayload(readBuffer) {
         if (!readBuffer.hasRemaining(MIN_INDEXATION_PAYLOAD_LENGTH)) {
             throw new Error("Indexation Payload data is " + readBuffer.length() + " in length which is less than the minimimum size required of " + MIN_INDEXATION_PAYLOAD_LENGTH);
+        }
+        var type = readBuffer.readUInt32("payloadIndexation.type");
+        if (type !== 2) {
+            throw new Error("Type mismatch in payloadIndexation " + type);
         }
         var index = readBuffer.readString("payloadIndexation.index");
         var dataLength = readBuffer.readUInt32("payloadIndexation.dataLength");
@@ -1110,6 +1151,7 @@
      * @param object The object to serialize.
      */
     function serializeIndexationPayload(writeBuffer, object) {
+        writeBuffer.writeUInt32("payloadIndexation.type", object.type);
         writeBuffer.writeString("payloadIndexation.index", object.index);
         writeBuffer.writeUInt32("payloadIndexation.dataLength", object.data.length / 2);
         writeBuffer.writeFixedBufferHex("payloadIndexation.data", object.data.length / 2, object.data);
@@ -1162,6 +1204,40 @@
     }
 
     /**
+     * Send a data transfer.
+     * @param client The client to send the transfer with.
+     * @param index The index name.
+     * @param data The index data.
+     * @returns The id of the message created.
+     */
+    function sendData(client, index, data) {
+        return __awaiter(this, void 0, Promise, function () {
+            var indexationPayload, tips, message;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        indexationPayload = {
+                            type: 2,
+                            index: index,
+                            data: data
+                        };
+                        return [4 /*yield*/, client.tips()];
+                    case 1:
+                        tips = _a.sent();
+                        message = {
+                            version: 1,
+                            parent1MessageId: tips.tip1MessageId,
+                            parent2MessageId: tips.tip2MessageId,
+                            payload: indexationPayload,
+                            nonce: 0
+                        };
+                        return [2 /*return*/, client.messageSubmit(message)];
+                }
+            });
+        });
+    }
+
+    /**
      * Class to help with bip32 paths.
      */
     var Bip32Path = /** @class */ (function () {
@@ -1205,6 +1281,335 @@
         };
         return Bip32Path;
     }());
+
+    /**
+     * Keep track of the write index within a buffer.
+     */
+    var WriteBuffer = /** @class */ (function () {
+        /**
+         * Create a new instance of ReadBuffer.
+         */
+        function WriteBuffer() {
+            this._buffer = Buffer.alloc(WriteBuffer.CHUNK_SIZE);
+            this._writeIndex = 0;
+        }
+        /**
+         * Get the length of the buffer.
+         * @returns The buffer length.
+         */
+        WriteBuffer.prototype.length = function () {
+            return this._buffer.length;
+        };
+        /**
+         * How much unused data is there.
+         * @returns The amount of unused data.
+         */
+        WriteBuffer.prototype.unused = function () {
+            return this._buffer.length - this._writeIndex;
+        };
+        /**
+         * Get the final buffer.
+         * @returns The final buffer.
+         */
+        WriteBuffer.prototype.finalBuffer = function () {
+            return this._buffer.slice(0, this._writeIndex);
+        };
+        /**
+         * Get the current write index.
+         * @returns The current write index.
+         */
+        WriteBuffer.prototype.getWriteIndex = function () {
+            return this._writeIndex;
+        };
+        /**
+         * Set the current write index.
+         * @param writeIndex The current write index.
+         */
+        WriteBuffer.prototype.setWriteIndex = function (writeIndex) {
+            this._writeIndex = writeIndex;
+        };
+        /**
+         * Write fixed length buffer.
+         * @param name The name of the data we are trying to write.
+         * @param length The length of the data to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeFixedBufferHex = function (name, length, val) {
+            if (!isHex(val)) {
+                throw new Error("The " + val + " should be in hex format");
+            }
+            // Hex should be twice the length as each byte is 2 ascii characters
+            if (length * 2 !== val.length) {
+                throw new Error(name + " length " + val.length + " does not match expected length " + length * 2);
+            }
+            this.expand(length);
+            this._buffer.write(val, this._writeIndex, "hex");
+            this._writeIndex += length;
+        };
+        /**
+         * Write a byte to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeByte = function (name, val) {
+            this.expand(1);
+            this._buffer.writeUInt8(val, this._writeIndex);
+            this._writeIndex += 1;
+        };
+        /**
+         * Write a UInt16 to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeUInt16 = function (name, val) {
+            this.expand(2);
+            this._buffer.writeUInt16LE(val, this._writeIndex);
+            this._writeIndex += 2;
+        };
+        /**
+         * Write a UInt32 to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeUInt32 = function (name, val) {
+            this.expand(4);
+            this._buffer.writeUInt32LE(val, this._writeIndex);
+            this._writeIndex += 4;
+        };
+        /**
+         * Write a UInt64 to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         */
+        WriteBuffer.prototype.writeUInt64 = function (name, val) {
+            this.expand(8);
+            this._buffer.writeBigUInt64LE(val, this._writeIndex);
+            this._writeIndex += 8;
+        };
+        /**
+         * Write a string to the buffer.
+         * @param name The name of the data we are trying to write.
+         * @param val The data to write.
+         * @returns The string.
+         */
+        WriteBuffer.prototype.writeString = function (name, val) {
+            this.writeUInt16(name, val.length);
+            this.expand(val.length);
+            this._buffer.write(val, this._writeIndex);
+            this._writeIndex += val.length;
+            return val;
+        };
+        /**
+         * Expand the buffer if there is not enough spave.
+         * @param additional The amount of space needed.
+         */
+        WriteBuffer.prototype.expand = function (additional) {
+            if (this._writeIndex + additional > this._buffer.byteLength) {
+                this._buffer = Buffer.concat([this._buffer, Buffer.alloc(WriteBuffer.CHUNK_SIZE)]);
+            }
+        };
+        /**
+         * Chunk size to expand the buffer.
+         */
+        WriteBuffer.CHUNK_SIZE = 4096;
+        return WriteBuffer;
+    }());
+
+    /**
+     * Send a transfer from the balance on the seed.
+     * @param client The client to send the transfer with.
+     * @param seed The seed to use for address generation.
+     * @param outputs The outputs to send.
+     * @param index Optional index name.
+     * @param data Optional index data.
+     * @returns The id of the message created and the remainder address if one was needed.
+     */
+    function sendTransfer(client, seed, outputs, index, data) {
+        return __awaiter(this, void 0, Promise, function () {
+            var requiredBalance, startIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, remainderKeyPair, addresses, _i, addresses_1, address, addressOutputIds, _a, _b, addressOutputId, addressOutput, input, writeBuffer, remainderAddress, outputsWithSerialization, _c, outputs_1, output, sigLockedOutput, writeBuffer, sortedInputs, sortedOutputs, transactionEssence, binaryEssenceBuffer, essenceFinalBuffer, unlockBlocks, addressToUnlockBlock, _d, sortedInputs_1, input, transactionPayload, tips, message, messageId;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
+                    case 0:
+                        if (!outputs || outputs.length === 0) {
+                            throw new Error("You must specify some outputs");
+                        }
+                        requiredBalance = outputs.reduce(function (total, output) { return total + output.amount; }, 0);
+                        startIndex = 0;
+                        consumedBalance = 0;
+                        inputsAndSignatureKeyPairs = [];
+                        finished = false;
+                        _e.label = 1;
+                    case 1:
+                        addresses = generateAddressKeyPairs(seed, startIndex, 20);
+                        _i = 0, addresses_1 = addresses;
+                        _e.label = 2;
+                    case 2:
+                        if (!(_i < addresses_1.length)) return [3 /*break*/, 9];
+                        address = addresses_1[_i];
+                        return [4 /*yield*/, client.addressOutputs(Ed25519.signAddress(address.publicKey))];
+                    case 3:
+                        addressOutputIds = _e.sent();
+                        if (!(addressOutputIds.outputIds.length === 0)) return [3 /*break*/, 4];
+                        finished = true;
+                        remainderKeyPair = address;
+                        return [3 /*break*/, 8];
+                    case 4:
+                        _a = 0, _b = addressOutputIds.outputIds;
+                        _e.label = 5;
+                    case 5:
+                        if (!(_a < _b.length)) return [3 /*break*/, 8];
+                        addressOutputId = _b[_a];
+                        return [4 /*yield*/, client.output(addressOutputId)];
+                    case 6:
+                        addressOutput = _e.sent();
+                        if (addressOutput.isSpent) {
+                            if (addressOutput.output.amount !== 0) {
+                                throw new Error("Spent address");
+                            }
+                        }
+                        else if (addressOutput.output.amount !== 0) {
+                            if (consumedBalance < requiredBalance) {
+                                consumedBalance += addressOutput.output.amount;
+                                input = {
+                                    type: 0,
+                                    transactionId: addressOutput.transactionId,
+                                    transactionOutputIndex: addressOutput.outputIndex
+                                };
+                                writeBuffer = new WriteBuffer();
+                                serializeInput(writeBuffer, input);
+                                inputsAndSignatureKeyPairs.push({
+                                    input: input,
+                                    addressKeyPair: address,
+                                    serialized: writeBuffer.finalBuffer().toString("hex")
+                                });
+                            }
+                        }
+                        _e.label = 7;
+                    case 7:
+                        _a++;
+                        return [3 /*break*/, 5];
+                    case 8:
+                        _i++;
+                        return [3 /*break*/, 2];
+                    case 9:
+                        startIndex += 20;
+                        _e.label = 10;
+                    case 10:
+                        if (!finished) return [3 /*break*/, 1];
+                        _e.label = 11;
+                    case 11:
+                        if (consumedBalance < requiredBalance) {
+                            throw new Error("There are not enough funds in the inputs for the required balance");
+                        }
+                        if (requiredBalance < consumedBalance && remainderKeyPair) {
+                            remainderAddress = Ed25519.signAddress(remainderKeyPair.publicKey);
+                            outputs.push({
+                                amount: consumedBalance - requiredBalance,
+                                address: remainderAddress
+                            });
+                        }
+                        outputsWithSerialization = [];
+                        for (_c = 0, outputs_1 = outputs; _c < outputs_1.length; _c++) {
+                            output = outputs_1[_c];
+                            sigLockedOutput = {
+                                type: 0,
+                                address: {
+                                    type: 1,
+                                    address: output.address
+                                },
+                                amount: output.amount
+                            };
+                            writeBuffer = new WriteBuffer();
+                            serializeOutput(writeBuffer, sigLockedOutput);
+                            outputsWithSerialization.push({
+                                output: sigLockedOutput,
+                                serialized: writeBuffer.finalBuffer().toString("hex")
+                            });
+                        }
+                        sortedInputs = inputsAndSignatureKeyPairs.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+                        sortedOutputs = outputsWithSerialization.sort(function (a, b) { return a.serialized.localeCompare(b.serialized); });
+                        transactionEssence = {
+                            type: 0,
+                            inputs: sortedInputs.map(function (i) { return i.input; }),
+                            outputs: sortedOutputs.map(function (o) { return o.output; }),
+                            payload: index && data ? { type: 2, index: index, data: data } : undefined
+                        };
+                        binaryEssenceBuffer = new WriteBuffer();
+                        serializeTransactionEssence(binaryEssenceBuffer, transactionEssence);
+                        essenceFinalBuffer = binaryEssenceBuffer.finalBuffer();
+                        unlockBlocks = [];
+                        addressToUnlockBlock = {};
+                        for (_d = 0, sortedInputs_1 = sortedInputs; _d < sortedInputs_1.length; _d++) {
+                            input = sortedInputs_1[_d];
+                            if (addressToUnlockBlock[input.addressKeyPair.publicKey]) {
+                                unlockBlocks.push({
+                                    type: 1,
+                                    reference: addressToUnlockBlock[input.addressKeyPair.publicKey].unlockIndex
+                                });
+                            }
+                            else {
+                                unlockBlocks.push({
+                                    type: 0,
+                                    signature: {
+                                        type: 1,
+                                        publicKey: input.addressKeyPair.publicKey,
+                                        signature: Ed25519.signData(input.addressKeyPair.privateKey, essenceFinalBuffer)
+                                    }
+                                });
+                                addressToUnlockBlock[input.addressKeyPair.publicKey] = {
+                                    keyPair: input.addressKeyPair,
+                                    unlockIndex: unlockBlocks.length - 1
+                                };
+                            }
+                        }
+                        transactionPayload = {
+                            type: 0,
+                            essence: transactionEssence,
+                            unlockBlocks: unlockBlocks
+                        };
+                        return [4 /*yield*/, client.tips()];
+                    case 12:
+                        tips = _e.sent();
+                        message = {
+                            version: 1,
+                            parent1MessageId: tips.tip1MessageId,
+                            parent2MessageId: tips.tip2MessageId,
+                            payload: transactionPayload,
+                            nonce: 0
+                        };
+                        return [4 /*yield*/, client.messageSubmit(message)];
+                    case 13:
+                        messageId = _e.sent();
+                        return [2 /*return*/, {
+                                messageId: messageId,
+                                remainderAddress: remainderAddress
+                            }];
+                }
+            });
+        });
+    }
+    /**
+     * Generate a list of address key pairs.
+     * @param seed The seed.
+     * @param startIndex The start index to generate from.
+     * @param count The number of address seeds
+     * @returns A list of the signature key pairs for the addresses.
+     */
+    function generateAddressKeyPairs(seed, startIndex, count) {
+        var keyPairs = [];
+        for (var i = startIndex; i < startIndex + count; i++) {
+            if (i === 0) {
+                keyPairs.push(seed.generateKeyPair());
+            }
+            else {
+                var bip32Path = new Bip32Path();
+                bip32Path.push(i);
+                var subSeed = seed.generateSubseed(bip32Path);
+                keyPairs.push(subSeed.generateKeyPair());
+            }
+        }
+        return keyPairs;
+    }
 
     /**
      * Class to help with seeds.
@@ -1468,228 +1873,107 @@
          * Read fixed length buffer.
          * @param name The name of the data we are trying to read.
          * @param length The length of the data to read.
+         * @param moveIndex Move the index pointer on.
          * @returns The buffer.
          */
-        ReadBuffer.prototype.readFixedBufferHex = function (name, length) {
+        ReadBuffer.prototype.readFixedBufferHex = function (name, length, moveIndex) {
+            if (moveIndex === void 0) { moveIndex = true; }
             if (!this.hasRemaining(length)) {
                 throw new Error(name + " length " + length + " exceeds the remaining data " + this.unused());
             }
             var val = this._buffer.slice(this._readIndex, this._readIndex + length);
-            this._readIndex += length;
-            // console.log(name, val.toString("hex"));
+            if (moveIndex) {
+                this._readIndex += length;
+            }
             return val.toString("hex");
         };
         /**
          * Read a byte from the buffer.
          * @param name The name of the data we are trying to read.
+         * @param moveIndex Move the index pointer on.
          * @returns The value.
          */
-        ReadBuffer.prototype.readByte = function (name) {
+        ReadBuffer.prototype.readByte = function (name, moveIndex) {
+            if (moveIndex === void 0) { moveIndex = true; }
             if (!this.hasRemaining(1)) {
                 throw new Error(name + " length " + 1 + " exceeds the remaining data " + this.unused());
             }
             var val = this._buffer.readUInt8(this._readIndex);
-            this._readIndex += 1;
-            // console.log(name, val);
+            if (moveIndex) {
+                this._readIndex += 1;
+            }
             return val;
         };
         /**
          * Read a UInt16 from the buffer.
          * @param name The name of the data we are trying to read.
+         * @param moveIndex Move the index pointer on.
          * @returns The value.
          */
-        ReadBuffer.prototype.readUInt16 = function (name) {
+        ReadBuffer.prototype.readUInt16 = function (name, moveIndex) {
+            if (moveIndex === void 0) { moveIndex = true; }
             if (!this.hasRemaining(2)) {
                 throw new Error(name + " length " + 2 + " exceeds the remaining data " + this.unused());
             }
             var val = this._buffer.readUInt16LE(this._readIndex);
-            this._readIndex += 2;
-            // console.log(name, val);
+            if (moveIndex) {
+                this._readIndex += 2;
+            }
             return val;
         };
         /**
          * Read a UInt32 from the buffer.
          * @param name The name of the data we are trying to read.
+         * @param moveIndex Move the index pointer on.
          * @returns The value.
          */
-        ReadBuffer.prototype.readUInt32 = function (name) {
+        ReadBuffer.prototype.readUInt32 = function (name, moveIndex) {
+            if (moveIndex === void 0) { moveIndex = true; }
             if (!this.hasRemaining(4)) {
                 throw new Error(name + " length " + 4 + " exceeds the remaining data " + this.unused());
             }
             var val = this._buffer.readUInt32LE(this._readIndex);
-            this._readIndex += 4;
-            // console.log(name, val);
+            if (moveIndex) {
+                this._readIndex += 4;
+            }
             return val;
         };
         /**
          * Read a UInt64 from the buffer.
          * @param name The name of the data we are trying to read.
+         * @param moveIndex Move the index pointer on.
          * @returns The value.
          */
-        ReadBuffer.prototype.readUInt64 = function (name) {
+        ReadBuffer.prototype.readUInt64 = function (name, moveIndex) {
+            if (moveIndex === void 0) { moveIndex = true; }
             if (!this.hasRemaining(8)) {
                 throw new Error(name + " length " + 8 + " exceeds the remaining data " + this.unused());
             }
             var val = this._buffer.readBigUInt64LE(this._readIndex);
-            this._readIndex += 8;
-            // console.log(name, val);
+            if (moveIndex) {
+                this._readIndex += 8;
+            }
             return val;
         };
         /**
          * Read a string from the buffer.
          * @param name The name of the data we are trying to read.
+         * @param moveIndex Move the index pointer on.
          * @returns The string.
          */
-        ReadBuffer.prototype.readString = function (name) {
+        ReadBuffer.prototype.readString = function (name, moveIndex) {
+            if (moveIndex === void 0) { moveIndex = true; }
             var stringLength = this.readUInt16(name);
             if (!this.hasRemaining(stringLength)) {
                 throw new Error(name + " length " + stringLength + " exceeds the remaining data " + this.unused());
             }
             var val = this._buffer.slice(this._readIndex, this._readIndex + stringLength);
-            this._readIndex += stringLength;
-            // console.log(name, val);
+            if (moveIndex) {
+                this._readIndex += stringLength;
+            }
             return val.toString();
         };
         return ReadBuffer;
-    }());
-
-    /**
-     * Keep track of the write index within a buffer.
-     */
-    var WriteBuffer = /** @class */ (function () {
-        /**
-         * Create a new instance of ReadBuffer.
-         */
-        function WriteBuffer() {
-            this._buffer = Buffer.alloc(WriteBuffer.CHUNK_SIZE);
-            this._writeIndex = 0;
-        }
-        /**
-         * Get the length of the buffer.
-         * @returns The buffer length.
-         */
-        WriteBuffer.prototype.length = function () {
-            return this._buffer.length;
-        };
-        /**
-         * How much unused data is there.
-         * @returns The amount of unused data.
-         */
-        WriteBuffer.prototype.unused = function () {
-            return this._buffer.length - this._writeIndex;
-        };
-        /**
-         * Get the final buffer.
-         * @returns The final buffer.
-         */
-        WriteBuffer.prototype.finalBuffer = function () {
-            return this._buffer.slice(0, this._writeIndex);
-        };
-        /**
-         * Get the current write index.
-         * @returns The current write index.
-         */
-        WriteBuffer.prototype.getWriteIndex = function () {
-            return this._writeIndex;
-        };
-        /**
-         * Set the current write index.
-         * @param writeIndex The current write index.
-         */
-        WriteBuffer.prototype.setWriteIndex = function (writeIndex) {
-            this._writeIndex = writeIndex;
-        };
-        /**
-         * Write fixed length buffer.
-         * @param name The name of the data we are trying to write.
-         * @param length The length of the data to write.
-         * @param val The data to write.
-         */
-        WriteBuffer.prototype.writeFixedBufferHex = function (name, length, val) {
-            if (!isHex(val)) {
-                throw new Error("The " + val + " should be in hex format");
-            }
-            // Hex should be twice the length as each byte is 2 ascii characters
-            if (length * 2 !== val.length) {
-                throw new Error(name + " length " + length * 2 + " does not match value length " + val.length);
-            }
-            this.expand(length);
-            this._buffer.write(val, this._writeIndex, "hex");
-            this._writeIndex += length;
-            // console.log(name, data);
-        };
-        /**
-         * Write a byte to the buffer.
-         * @param name The name of the data we are trying to write.
-         * @param val The data to write.
-         */
-        WriteBuffer.prototype.writeByte = function (name, val) {
-            this.expand(1);
-            this._buffer.writeUInt8(val, this._writeIndex);
-            this._writeIndex += 1;
-            // console.log(name, val);
-        };
-        /**
-         * Write a UInt16 to the buffer.
-         * @param name The name of the data we are trying to write.
-         * @param val The data to write.
-         */
-        WriteBuffer.prototype.writeUInt16 = function (name, val) {
-            this.expand(2);
-            this._buffer.writeUInt16LE(val, this._writeIndex);
-            this._writeIndex += 2;
-            // console.log(name, val);
-        };
-        /**
-         * Write a UInt32 to the buffer.
-         * @param name The name of the data we are trying to write.
-         * @param val The data to write.
-         */
-        WriteBuffer.prototype.writeUInt32 = function (name, val) {
-            this.expand(4);
-            this._buffer.writeUInt32LE(val, this._writeIndex);
-            this._writeIndex += 4;
-            // console.log(name, val);
-        };
-        /**
-         * Write a UInt64 to the buffer.
-         * @param name The name of the data we are trying to write.
-         * @param val The data to write.
-         */
-        WriteBuffer.prototype.writeUInt64 = function (name, val) {
-            this.expand(8);
-            this._buffer.writeBigUInt64LE(val, this._writeIndex);
-            this._writeIndex += 8;
-            // console.log(name, val);
-        };
-        /**
-         * Write a string to the buffer.
-         * @param name The name of the data we are trying to write.
-         * @param val The data to write.
-         * @returns The string.
-         */
-        WriteBuffer.prototype.writeString = function (name, val) {
-            this.writeUInt16(name, val.length);
-            this.expand(val.length);
-            this._buffer.write(val, this._writeIndex);
-            this._writeIndex += val.length;
-            // console.log(name, val);
-            return val;
-        };
-        /**
-         * Expand the buffer if there is not enough spave.
-         * @param additional The amount of space needed.
-         */
-        WriteBuffer.prototype.expand = function (additional) {
-            if (this._writeIndex + additional > this._buffer.byteLength) {
-                this._buffer = Buffer.concat([this._buffer, Buffer.alloc(WriteBuffer.CHUNK_SIZE)]);
-            }
-        };
-        /**
-         * Chunk size to expand the buffer.
-         */
-        WriteBuffer.CHUNK_SIZE = 4096;
-        return WriteBuffer;
     }());
 
     exports.ARRAY_LENGTH = ARRAY_LENGTH;
@@ -1718,6 +2002,7 @@
     exports.MIN_UNLOCK_BLOCK_LENGTH = MIN_UNLOCK_BLOCK_LENGTH;
     exports.MIN_UTXO_INPUT_LENGTH = MIN_UTXO_INPUT_LENGTH;
     exports.ReadBuffer = ReadBuffer;
+    exports.SMALL_TYPE_LENGTH = SMALL_TYPE_LENGTH;
     exports.STRING_LENGTH = STRING_LENGTH;
     exports.TRANSACTION_ID_LENGTH = TRANSACTION_ID_LENGTH;
     exports.TYPE_LENGTH = TYPE_LENGTH;
@@ -1745,6 +2030,7 @@
     exports.deserializeUTXOInput = deserializeUTXOInput;
     exports.deserializeUnlockBlock = deserializeUnlockBlock;
     exports.deserializeUnlockBlocks = deserializeUnlockBlocks;
+    exports.generateAddressKeyPairs = generateAddressKeyPairs;
     exports.isHex = isHex;
     exports.logAddress = logAddress;
     exports.logInput = logInput;
@@ -1753,6 +2039,8 @@
     exports.logPayload = logPayload;
     exports.logSignature = logSignature;
     exports.logUnlockBlock = logUnlockBlock;
+    exports.sendData = sendData;
+    exports.sendTransfer = sendTransfer;
     exports.serializeAddress = serializeAddress;
     exports.serializeEd25519Address = serializeEd25519Address;
     exports.serializeEd25519Signature = serializeEd25519Signature;

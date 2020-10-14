@@ -60,7 +60,7 @@ describe("Binary Input", () => {
         const serialized = new WriteBuffer();
         serializeUTXOInput(serialized, object);
         const hex = serialized.finalBuffer().toString("hex");
-        expect(hex).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f923930");
+        expect(hex).toEqual("006920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f923930");
         const deserialized = deserializeUTXOInput(new ReadBuffer(Buffer.from(hex, "hex")));
         expect(deserialized.type).toEqual(0);
         expect(deserialized.transactionId).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");

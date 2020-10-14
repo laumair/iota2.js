@@ -2,10 +2,10 @@ import { Ed25519 } from "../crypto/ed25519";
 import { IEd25519Address } from "../models/IEd25519Address";
 import { ReadBuffer } from "../utils/readBuffer";
 import { WriteBuffer } from "../utils/writeBuffer";
-import { BYTE_SIZE } from "./common";
+import { SMALL_TYPE_LENGTH } from "./common";
 
-export const MIN_ADDRESS_LENGTH: number = BYTE_SIZE;
-export const MIN_ED25519_ADDRESS_LENGTH: number = Ed25519.ADDRESS_LENGTH;
+export const MIN_ADDRESS_LENGTH: number = SMALL_TYPE_LENGTH;
+export const MIN_ED25519_ADDRESS_LENGTH: number = MIN_ADDRESS_LENGTH + Ed25519.ADDRESS_LENGTH;
 
 /**
  * Deserialize the address from binary.
@@ -18,7 +18,7 @@ export function deserializeAddress(readBuffer: ReadBuffer): IEd25519Address {
             } in length which is less than the minimimum size required of ${MIN_ADDRESS_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("address.type");
+    const type = readBuffer.readByte("address.type", false);
     let address;
 
     if (type === 1) {
@@ -36,8 +36,6 @@ export function deserializeAddress(readBuffer: ReadBuffer): IEd25519Address {
  * @param object The object to serialize.
  */
 export function serializeAddress(writeBuffer: WriteBuffer, object: IEd25519Address): void {
-    writeBuffer.writeByte("address.type", object.type);
-
     if (object.type === 1) {
         serializeEd25519Address(writeBuffer, object);
     } else {
@@ -56,10 +54,15 @@ export function deserializeEd25519Address(readBuffer: ReadBuffer): IEd25519Addre
             } in length which is less than the minimimum size required of ${MIN_ED25519_ADDRESS_LENGTH}`);
     }
 
+    const type = readBuffer.readByte("ed25519Address.type");
+    if (type !== 1) {
+        throw new Error(`Type mismatch in ed25519Address ${type}`);
+    }
+
     const address = readBuffer.readFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH);
 
     return {
-        type: 1,
+        type,
         address
     };
 }
@@ -70,5 +73,6 @@ export function deserializeEd25519Address(readBuffer: ReadBuffer): IEd25519Addre
  * @param object The object to serialize.
  */
 export function serializeEd25519Address(writeBuffer: WriteBuffer, object: IEd25519Address): void {
+    writeBuffer.writeByte("ed25519Address.type", object.type);
     writeBuffer.writeFixedBufferHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH, object.address);
 }

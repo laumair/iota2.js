@@ -14,7 +14,7 @@ describe("Binary Transaction", () => {
         const serialized = new WriteBuffer();
         serializeTransactionEssence(serialized, object);
         const hex = serialized.finalBuffer().toString("hex");
-        expect(hex).toEqual("0000000000000000");
+        expect(hex).toEqual("000000000000000000000000");
         const deserialized = deserializeTransactionEssence(new ReadBuffer(Buffer.from(hex, "hex")));
         expect(deserialized.type).toEqual(0);
         expect(deserialized.inputs.length).toEqual(0);
@@ -37,7 +37,7 @@ describe("Binary Transaction", () => {
         const serialized = new WriteBuffer();
         serializeTransactionEssence(serialized, object);
         const hex = serialized.finalBuffer().toString("hex");
-        expect(hex).toEqual("0000000010000000020000000300666f6f03000000626172");
+        expect(hex).toEqual("000000000000000010000000020000000300666f6f03000000626172");
         const deserialized = deserializeTransactionEssence(new ReadBuffer(Buffer.from(hex, "hex")));
         expect(deserialized.type).toEqual(0);
         expect(deserialized.inputs.length).toEqual(0);

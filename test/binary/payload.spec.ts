@@ -81,7 +81,7 @@ describe("Binary Payload", () => {
         const serialized = new WriteBuffer();
         serializeIndexationPayload(serialized, payload);
         const hex = serialized.finalBuffer().toString("hex");
-        expect(hex).toEqual("0300666f6f03000000626172");
+        expect(hex).toEqual("020000000300666f6f03000000626172");
         const deserialized = deserializeIndexationPayload(new ReadBuffer(Buffer.from(hex, "hex")));
         expect(deserialized.type).toEqual(2);
         expect(deserialized.index).toEqual("foo");
@@ -100,7 +100,7 @@ describe("Binary Payload", () => {
         const serialized = new WriteBuffer();
         serializeMilestonePayload(serialized, payload);
         const hex = serialized.finalBuffer().toString("hex");
-        expect(hex).toEqual("7b00000000000000c801000000000000786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce8cba2c84d06b378736681305d3fcf11698c5d3cb45dd6146ea47e0d26bddca03887501858ab4c803d7db8c09f5c6f5bec87aade06b6f4de6c050c07fede4cb04");
+        expect(hex).toEqual("010000007b00000000000000c801000000000000786a02f742015903c6c6fd852552d272912f4740e15847618a86e217f71f5419d25e1031afee585313896444934eb04b903a685b1448b755d56f701afe9be2ce8cba2c84d06b378736681305d3fcf11698c5d3cb45dd6146ea47e0d26bddca03887501858ab4c803d7db8c09f5c6f5bec87aade06b6f4de6c050c07fede4cb04");
         const deserialized = deserializeMilestonePayload(new ReadBuffer(Buffer.from(hex, "hex")));
         expect(deserialized.type).toEqual(1);
         expect(deserialized.index).toEqual(123);

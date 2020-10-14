@@ -2,6 +2,8 @@
 import { deserializeMessage, serializeMessage } from "../../src/binary/message";
 import { IIndexationPayload } from "../../src/models/IIndexationPayload";
 import { IMilestonePayload } from "../../src/models/IMilestonePayload";
+import { ISignatureUnlockBlock } from "../../src/models/ISignatureUnlockBlock";
+import { ITransactionPayload } from "../../src/models/ITransactionPayload";
 import { ReadBuffer } from "../../src/utils/readBuffer";
 import { WriteBuffer } from "../../src/utils/writeBuffer";
 
@@ -101,6 +103,32 @@ describe("Binary Message", () => {
         expect(payload.type).toEqual(2);
         expect(payload.index).toEqual("Foo");
         expect(Buffer.from(payload.data, "hex").toString()).toEqual("Bar");
+        expect(message.nonce).toEqual(0);
+    });
+
+    test("Can succeed with transaction data", () => {
+        const buffer = Buffer.from("0151787e8600ba1cb2644c25481b5e586656c838dfc45dc19478ea6958f72ee867b968b9a88d536f49b275954c1da214cc013b691e174a2068b72b157cd8c96399c100000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000001000001091dc94a7f12f3913dce4dc4f7fc9813461d8e296a011d979fe98c95d854483cc15d2dd3f7df09000000000001000001f7868ab6bb55800b77b8b74191ad8285a9bf428ace579d541fda47661803ff443be6a969c0ae547f394293d7d76c440fd7d4ea9de447130ccb45906b07766497d9c01f08d2233346b9a58bc634b38dc171f2d4408d94cd7c266868767e86600c0000000000000000", "hex");
+        const message = deserializeMessage(new ReadBuffer(buffer));
+        expect(message.version).toEqual(1);
+        expect(message.parent1MessageId).toEqual("51787e8600ba1cb2644c25481b5e586656c838dfc45dc19478ea6958f72ee867");
+        expect(message.parent2MessageId).toEqual("b968b9a88d536f49b275954c1da214cc013b691e174a2068b72b157cd8c96399");
+        const payload = message.payload as ITransactionPayload;
+        expect(payload.type).toEqual(0);
+        expect(payload.essence.type).toEqual(0);
+        expect(payload.essence.inputs.length).toEqual(1);
+        expect(payload.essence.inputs[0].type).toEqual(0);
+        expect(payload.essence.inputs[0].transactionId).toEqual("0000000000000000000000000000000000000000000000000000000000000000");
+        expect(payload.essence.inputs[0].transactionOutputIndex).toEqual(0);
+        expect(payload.essence.outputs.length).toEqual(1);
+        expect(payload.essence.outputs[0].type).toEqual(0);
+        expect(payload.essence.outputs[0].address.type).toEqual(1);
+        expect(payload.essence.outputs[0].address.address).toEqual("091dc94a7f12f3913dce4dc4f7fc9813461d8e296a011d979fe98c95d854483c");
+        expect(payload.essence.outputs[0].amount).toEqual(2779530283277761);
+        expect(payload.unlockBlocks.length).toEqual(1);
+        expect(payload.unlockBlocks[0].type).toEqual(0);
+        const unlockBlock = payload.unlockBlocks[0] as ISignatureUnlockBlock;
+        expect(unlockBlock.signature.publicKey).toEqual("f7868ab6bb55800b77b8b74191ad8285a9bf428ace579d541fda47661803ff44");
+        expect(unlockBlock.signature.signature).toEqual("3be6a969c0ae547f394293d7d76c440fd7d4ea9de447130ccb45906b07766497d9c01f08d2233346b9a58bc634b38dc171f2d4408d94cd7c266868767e86600c");
         expect(message.nonce).toEqual(0);
     });
 });

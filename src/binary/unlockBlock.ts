@@ -3,12 +3,13 @@ import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
 import { ITypeBase } from "../models/ITypeBase";
 import { ReadBuffer } from "../utils/readBuffer";
 import { WriteBuffer } from "../utils/writeBuffer";
-import { BYTE_SIZE, UINT16_SIZE } from "./common";
-import { deserializeSignature, MIN_ED25519_SIGNATURE_LENGTH, MIN_SIGNATURE_LENGTH, serializeSignature } from "./signature";
+import { SMALL_TYPE_LENGTH, UINT16_SIZE } from "./common";
+import { deserializeSignature, MIN_SIGNATURE_LENGTH, serializeSignature } from "./signature";
 
-export const MIN_UNLOCK_BLOCK_LENGTH: number = BYTE_SIZE;
-export const MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH: number = MIN_SIGNATURE_LENGTH + MIN_ED25519_SIGNATURE_LENGTH;
-export const MIN_REFERENCE_UNLOCK_BLOCK_LENGTH: number = UINT16_SIZE;
+export const MIN_UNLOCK_BLOCK_LENGTH: number = SMALL_TYPE_LENGTH;
+export const MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH: number =
+    MIN_UNLOCK_BLOCK_LENGTH + MIN_SIGNATURE_LENGTH;
+export const MIN_REFERENCE_UNLOCK_BLOCK_LENGTH: number = MIN_UNLOCK_BLOCK_LENGTH + UINT16_SIZE;
 
 /**
  * Deserialize the unlock blocks from binary.
@@ -49,7 +50,7 @@ export function deserializeUnlockBlock(readBuffer: ReadBuffer): IReferenceUnlock
             } in length which is less than the minimimum size required of ${MIN_UNLOCK_BLOCK_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("unlockBlock.type");
+    const type = readBuffer.readByte("unlockBlock.type", false);
     let unlockBlock;
 
     if (type === 0) {
@@ -70,8 +71,6 @@ export function deserializeUnlockBlock(readBuffer: ReadBuffer): IReferenceUnlock
  */
 export function serializeUnlockBlock(writeBuffer: WriteBuffer,
     object: IReferenceUnlockBlock | ISignatureUnlockBlock): void {
-    writeBuffer.writeByte("unlockBlock.type", object.type);
-
     if (object.type === 0) {
         serializeSignatureUnlockBlock(writeBuffer, object);
     } else if (object.type === 1) {
@@ -92,10 +91,15 @@ export function deserializeSignatureUnlockBlock(readBuffer: ReadBuffer): ISignat
             } in length which is less than the minimimum size required of ${MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH}`);
     }
 
+    const type = readBuffer.readByte("signatureUnlockBlock.type");
+    if (type !== 0) {
+        throw new Error(`Type mismatch in signatureUnlockBlock ${type}`);
+    }
+
     const signature = deserializeSignature(readBuffer);
 
     return {
-        type: 0,
+        type,
         signature
     };
 }
@@ -107,6 +111,7 @@ export function deserializeSignatureUnlockBlock(readBuffer: ReadBuffer): ISignat
  */
 export function serializeSignatureUnlockBlock(writeBuffer: WriteBuffer,
     object: ISignatureUnlockBlock): void {
+    writeBuffer.writeByte("signatureUnlockBlock.type", object.type);
     serializeSignature(writeBuffer, object.signature);
 }
 
@@ -121,10 +126,15 @@ export function deserializeReferenceUnlockBlock(readBuffer: ReadBuffer): IRefere
             } in length which is less than the minimimum size required of ${MIN_REFERENCE_UNLOCK_BLOCK_LENGTH}`);
     }
 
+    const type = readBuffer.readByte("referenceUnlockBlock.type");
+    if (type !== 1) {
+        throw new Error(`Type mismatch in referenceUnlockBlock ${type}`);
+    }
+
     const reference = readBuffer.readUInt16("referenceUnlockBlock.reference");
 
     return {
-        type: 1,
+        type,
         reference
     };
 }
@@ -136,5 +146,6 @@ export function deserializeReferenceUnlockBlock(readBuffer: ReadBuffer): IRefere
  */
 export function serializeReferenceUnlockBlock(writeBuffer: WriteBuffer,
     object: IReferenceUnlockBlock): void {
+    writeBuffer.writeByte("referenceUnlockBlock.type", object.type);
     writeBuffer.writeUInt16("referenceUnlockBlock.reference", object.reference);
 }
