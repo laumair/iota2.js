@@ -11,10 +11,10 @@ npm install obany/iota2.js
 ## Example
 
 ```js
-const { Client } = require("@iota/iota2.js");
+const { SingleNodeClient } = require("@iota/iota2.js");
 
 async function run() {
-    const client = new Client("http://localhost:14265");
+    const client = new SingleNodeClient("http://localhost:14265");
 
     const info = await client.info();
     console.log("Node Info");
@@ -57,8 +57,16 @@ These methods are also implemented.
 
 There are also high level operations:
 
-* sendTransfer
-* sendData
+* getAddressBalances - Get the balance for a list of addresses.
+* getAddresses - Given a seed, path, start index and count, generate the addresses.
+* getAddressesKeyPairs - Given a seed, path, start index and count, generate the address key pairs.
+* getAllUnspentAddresses - Given a seed, path, and start index find all the unspent addresses.
+* getBalance - Given a seed, path, and start index calculate the balance for the seed.
+* getUnspentAddress - Given a seed, path, and start index find the next unspent address.
+* retrieveData - Given a message id return the index and data from it.
+* send - Given a seed, path, destination address and amount make a single transfer.
+* sendAdvanced - Given a seed, path, list of destinations make multiple transfers, can also include index data.
+* sendData - Given index and data create a new data message.
 
 ## Models
 
@@ -68,4 +76,4 @@ You can see the model definitions for the request and receive objects in the [ty
 
 Please find other examples in the [./examples](./examples) folder.
 * Simple - Performs basic API operations.
-* Transaction - Demonstrates how to send a transaction.
+* Transaction - Demonstrates how to send a transaction and call some of the other higher level functions.

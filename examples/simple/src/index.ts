@@ -1,9 +1,9 @@
-import { Client, deserializeMessage, IMessage, logMessage, logOutput, ReadBuffer } from "@iota/iota2.js";
+import { deserializeMessage, IMessage, logMessage, logOutput, ReadBuffer, SingleNodeClient } from "@iota/iota2.js";
 
 const API_ENDPOINT = "http://localhost:14265";
 
 async function run() {
-    const client = new Client(API_ENDPOINT);
+    const client = new SingleNodeClient(API_ENDPOINT);
 
     const health = await client.health();
     console.log("Is the node healthy", health ? "Yes" : "No");

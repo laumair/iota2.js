@@ -51,7 +51,7 @@ export class Ed25519 {
      * @param publicKey The public key to convert.
      * @returns The address.
      */
-    public static signAddress(publicKey: string): string {
+    public static publicKeyToAddress(publicKey: string): string {
         return Blake2b.sum256(publicKey);
     }
 
@@ -62,7 +62,7 @@ export class Ed25519 {
      * @returns True if the data and address is verified.
      */
     public static verifyAddress(publicKey: string, address: string): boolean {
-        const addressFromPublicKey = Ed25519.signAddress(publicKey);
+        const addressFromPublicKey = Ed25519.publicKeyToAddress(publicKey);
         return addressFromPublicKey === address;
     }
 }

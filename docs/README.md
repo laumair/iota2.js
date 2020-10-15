@@ -1,11 +1,11 @@
 ## Classes
 
 <dl>
-<dt><a href="#Client">Client</a></dt>
-<dd><p>Client for API communication.</p>
-</dd>
 <dt><a href="#ClientError">ClientError</a></dt>
 <dd><p>Class to handle http errors.</p>
+</dd>
+<dt><a href="#SingleNodeClient">SingleNodeClient</a></dt>
+<dd><p>Client for API communication.</p>
 </dd>
 <dt><a href="#Bip32Path">Bip32Path</a></dt>
 <dd><p>Class to help with bip32 paths.</p>
@@ -18,6 +18,10 @@
 </dd>
 <dt><a href="#Ed25519Seed">Ed25519Seed</a></dt>
 <dd><p>Class to help with seeds.</p>
+</dd>
+<dt><a href="#Slip0010">Slip0010</a></dt>
+<dd><p>Class to help with slip0010 key derivation.
+<a href="https://github.com/satoshilabs/slips/blob/master/slip-0010.md">https://github.com/satoshilabs/slips/blob/master/slip-0010.md</a></p>
 </dd>
 <dt><a href="#ReadBuffer">ReadBuffer</a></dt>
 <dd><p>Keep track of the read index within a buffer.</p>
@@ -153,14 +157,35 @@
 <dt><a href="#serializeReferenceUnlockBlock">serializeReferenceUnlockBlock(writeBuffer, object)</a></dt>
 <dd><p>Serialize the reference unlock block to binary.</p>
 </dd>
-<dt><a href="#sendData">sendData(client, index, data)</a> ⇒</dt>
-<dd><p>Send a data transfer.</p>
+<dt><a href="#getAddressBalances">getAddressBalances(client, addresses)</a> ⇒</dt>
+<dd><p>Get the balance for a list of addresses.</p>
 </dd>
-<dt><a href="#sendTransfer">sendTransfer(client, seed, outputs, index, data)</a> ⇒</dt>
+<dt><a href="#getAddresses">getAddresses(seed, basePath, startIndex, count)</a> ⇒</dt>
+<dd><p>Generate a list of address key pairs.</p>
+</dd>
+<dt><a href="#getAddressesKeyPairs">getAddressesKeyPairs(seed, basePath, startIndex, count)</a> ⇒</dt>
+<dd><p>Generate a list of address key pairs.</p>
+</dd>
+<dt><a href="#getAllUnspentAddresses">getAllUnspentAddresses(client, seed, basePath, startIndex)</a> ⇒</dt>
+<dd><p>Get all the unspent addresses.</p>
+</dd>
+<dt><a href="#getBalance">getBalance(client, seed, basePath, startIndex)</a> ⇒</dt>
+<dd><p>Get the balance for the address.</p>
+</dd>
+<dt><a href="#getUnspentAddress">getUnspentAddress(client, seed, basePath, startIndex)</a> ⇒</dt>
+<dd><p>Get the first unspent address.</p>
+</dd>
+<dt><a href="#retrieveData">retrieveData(client, messageId)</a> ⇒</dt>
+<dd><p>Retrieve a data message.</p>
+</dd>
+<dt><a href="#send">send(client, seed, basePath, address, amount, startIndex)</a> ⇒</dt>
 <dd><p>Send a transfer from the balance on the seed.</p>
 </dd>
-<dt><a href="#generateAddressKeyPairs">generateAddressKeyPairs(seed, startIndex, count)</a> ⇒</dt>
-<dd><p>Generate a list of address key pairs.</p>
+<dt><a href="#sendAdvanced">sendAdvanced(client, seed, basePath, outputs, startIndex, indexation, indexationData)</a> ⇒</dt>
+<dd><p>Send a transfer from the balance on the seed.</p>
+</dd>
+<dt><a href="#sendData">sendData(client, index, data)</a> ⇒</dt>
+<dd><p>Send a data message.</p>
 </dd>
 <dt><a href="#logMessage">logMessage(prefix, message)</a></dt>
 <dd><p>Log a message to the console.</p>
@@ -185,193 +210,6 @@
 </dd>
 </dl>
 
-<a name="Client"></a>
-
-## Client
-Client for API communication.
-
-**Kind**: global class  
-
-* [Client](#Client)
-    * [new Client(endpoint)](#new_Client_new)
-    * [.health()](#Client+health) ⇒
-    * [.info()](#Client+info) ⇒
-    * [.tips()](#Client+tips) ⇒
-    * [.message(messageId)](#Client+message) ⇒
-    * [.messageMetadata(messageId)](#Client+messageMetadata) ⇒
-    * [.messageRaw(messageId)](#Client+messageRaw) ⇒
-    * [.messageSubmit(message)](#Client+messageSubmit) ⇒
-    * [.messageSubmitRaw(message)](#Client+messageSubmitRaw) ⇒
-    * [.messagesFind(index)](#Client+messagesFind) ⇒
-    * [.messageChildren(messageId)](#Client+messageChildren) ⇒
-    * [.output(outputId)](#Client+output) ⇒
-    * [.address(address)](#Client+address) ⇒
-    * [.addressOutputs(address)](#Client+addressOutputs) ⇒
-    * [.milestone(index)](#Client+milestone) ⇒
-
-<a name="new_Client_new"></a>
-
-### new Client(endpoint)
-Create a new instance of client.
-
-
-| Param | Description |
-| --- | --- |
-| endpoint | The endpoint. |
-
-<a name="Client+health"></a>
-
-### client.health() ⇒
-Get the health of the node.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: True if the node is healthy.  
-<a name="Client+info"></a>
-
-### client.info() ⇒
-Get the info about the node.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The node information.  
-<a name="Client+tips"></a>
-
-### client.tips() ⇒
-Get the tips from the node.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The tips.  
-<a name="Client+message"></a>
-
-### client.message(messageId) ⇒
-Get the message data by id.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The message data.  
-
-| Param | Description |
-| --- | --- |
-| messageId | The message to get the data for. |
-
-<a name="Client+messageMetadata"></a>
-
-### client.messageMetadata(messageId) ⇒
-Get the message metadata by id.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The message metadata.  
-
-| Param | Description |
-| --- | --- |
-| messageId | The message to get the metadata for. |
-
-<a name="Client+messageRaw"></a>
-
-### client.messageRaw(messageId) ⇒
-Get the message raw data by id.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The message raw data.  
-
-| Param | Description |
-| --- | --- |
-| messageId | The message to get the data for. |
-
-<a name="Client+messageSubmit"></a>
-
-### client.messageSubmit(message) ⇒
-Submit message.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The messageId.  
-
-| Param | Description |
-| --- | --- |
-| message | The message to submit. |
-
-<a name="Client+messageSubmitRaw"></a>
-
-### client.messageSubmitRaw(message) ⇒
-Submit message in raw format.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The messageId.  
-
-| Param | Description |
-| --- | --- |
-| message | The message to submit. |
-
-<a name="Client+messagesFind"></a>
-
-### client.messagesFind(index) ⇒
-Find messages by index.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The messageId.  
-
-| Param | Description |
-| --- | --- |
-| index | The index value. |
-
-<a name="Client+messageChildren"></a>
-
-### client.messageChildren(messageId) ⇒
-Get the children of a message.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The messages children.  
-
-| Param | Description |
-| --- | --- |
-| messageId | The id of the message to get the children for. |
-
-<a name="Client+output"></a>
-
-### client.output(outputId) ⇒
-Find an output by its identifier.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The output details.  
-
-| Param | Description |
-| --- | --- |
-| outputId | The id of the output to get. |
-
-<a name="Client+address"></a>
-
-### client.address(address) ⇒
-Get the address details.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The address details.  
-
-| Param | Description |
-| --- | --- |
-| address | The address to get the details for. |
-
-<a name="Client+addressOutputs"></a>
-
-### client.addressOutputs(address) ⇒
-Get the address outputs.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The address outputs.  
-
-| Param | Description |
-| --- | --- |
-| address | The address to get the outputs for. |
-
-<a name="Client+milestone"></a>
-
-### client.milestone(index) ⇒
-Get the requested milestone.
-
-**Kind**: instance method of [<code>Client</code>](#Client)  
-**Returns**: The milestone details.  
-
-| Param | Description |
-| --- | --- |
-| index | The index of the milestone to get. |
-
 <a name="ClientError"></a>
 
 ## ClientError
@@ -391,6 +229,193 @@ Create a new instance of ClientError.
 | httpStatus | The http status code. |
 | code | The code in the payload. |
 
+<a name="SingleNodeClient"></a>
+
+## SingleNodeClient
+Client for API communication.
+
+**Kind**: global class  
+
+* [SingleNodeClient](#SingleNodeClient)
+    * [new SingleNodeClient(endpoint)](#new_SingleNodeClient_new)
+    * [.health()](#SingleNodeClient+health) ⇒
+    * [.info()](#SingleNodeClient+info) ⇒
+    * [.tips()](#SingleNodeClient+tips) ⇒
+    * [.message(messageId)](#SingleNodeClient+message) ⇒
+    * [.messageMetadata(messageId)](#SingleNodeClient+messageMetadata) ⇒
+    * [.messageRaw(messageId)](#SingleNodeClient+messageRaw) ⇒
+    * [.messageSubmit(message)](#SingleNodeClient+messageSubmit) ⇒
+    * [.messageSubmitRaw(message)](#SingleNodeClient+messageSubmitRaw) ⇒
+    * [.messagesFind(index)](#SingleNodeClient+messagesFind) ⇒
+    * [.messageChildren(messageId)](#SingleNodeClient+messageChildren) ⇒
+    * [.output(outputId)](#SingleNodeClient+output) ⇒
+    * [.address(address)](#SingleNodeClient+address) ⇒
+    * [.addressOutputs(address)](#SingleNodeClient+addressOutputs) ⇒
+    * [.milestone(index)](#SingleNodeClient+milestone) ⇒
+
+<a name="new_SingleNodeClient_new"></a>
+
+### new SingleNodeClient(endpoint)
+Create a new instance of client.
+
+
+| Param | Description |
+| --- | --- |
+| endpoint | The endpoint. |
+
+<a name="SingleNodeClient+health"></a>
+
+### singleNodeClient.health() ⇒
+Get the health of the node.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: True if the node is healthy.  
+<a name="SingleNodeClient+info"></a>
+
+### singleNodeClient.info() ⇒
+Get the info about the node.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The node information.  
+<a name="SingleNodeClient+tips"></a>
+
+### singleNodeClient.tips() ⇒
+Get the tips from the node.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The tips.  
+<a name="SingleNodeClient+message"></a>
+
+### singleNodeClient.message(messageId) ⇒
+Get the message data by id.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The message data.  
+
+| Param | Description |
+| --- | --- |
+| messageId | The message to get the data for. |
+
+<a name="SingleNodeClient+messageMetadata"></a>
+
+### singleNodeClient.messageMetadata(messageId) ⇒
+Get the message metadata by id.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The message metadata.  
+
+| Param | Description |
+| --- | --- |
+| messageId | The message to get the metadata for. |
+
+<a name="SingleNodeClient+messageRaw"></a>
+
+### singleNodeClient.messageRaw(messageId) ⇒
+Get the message raw data by id.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The message raw data.  
+
+| Param | Description |
+| --- | --- |
+| messageId | The message to get the data for. |
+
+<a name="SingleNodeClient+messageSubmit"></a>
+
+### singleNodeClient.messageSubmit(message) ⇒
+Submit message.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The messageId.  
+
+| Param | Description |
+| --- | --- |
+| message | The message to submit. |
+
+<a name="SingleNodeClient+messageSubmitRaw"></a>
+
+### singleNodeClient.messageSubmitRaw(message) ⇒
+Submit message in raw format.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The messageId.  
+
+| Param | Description |
+| --- | --- |
+| message | The message to submit. |
+
+<a name="SingleNodeClient+messagesFind"></a>
+
+### singleNodeClient.messagesFind(index) ⇒
+Find messages by index.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The messageId.  
+
+| Param | Description |
+| --- | --- |
+| index | The index value. |
+
+<a name="SingleNodeClient+messageChildren"></a>
+
+### singleNodeClient.messageChildren(messageId) ⇒
+Get the children of a message.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The messages children.  
+
+| Param | Description |
+| --- | --- |
+| messageId | The id of the message to get the children for. |
+
+<a name="SingleNodeClient+output"></a>
+
+### singleNodeClient.output(outputId) ⇒
+Find an output by its identifier.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The output details.  
+
+| Param | Description |
+| --- | --- |
+| outputId | The id of the output to get. |
+
+<a name="SingleNodeClient+address"></a>
+
+### singleNodeClient.address(address) ⇒
+Get the address details.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The address details.  
+
+| Param | Description |
+| --- | --- |
+| address | The address to get the details for. |
+
+<a name="SingleNodeClient+addressOutputs"></a>
+
+### singleNodeClient.addressOutputs(address) ⇒
+Get the address outputs.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The address outputs.  
+
+| Param | Description |
+| --- | --- |
+| address | The address to get the outputs for. |
+
+<a name="SingleNodeClient+milestone"></a>
+
+### singleNodeClient.milestone(index) ⇒
+Get the requested milestone.
+
+**Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
+**Returns**: The milestone details.  
+
+| Param | Description |
+| --- | --- |
+| index | The index of the milestone to get. |
+
 <a name="Bip32Path"></a>
 
 ## Bip32Path
@@ -402,7 +427,9 @@ Class to help with bip32 paths.
     * [new Bip32Path(initialPath)](#new_Bip32Path_new)
     * [.toString()](#Bip32Path+toString) ⇒
     * [.push(index)](#Bip32Path+push)
-    * [.pop()](#Bip32Path+pop) ⇒
+    * [.pushHardened(index)](#Bip32Path+pushHardened)
+    * [.pop()](#Bip32Path+pop)
+    * [.numberSegments()](#Bip32Path+numberSegments) ⇒
 
 <a name="new_Bip32Path_new"></a>
 
@@ -432,13 +459,30 @@ Push a new index on to the path.
 | --- | --- |
 | index | The index to add to the path. |
 
+<a name="Bip32Path+pushHardened"></a>
+
+### bip32Path.pushHardened(index)
+Push a new hardened index on to the path.
+
+**Kind**: instance method of [<code>Bip32Path</code>](#Bip32Path)  
+
+| Param | Description |
+| --- | --- |
+| index | The index to add to the path. |
+
 <a name="Bip32Path+pop"></a>
 
-### bip32Path.pop() ⇒
+### bip32Path.pop()
 Pop an index from the path.
 
 **Kind**: instance method of [<code>Bip32Path</code>](#Bip32Path)  
-**Returns**: The popped index  
+<a name="Bip32Path+numberSegments"></a>
+
+### bip32Path.numberSegments() ⇒
+Get the segments.
+
+**Kind**: instance method of [<code>Bip32Path</code>](#Bip32Path)  
+**Returns**: The segments as numbers.  
 <a name="Blake2b"></a>
 
 ## Blake2b
@@ -482,7 +526,7 @@ Class to help with Ed25519 Signature scheme.
     * [.ADDRESS_LENGTH](#Ed25519.ADDRESS_LENGTH)
     * [.signData(privateKey, data)](#Ed25519.signData) ⇒
     * [.verifyData(publicKey, signature, data)](#Ed25519.verifyData) ⇒
-    * [.signAddress(publicKey)](#Ed25519.signAddress) ⇒
+    * [.publicKeyToAddress(publicKey)](#Ed25519.publicKeyToAddress) ⇒
     * [.verifyAddress(publicKey, address)](#Ed25519.verifyAddress) ⇒
 
 <a name="Ed25519.VERSION"></a>
@@ -536,9 +580,9 @@ Use the public key and signature to validate the data.
 | signature | The signature to verify. |
 | data | The data to verify. |
 
-<a name="Ed25519.signAddress"></a>
+<a name="Ed25519.publicKeyToAddress"></a>
 
-### Ed25519.signAddress(publicKey) ⇒
+### Ed25519.publicKeyToAddress(publicKey) ⇒
 Convert the public key to an address.
 
 **Kind**: static method of [<code>Ed25519</code>](#Ed25519)  
@@ -571,8 +615,8 @@ Class to help with seeds.
 * [Ed25519Seed](#Ed25519Seed)
     * _instance_
         * [._secretKey](#Ed25519Seed+_secretKey)
-        * [.generateKeyPair()](#Ed25519Seed+generateKeyPair) ⇒
-        * [.generateSubseed(path)](#Ed25519Seed+generateSubseed) ⇒
+        * [.keyPair()](#Ed25519Seed+keyPair) ⇒
+        * [.generateSeedFromPath(path)](#Ed25519Seed+generateSeedFromPath) ⇒
         * [.toBytes()](#Ed25519Seed+toBytes) ⇒
         * [.toString()](#Ed25519Seed+toString) ⇒
     * _static_
@@ -587,24 +631,24 @@ Class to help with seeds.
 The secret key for the seed.
 
 **Kind**: instance property of [<code>Ed25519Seed</code>](#Ed25519Seed)  
-<a name="Ed25519Seed+generateKeyPair"></a>
+<a name="Ed25519Seed+keyPair"></a>
 
-### ed25519Seed.generateKeyPair() ⇒
-Generate a key pair from the seed.
+### ed25519Seed.keyPair() ⇒
+Get the key pair from the seed.
 
 **Kind**: instance method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
 **Returns**: The key pair.  
-<a name="Ed25519Seed+generateSubseed"></a>
+<a name="Ed25519Seed+generateSeedFromPath"></a>
 
-### ed25519Seed.generateSubseed(path) ⇒
-Generate the subseeed from bip32 path.
+### ed25519Seed.generateSeedFromPath(path) ⇒
+Generate a new seed from the path.
 
 **Kind**: instance method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
-**Returns**: The private key.  
+**Returns**: The generated seed.  
 
 | Param | Description |
 | --- | --- |
-| path | The path of the subseed to generate. |
+| path | The path to generate the seed for. |
 
 <a name="Ed25519Seed+toBytes"></a>
 
@@ -657,6 +701,56 @@ Generate a new random seed.
 
 **Kind**: static method of [<code>Ed25519Seed</code>](#Ed25519Seed)  
 **Returns**: The random seed.  
+<a name="Slip0010"></a>
+
+## Slip0010
+Class to help with slip0010 key derivation.https://github.com/satoshilabs/slips/blob/master/slip-0010.md
+
+**Kind**: global class  
+
+* [Slip0010](#Slip0010)
+    * [.getMasterKeyFromSeed(seed)](#Slip0010.getMasterKeyFromSeed) ⇒
+    * [.derivePath(seed, path)](#Slip0010.derivePath) ⇒
+    * [.getPublicKey(privateKey, withZeroByte)](#Slip0010.getPublicKey) ⇒
+
+<a name="Slip0010.getMasterKeyFromSeed"></a>
+
+### Slip0010.getMasterKeyFromSeed(seed) ⇒
+Get the master key from the seed.
+
+**Kind**: static method of [<code>Slip0010</code>](#Slip0010)  
+**Returns**: The key and chain code.  
+
+| Param | Description |
+| --- | --- |
+| seed | The seed to generate the master key from. |
+
+<a name="Slip0010.derivePath"></a>
+
+### Slip0010.derivePath(seed, path) ⇒
+Derive a key from the path.
+
+**Kind**: static method of [<code>Slip0010</code>](#Slip0010)  
+**Returns**: The key and chain code.  
+
+| Param | Description |
+| --- | --- |
+| seed | The seed. |
+| path | The path. |
+
+<a name="Slip0010.getPublicKey"></a>
+
+### Slip0010.getPublicKey(privateKey, withZeroByte) ⇒
+Get the public key from the private key.
+
+**Kind**: static method of [<code>Slip0010</code>](#Slip0010)  
+**Returns**: The public key.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| privateKey |  | The private key. |
+| withZeroByte | <code>true</code> | Include a zero bute prefix. |
+
 <a name="ReadBuffer"></a>
 
 ## ReadBuffer
@@ -1444,23 +1538,127 @@ Serialize the reference unlock block to binary.
 | writeBuffer | The buffer to write the data to. |
 | object | The object to serialize. |
 
-<a name="sendData"></a>
+<a name="getAddressBalances"></a>
 
-## sendData(client, index, data) ⇒
-Send a data transfer.
+## getAddressBalances(client, addresses) ⇒
+Get the balance for a list of addresses.
 
 **Kind**: global function  
-**Returns**: The id of the message created.  
+**Returns**: The balances.  
 
 | Param | Description |
 | --- | --- |
 | client | The client to send the transfer with. |
-| index | The index name. |
-| data | The index data. |
+| addresses | The list of addresses to get the balance for. |
 
-<a name="sendTransfer"></a>
+<a name="getAddresses"></a>
 
-## sendTransfer(client, seed, outputs, index, data) ⇒
+## getAddresses(seed, basePath, startIndex, count) ⇒
+Generate a list of address key pairs.
+
+**Kind**: global function  
+**Returns**: A list of the signature key pairs for the addresses.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| seed |  | The seed. |
+| basePath |  | The base path to start looking for addresses. |
+| startIndex | <code>0</code> | The start index to generate from, defaults to 0. |
+| count |  | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
+
+<a name="getAddressesKeyPairs"></a>
+
+## getAddressesKeyPairs(seed, basePath, startIndex, count) ⇒
+Generate a list of address key pairs.
+
+**Kind**: global function  
+**Returns**: A list of the signature key pairs for the addresses.  
+
+| Param | Default | Description |
+| --- | --- | --- |
+| seed |  | The seed. |
+| basePath |  | The base path to start looking for addresses. |
+| startIndex | <code>0</code> | The start index to generate from, defaults to 0. |
+| count |  | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
+
+<a name="getAllUnspentAddresses"></a>
+
+## getAllUnspentAddresses(client, seed, basePath, startIndex) ⇒
+Get all the unspent addresses.
+
+**Kind**: global function  
+**Returns**: All the unspent addresses.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| seed | The seed to use for address generation. |
+| basePath | The base path to start looking for addresses. |
+| startIndex | Optional start index for the wallet count address, defaults to 0. |
+
+<a name="getBalance"></a>
+
+## getBalance(client, seed, basePath, startIndex) ⇒
+Get the balance for the address.
+
+**Kind**: global function  
+**Returns**: The balance.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| seed | The seed to use for address generation. |
+| basePath | The base path to start looking for addresses. |
+| startIndex | Optional start index for the wallet count address, defaults to 0. |
+
+<a name="getUnspentAddress"></a>
+
+## getUnspentAddress(client, seed, basePath, startIndex) ⇒
+Get the first unspent address.
+
+**Kind**: global function  
+**Returns**: The first unspent address.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| seed | The seed to use for address generation. |
+| basePath | The base path to start looking for addresses. |
+| startIndex | Optional start index for the wallet count address, defaults to 0. |
+
+<a name="retrieveData"></a>
+
+## retrieveData(client, messageId) ⇒
+Retrieve a data message.
+
+**Kind**: global function  
+**Returns**: The message index and data.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| messageId | The message id of the data to get. |
+
+<a name="send"></a>
+
+## send(client, seed, basePath, address, amount, startIndex) ⇒
+Send a transfer from the balance on the seed.
+
+**Kind**: global function  
+**Returns**: The id of the message created and the contructed message.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| seed | The seed to use for address generation. |
+| basePath | The base path to start looking for addresses. |
+| address | The address to send the funds to. |
+| amount | The amount to send. |
+| startIndex | The start index for the wallet count address, defaults to 0. |
+
+<a name="sendAdvanced"></a>
+
+## sendAdvanced(client, seed, basePath, outputs, startIndex, indexation, indexationData) ⇒
 Send a transfer from the balance on the seed.
 
 **Kind**: global function  
@@ -1470,23 +1668,25 @@ Send a transfer from the balance on the seed.
 | --- | --- |
 | client | The client to send the transfer with. |
 | seed | The seed to use for address generation. |
+| basePath | The base path to start looking for addresses. |
 | outputs | The outputs to send. |
-| index | Optional index name. |
-| data | Optional index data. |
+| startIndex | Optional start index for the wallet count address, defaults to 0. |
+| indexation | Optional indexation name. |
+| indexationData | Optional index data. |
 
-<a name="generateAddressKeyPairs"></a>
+<a name="sendData"></a>
 
-## generateAddressKeyPairs(seed, startIndex, count) ⇒
-Generate a list of address key pairs.
+## sendData(client, index, data) ⇒
+Send a data message.
 
 **Kind**: global function  
-**Returns**: A list of the signature key pairs for the addresses.  
+**Returns**: The id of the message created and the message.  
 
 | Param | Description |
 | --- | --- |
-| seed | The seed. |
-| startIndex | The start index to generate from. |
-| count | The number of address seeds |
+| client | The client to send the transfer with. |
+| index | The index name. |
+| data | The index data. |
 
 <a name="logMessage"></a>
 

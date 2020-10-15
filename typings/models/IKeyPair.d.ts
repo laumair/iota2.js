@@ -1,7 +1,7 @@
 /**
  * Definition of signature key pair.
  */
-export interface ISignatureKeyPair {
+export interface IKeyPair {
     /**
      * The public key.
      */

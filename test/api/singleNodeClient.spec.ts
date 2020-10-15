@@ -1,17 +1,17 @@
-import { Client } from "../../src/api/client";
+import { SingleNodeClient } from "../../src/api/singleNodeClient";
 
 describe("Client", () => {
     test("Can fail to construct with invalid endpoint", async () => {
-        expect(() => new Client("")).toThrow("correct format");
+        expect(() => new SingleNodeClient("")).toThrow("correct format");
     });
 
     test("Can be constructed with local url", async () => {
-        const client = new Client("https://localhost:14265/");
+        const client = new SingleNodeClient("https://localhost:14265/");
         expect(client).toBeDefined();
     });
 
     test("Can be constructed with remote url", async () => {
-        const client = new Client("https://my.example.com:14265/");
+        const client = new SingleNodeClient("https://my.example.com:14265/");
         expect(client).toBeDefined();
     });
 });

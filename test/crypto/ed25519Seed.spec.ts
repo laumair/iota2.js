@@ -9,25 +9,19 @@ describe("Ed25519Seed", () => {
         expect(seed.toString().length).toEqual(64);
     });
 
-    test("Can fail to generate a private key from an empty path", () => {
+    test("Can get a key pair from a seed", () => {
         const seed = Ed25519Seed.fromString("a".repeat(64));
-        expect(() => seed.generateSubseed(new Bip32Path())).toThrow("Invalid derivation path");
-    });
-
-    test("Can generate a key pair from a seed", () => {
-        const seed = Ed25519Seed.fromString("a".repeat(64));
-        const keyPair = seed.generateKeyPair();
+        const keyPair = seed.keyPair();
         expect(keyPair.privateKey).toEqual("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaae734ea6c2b6257de72355e472aa05a4c487e6b463c029ed306df2f01b5636b58");
         expect(keyPair.publicKey).toEqual("e734ea6c2b6257de72355e472aa05a4c487e6b463c029ed306df2f01b5636b58");
     });
 
-
-    test("Can generate a subseed from a filled path", () => {
+    test("Can generate a new seed from the master path", () => {
         const seed = Ed25519Seed.fromString("a".repeat(64));
-        const path = new Bip32Path("m/1'");
-        const subseed = seed.generateSubseed(path);
-
-        expect(subseed.toString()).toEqual("b2d4b67198c077bdd14ab356594a082a70f8b17ba5d644d044b52c7f1a0b075a");
+        const newSeed = seed.generateSeedFromPath(new Bip32Path("m/"));
+        const keyPair = newSeed.keyPair();
+        expect(keyPair.privateKey).toEqual("8d65383423e467e90d7a6595c7f3580b0ec57cab8b48b7e29c4049a5a2c43838fedd4422814c7ea0fc39c5221475dba6890dbfe7652f05c45114d1e6a7ffc3ce");
+        expect(keyPair.publicKey).toEqual("fedd4422814c7ea0fc39c5221475dba6890dbfe7652f05c45114d1e6a7ffc3ce");
     });
 });
 

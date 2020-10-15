@@ -39,7 +39,7 @@ export declare class Ed25519 {
      * @param publicKey The public key to convert.
      * @returns The address.
      */
-    static signAddress(publicKey: string): string;
+    static publicKeyToAddress(publicKey: string): string;
     /**
      * Use the public key to validate the address.
      * @param publicKey The public key to verify with.

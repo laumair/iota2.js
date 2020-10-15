@@ -1,6 +1,6 @@
 /// <reference types="node" />
+import { IKeyPair } from "../models/IKeyPair";
 import { ISeed } from "../models/ISeed";
-import { ISignatureKeyPair } from "../models/ISignatureKeyPair";
 import { Bip32Path } from "./bip32Path";
 /**
  * Class to help with seeds.
@@ -32,16 +32,16 @@ export declare class Ed25519Seed implements ISeed {
      */
     static random(): Ed25519Seed;
     /**
-     * Generate a key pair from the seed.
+     * Get the key pair from the seed.
      * @returns The key pair.
      */
-    generateKeyPair(): ISignatureKeyPair;
+    keyPair(): IKeyPair;
     /**
-     * Generate the subseeed from bip32 path.
-     * @param path The path of the subseed to generate.
-     * @returns The private key.
+     * Generate a new seed from the path.
+     * @param path The path to generate the seed for.
+     * @returns The generated seed.
      */
-    generateSubseed(path: Bip32Path): ISeed;
+    generateSeedFromPath(path: Bip32Path): ISeed;
     /**
      * Return the key as bytes.
      * @returns The key as bytes.

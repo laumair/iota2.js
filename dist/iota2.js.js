@@ -1,12 +1,13 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('cross-fetch'), require('tweetnacl'), require('blakejs'), require('ed25519-hd-key')) :
-    typeof define === 'function' && define.amd ? define(['exports', 'cross-fetch', 'tweetnacl', 'blakejs', 'ed25519-hd-key'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Iota2 = {}, global['cross-fetch'], global.tweetnacl, global.blakejs, global['ed25519-hd-key']));
-}(this, (function (exports, fetch, nacl, blakejs, ed25519HdKey) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('cross-fetch'), require('tweetnacl'), require('blakejs'), require('crypto')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'cross-fetch', 'tweetnacl', 'blakejs', 'crypto'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.Iota2 = {}, global['cross-fetch'], global.tweetnacl, global.blakejs, global.crypto));
+}(this, (function (exports, fetch, nacl, blakejs, crypto) { 'use strict';
 
     function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
     var fetch__default = /*#__PURE__*/_interopDefaultLegacy(fetch);
+    var crypto__default = /*#__PURE__*/_interopDefaultLegacy(crypto);
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation.
@@ -100,12 +101,12 @@
     /**
      * Client for API communication.
      */
-    var Client = /** @class */ (function () {
+    var SingleNodeClient = /** @class */ (function () {
         /**
          * Create a new instance of client.
          * @param endpoint The endpoint.
          */
-        function Client(endpoint) {
+        function SingleNodeClient(endpoint) {
             if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
                 throw new Error("The endpoint is not in the correct format");
             }
@@ -115,7 +116,7 @@
          * Get the health of the node.
          * @returns True if the node is healthy.
          */
-        Client.prototype.health = function () {
+        SingleNodeClient.prototype.health = function () {
             return __awaiter(this, void 0, Promise, function () {
                 var status;
                 return __generator(this, function (_a) {
@@ -138,7 +139,7 @@
          * Get the info about the node.
          * @returns The node information.
          */
-        Client.prototype.info = function () {
+        SingleNodeClient.prototype.info = function () {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/info")];
@@ -149,7 +150,7 @@
          * Get the tips from the node.
          * @returns The tips.
          */
-        Client.prototype.tips = function () {
+        SingleNodeClient.prototype.tips = function () {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/tips")];
@@ -161,7 +162,7 @@
          * @param messageId The message to get the data for.
          * @returns The message data.
          */
-        Client.prototype.message = function (messageId) {
+        SingleNodeClient.prototype.message = function (messageId) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId)];
@@ -173,7 +174,7 @@
          * @param messageId The message to get the metadata for.
          * @returns The message metadata.
          */
-        Client.prototype.messageMetadata = function (messageId) {
+        SingleNodeClient.prototype.messageMetadata = function (messageId) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/metadata")];
@@ -185,7 +186,7 @@
          * @param messageId The message to get the data for.
          * @returns The message raw data.
          */
-        Client.prototype.messageRaw = function (messageId) {
+        SingleNodeClient.prototype.messageRaw = function (messageId) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchBinary("get", "/api/v1/messages/" + messageId + "/raw")];
@@ -197,7 +198,7 @@
          * @param message The message to submit.
          * @returns The messageId.
          */
-        Client.prototype.messageSubmit = function (message) {
+        SingleNodeClient.prototype.messageSubmit = function (message) {
             return __awaiter(this, void 0, Promise, function () {
                 var response;
                 return __generator(this, function (_a) {
@@ -215,7 +216,7 @@
          * @param message The message to submit.
          * @returns The messageId.
          */
-        Client.prototype.messageSubmitRaw = function (message) {
+        SingleNodeClient.prototype.messageSubmitRaw = function (message) {
             return __awaiter(this, void 0, Promise, function () {
                 var response;
                 return __generator(this, function (_a) {
@@ -233,7 +234,7 @@
          * @param index The index value.
          * @returns The messageId.
          */
-        Client.prototype.messagesFind = function (index) {
+        SingleNodeClient.prototype.messagesFind = function (index) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/messages?index=" + encodeURIComponent(index))];
@@ -245,7 +246,7 @@
          * @param messageId The id of the message to get the children for.
          * @returns The messages children.
          */
-        Client.prototype.messageChildren = function (messageId) {
+        SingleNodeClient.prototype.messageChildren = function (messageId) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/children")];
@@ -257,7 +258,7 @@
          * @param outputId The id of the output to get.
          * @returns The output details.
          */
-        Client.prototype.output = function (outputId) {
+        SingleNodeClient.prototype.output = function (outputId) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/outputs/" + outputId)];
@@ -269,7 +270,7 @@
          * @param address The address to get the details for.
          * @returns The address details.
          */
-        Client.prototype.address = function (address) {
+        SingleNodeClient.prototype.address = function (address) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address)];
@@ -281,7 +282,7 @@
          * @param address The address to get the outputs for.
          * @returns The address outputs.
          */
-        Client.prototype.addressOutputs = function (address) {
+        SingleNodeClient.prototype.addressOutputs = function (address) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address + "/outputs")];
@@ -293,7 +294,7 @@
          * @param index The index of the milestone to get.
          * @returns The milestone details.
          */
-        Client.prototype.milestone = function (index) {
+        SingleNodeClient.prototype.milestone = function (index) {
             return __awaiter(this, void 0, Promise, function () {
                 return __generator(this, function (_a) {
                     return [2 /*return*/, this.fetchJson("get", "/api/v1/milestones/" + index)];
@@ -306,7 +307,7 @@
          * @returns The response.
          * @private
          */
-        Client.prototype.fetchStatus = function (route) {
+        SingleNodeClient.prototype.fetchStatus = function (route) {
             return __awaiter(this, void 0, Promise, function () {
                 var response;
                 return __generator(this, function (_a) {
@@ -329,7 +330,7 @@
          * @returns The response.
          * @private
          */
-        Client.prototype.fetchJson = function (method, route, requestData) {
+        SingleNodeClient.prototype.fetchJson = function (method, route, requestData) {
             var _a, _b, _c;
             return __awaiter(this, void 0, Promise, function () {
                 var response, responseData;
@@ -363,7 +364,7 @@
          * @returns The response.
          * @private
          */
-        Client.prototype.fetchBinary = function (method, route, requestData) {
+        SingleNodeClient.prototype.fetchBinary = function (method, route, requestData) {
             var _a, _b, _c;
             return __awaiter(this, void 0, Promise, function () {
                 var response, responseData, _d, _e;
@@ -401,7 +402,7 @@
                 });
             });
         };
-        return Client;
+        return SingleNodeClient;
     }());
 
     /**
@@ -455,7 +456,7 @@
          * @param publicKey The public key to convert.
          * @returns The address.
          */
-        Ed25519.signAddress = function (publicKey) {
+        Ed25519.publicKeyToAddress = function (publicKey) {
             return Blake2b.sum256(publicKey);
         };
         /**
@@ -465,7 +466,7 @@
          * @returns True if the data and address is verified.
          */
         Ed25519.verifyAddress = function (publicKey, address) {
-            var addressFromPublicKey = Ed25519.signAddress(publicKey);
+            var addressFromPublicKey = Ed25519.publicKeyToAddress(publicKey);
             return addressFromPublicKey === address;
         };
         /**
@@ -1204,40 +1205,6 @@
     }
 
     /**
-     * Send a data transfer.
-     * @param client The client to send the transfer with.
-     * @param index The index name.
-     * @param data The index data.
-     * @returns The id of the message created.
-     */
-    function sendData(client, index, data) {
-        return __awaiter(this, void 0, Promise, function () {
-            var indexationPayload, tips, message;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        indexationPayload = {
-                            type: 2,
-                            index: index,
-                            data: data
-                        };
-                        return [4 /*yield*/, client.tips()];
-                    case 1:
-                        tips = _a.sent();
-                        message = {
-                            version: 1,
-                            parent1MessageId: tips.tip1MessageId,
-                            parent2MessageId: tips.tip2MessageId,
-                            payload: indexationPayload,
-                            nonce: 0
-                        };
-                        return [2 /*return*/, client.messageSubmit(message)];
-                }
-            });
-        });
-    }
-
-    /**
      * Class to help with bip32 paths.
      */
     var Bip32Path = /** @class */ (function () {
@@ -1246,16 +1213,14 @@
          * @param initialPath Initial path to create.
          */
         function Bip32Path(initialPath) {
-            this._path = [];
             if (initialPath) {
-                if (!/^m((?:\/\d+')*)$/.test(initialPath)) {
-                    throw new Error("Bip32 Path is not in correct format");
+                this._path = initialPath.split("/");
+                if (this._path[0] === "m") {
+                    this._path.shift();
                 }
-                this._path = initialPath
-                    .slice(2)
-                    .replace(/'/g, "")
-                    .split("/")
-                    .map(function (p) { return Number.parseInt(p, 10); });
+            }
+            else {
+                this._path = [];
             }
         }
         /**
@@ -1263,24 +1228,511 @@
          * @returns The path as a string.
          */
         Bip32Path.prototype.toString = function () {
-            return "m/" + this._path.map(function (v) { return v + "'"; }).join("/");
+            return this._path.length > 0 ? "m/" + this._path.join("/") : "m";
         };
         /**
          * Push a new index on to the path.
          * @param index The index to add to the path.
          */
         Bip32Path.prototype.push = function (index) {
-            this._path.push(index);
+            this._path.push("" + index);
+        };
+        /**
+         * Push a new hardened index on to the path.
+         * @param index The index to add to the path.
+         */
+        Bip32Path.prototype.pushHardened = function (index) {
+            this._path.push(index + "'");
         };
         /**
          * Pop an index from the path.
-         * @returns The popped index
          */
         Bip32Path.prototype.pop = function () {
-            return this._path.pop();
+            this._path.pop();
+        };
+        /**
+         * Get the segments.
+         * @returns The segments as numbers.
+         */
+        Bip32Path.prototype.numberSegments = function () {
+            return this._path.map(function (p) { return Number.parseInt(p, 10); });
         };
         return Bip32Path;
     }());
+
+    var createHmac = crypto__default['default'].createHmac;
+
+    /**
+     * Class to help with slip0010 key derivation.
+     * https://github.com/satoshilabs/slips/blob/master/slip-0010.md
+     */
+    var Slip0010 = /** @class */ (function () {
+        function Slip0010() {
+        }
+        /**
+         * Get the master key from the seed.
+         * @param seed The seed to generate the master key from.
+         * @returns The key and chain code.
+         */
+        Slip0010.getMasterKeyFromSeed = function (seed) {
+            var hmac = createHmac("sha512", "ed25519 seed");
+            var fullKey = hmac.update(seed).digest();
+            return {
+                privateKey: fullKey.slice(0, 32),
+                chainCode: fullKey.slice(32)
+            };
+        };
+        /**
+         * Derive a key from the path.
+         * @param seed The seed.
+         * @param path The path.
+         * @returns The key and chain code.
+         */
+        Slip0010.derivePath = function (seed, path) {
+            var _a = Slip0010.getMasterKeyFromSeed(seed), privateKey = _a.privateKey, chainCode = _a.chainCode;
+            var segments = path.numberSegments();
+            for (var i = 0; i < segments.length; i++) {
+                var indexBuffer = Buffer.allocUnsafe(4);
+                indexBuffer.writeUInt32BE(0x80000000 + segments[i], 0);
+                var data = Buffer.concat([Buffer.alloc(1, 0), privateKey, indexBuffer]);
+                var fullKey = createHmac("sha512", chainCode)
+                    .update(data)
+                    .digest();
+                privateKey = fullKey.slice(0, 32);
+                chainCode = fullKey.slice(32);
+            }
+            return {
+                privateKey: privateKey,
+                chainCode: chainCode
+            };
+        };
+        /**
+         * Get the public key from the private key.
+         * @param privateKey The private key.
+         * @param withZeroByte Include a zero bute prefix.
+         * @returns The public key.
+         */
+        Slip0010.getPublicKey = function (privateKey, withZeroByte) {
+            if (withZeroByte === void 0) { withZeroByte = true; }
+            var keyPair = nacl.sign.keyPair.fromSeed(privateKey);
+            var signPk = Buffer.from(keyPair.secretKey.slice(32));
+            return withZeroByte
+                ? Buffer.concat([Buffer.alloc(1, 0), signPk])
+                : signPk;
+        };
+        return Slip0010;
+    }());
+
+    /**
+     * Class to help with seeds.
+     */
+    var Ed25519Seed = /** @class */ (function () {
+        function Ed25519Seed() {
+            /**
+             * The secret key for the seed.
+             */
+            this._secretKey = Buffer.alloc(0);
+        }
+        /**
+         * Create a seed from the bytes.
+         * @param buffer The binary representation of the seed.
+         * @returns The seed.
+         */
+        Ed25519Seed.fromBytes = function (buffer) {
+            var seed = new Ed25519Seed();
+            seed._secretKey = buffer;
+            return seed;
+        };
+        /**
+         * Create a seed from the hex string.
+         * @param hex The hex representation of the seed.
+         * @returns The seed.
+         */
+        Ed25519Seed.fromString = function (hex) {
+            var seed = new Ed25519Seed();
+            seed._secretKey = Buffer.from(hex, "hex");
+            return seed;
+        };
+        /**
+         * Generate a new random seed.
+         * @returns The random seed.
+         */
+        Ed25519Seed.random = function () {
+            return Ed25519Seed.fromBytes(Buffer.from(nacl.randomBytes(Ed25519Seed.SEED_SIZE_BYTES)));
+        };
+        /**
+         * Get the key pair from the seed.
+         * @returns The key pair.
+         */
+        Ed25519Seed.prototype.keyPair = function () {
+            var signKeyPair = nacl.sign.keyPair.fromSeed(this._secretKey);
+            return {
+                publicKey: Buffer.from(signKeyPair.publicKey).toString("hex"),
+                privateKey: Buffer.from(signKeyPair.secretKey).toString("hex")
+            };
+        };
+        /**
+         * Generate a new seed from the path.
+         * @param path The path to generate the seed for.
+         * @returns The generated seed.
+         */
+        Ed25519Seed.prototype.generateSeedFromPath = function (path) {
+            var keys = Slip0010.derivePath(this._secretKey, path);
+            return Ed25519Seed.fromBytes(keys.privateKey);
+        };
+        /**
+         * Return the key as bytes.
+         * @returns The key as bytes.
+         */
+        Ed25519Seed.prototype.toBytes = function () {
+            return this._secretKey;
+        };
+        /**
+         * Return the key as string.
+         * @returns The key as string.
+         */
+        Ed25519Seed.prototype.toString = function () {
+            return this._secretKey.toString("hex");
+        };
+        /**
+         * SeedSize is the size, in bytes, of private key seeds.
+         */
+        Ed25519Seed.SEED_SIZE_BYTES = 32;
+        return Ed25519Seed;
+    }());
+
+    var DEFAULT_CHUNK_SIZE = 20;
+
+    /**
+     * Get the balance for a list of addresses.
+     * @param client The client to send the transfer with.
+     * @param addresses The list of addresses to get the balance for.
+     * @returns The balances.
+     */
+    function getAddressBalances(client, addresses) {
+        return __awaiter(this, void 0, Promise, function () {
+            var balances, _i, addresses_1, address, addressOutputIds, balance, _a, _b, addressOutputId, addressOutput;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        balances = [];
+                        _i = 0, addresses_1 = addresses;
+                        _c.label = 1;
+                    case 1:
+                        if (!(_i < addresses_1.length)) return [3 /*break*/, 8];
+                        address = addresses_1[_i];
+                        return [4 /*yield*/, client.addressOutputs(address)];
+                    case 2:
+                        addressOutputIds = _c.sent();
+                        balance = 0;
+                        _a = 0, _b = addressOutputIds.outputIds;
+                        _c.label = 3;
+                    case 3:
+                        if (!(_a < _b.length)) return [3 /*break*/, 6];
+                        addressOutputId = _b[_a];
+                        return [4 /*yield*/, client.output(addressOutputId)];
+                    case 4:
+                        addressOutput = _c.sent();
+                        if (!addressOutput.isSpent) {
+                            balance += addressOutput.output.amount;
+                        }
+                        _c.label = 5;
+                    case 5:
+                        _a++;
+                        return [3 /*break*/, 3];
+                    case 6:
+                        balances.push(balance);
+                        _c.label = 7;
+                    case 7:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 8: return [2 /*return*/, balances];
+                }
+            });
+        });
+    }
+
+    /**
+     * Generate a list of address key pairs.
+     * @param seed The seed.
+     * @param basePath The base path to start looking for addresses.
+     * @param startIndex The start index to generate from, defaults to 0.
+     * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
+     * @returns A list of the signature key pairs for the addresses.
+     */
+    function getAddressesKeyPairs(seed, basePath, startIndex, count) {
+        if (startIndex === void 0) { startIndex = 0; }
+        if (count === void 0) { count = DEFAULT_CHUNK_SIZE; }
+        var keyPairs = [];
+        for (var i = startIndex; i < startIndex + count; i++) {
+            basePath.push(i);
+            var newSeed = seed.generateSeedFromPath(basePath);
+            keyPairs.push(newSeed.keyPair());
+            basePath.pop();
+        }
+        return keyPairs;
+    }
+
+    /**
+     * Generate a list of address key pairs.
+     * @param seed The seed.
+     * @param basePath The base path to start looking for addresses.
+     * @param startIndex The start index to generate from, defaults to 0.
+     * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
+     * @returns A list of the signature key pairs for the addresses.
+     */
+    function getAddresses(seed, basePath, startIndex, count) {
+        if (startIndex === void 0) { startIndex = 0; }
+        if (count === void 0) { count = DEFAULT_CHUNK_SIZE; }
+        return getAddressesKeyPairs(seed, basePath, startIndex, count).map(function (kp) { return Ed25519.publicKeyToAddress(kp.publicKey); });
+    }
+
+    /**
+     * Get all the unspent addresses.
+     * @param client The client to send the transfer with.
+     * @param seed The seed to use for address generation.
+     * @param basePath The base path to start looking for addresses.
+     * @param startIndex Optional start index for the wallet count address, defaults to 0.
+     * @returns All the unspent addresses.
+     */
+    function getAllUnspentAddresses(client, seed, basePath, startIndex) {
+        return __awaiter(this, void 0, Promise, function () {
+            var localStartIndex, finished, allUnspent, addresses, i, addr, addressOutputIds, amount, _i, _a, addressOutputId, addressOutput;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        localStartIndex = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
+                        finished = false;
+                        allUnspent = [];
+                        _b.label = 1;
+                    case 1:
+                        addresses = getAddressesKeyPairs(seed, basePath, localStartIndex, DEFAULT_CHUNK_SIZE);
+                        i = 0;
+                        _b.label = 2;
+                    case 2:
+                        if (!(i < addresses.length)) return [3 /*break*/, 9];
+                        addr = Ed25519.publicKeyToAddress(addresses[i].publicKey);
+                        return [4 /*yield*/, client.addressOutputs(addr)];
+                    case 3:
+                        addressOutputIds = _b.sent();
+                        amount = 0;
+                        _i = 0, _a = addressOutputIds.outputIds;
+                        _b.label = 4;
+                    case 4:
+                        if (!(_i < _a.length)) return [3 /*break*/, 7];
+                        addressOutputId = _a[_i];
+                        return [4 /*yield*/, client.output(addressOutputId)];
+                    case 5:
+                        addressOutput = _b.sent();
+                        if (!addressOutput.isSpent && addressOutput.output.amount !== 0) {
+                            amount += addressOutput.output.amount;
+                        }
+                        _b.label = 6;
+                    case 6:
+                        _i++;
+                        return [3 /*break*/, 4];
+                    case 7:
+                        if (amount === 0) {
+                            finished = true;
+                        }
+                        else {
+                            allUnspent.push({
+                                address: addr,
+                                index: localStartIndex + i,
+                                amount: amount
+                            });
+                        }
+                        _b.label = 8;
+                    case 8:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 9:
+                        localStartIndex += DEFAULT_CHUNK_SIZE;
+                        _b.label = 10;
+                    case 10:
+                        if (!finished) return [3 /*break*/, 1];
+                        _b.label = 11;
+                    case 11: return [2 /*return*/, allUnspent];
+                }
+            });
+        });
+    }
+
+    /**
+     * Get the balance for the address.
+     * @param client The client to send the transfer with.
+     * @param seed The seed to use for address generation.
+     * @param basePath The base path to start looking for addresses.
+     * @param startIndex Optional start index for the wallet count address, defaults to 0.
+     * @returns The balance.
+     */
+    function getBalance(client, seed, basePath, startIndex) {
+        return __awaiter(this, void 0, Promise, function () {
+            var localStartIndex, finished, balance, addresses, i, addr, addressOutputIds, _i, _a, addressOutputId, addressOutput;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        localStartIndex = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
+                        finished = false;
+                        balance = 0;
+                        _b.label = 1;
+                    case 1:
+                        addresses = getAddressesKeyPairs(seed, basePath, localStartIndex, DEFAULT_CHUNK_SIZE);
+                        i = 0;
+                        _b.label = 2;
+                    case 2:
+                        if (!(i < addresses.length)) return [3 /*break*/, 9];
+                        addr = Ed25519.publicKeyToAddress(addresses[i].publicKey);
+                        return [4 /*yield*/, client.addressOutputs(addr)];
+                    case 3:
+                        addressOutputIds = _b.sent();
+                        if (!(addressOutputIds.outputIds.length === 0)) return [3 /*break*/, 4];
+                        finished = true;
+                        return [3 /*break*/, 8];
+                    case 4:
+                        _i = 0, _a = addressOutputIds.outputIds;
+                        _b.label = 5;
+                    case 5:
+                        if (!(_i < _a.length)) return [3 /*break*/, 8];
+                        addressOutputId = _a[_i];
+                        return [4 /*yield*/, client.output(addressOutputId)];
+                    case 6:
+                        addressOutput = _b.sent();
+                        if (addressOutput.output.amount === 0) {
+                            finished = true;
+                        }
+                        else if (!addressOutput.isSpent) {
+                            balance += addressOutput.output.amount;
+                        }
+                        _b.label = 7;
+                    case 7:
+                        _i++;
+                        return [3 /*break*/, 5];
+                    case 8:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 9:
+                        localStartIndex += DEFAULT_CHUNK_SIZE;
+                        _b.label = 10;
+                    case 10:
+                        if (!finished) return [3 /*break*/, 1];
+                        _b.label = 11;
+                    case 11: return [2 /*return*/, balance];
+                }
+            });
+        });
+    }
+
+    /**
+     * Get the first unspent address.
+     * @param client The client to send the transfer with.
+     * @param seed The seed to use for address generation.
+     * @param basePath The base path to start looking for addresses.
+     * @param startIndex Optional start index for the wallet count address, defaults to 0.
+     * @returns The first unspent address.
+     */
+    function getUnspentAddress(client, seed, basePath, startIndex) {
+        return __awaiter(this, void 0, Promise, function () {
+            var localStartIndex, finished, unspentAddress, unspentAddressIndex, unspentAmount, addresses, i, addr, addressOutputIds, _i, _a, addressOutputId, addressOutput;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        localStartIndex = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
+                        finished = false;
+                        unspentAmount = 0;
+                        _b.label = 1;
+                    case 1:
+                        addresses = getAddressesKeyPairs(seed, basePath, localStartIndex, DEFAULT_CHUNK_SIZE);
+                        i = 0;
+                        _b.label = 2;
+                    case 2:
+                        if (!(i < addresses.length)) return [3 /*break*/, 10];
+                        addr = Ed25519.publicKeyToAddress(addresses[i].publicKey);
+                        return [4 /*yield*/, client.addressOutputs(addr)];
+                    case 3:
+                        addressOutputIds = _b.sent();
+                        if (!(addressOutputIds.outputIds.length === 0)) return [3 /*break*/, 4];
+                        finished = true;
+                        return [3 /*break*/, 8];
+                    case 4:
+                        _i = 0, _a = addressOutputIds.outputIds;
+                        _b.label = 5;
+                    case 5:
+                        if (!(_i < _a.length)) return [3 /*break*/, 8];
+                        addressOutputId = _a[_i];
+                        return [4 /*yield*/, client.output(addressOutputId)];
+                    case 6:
+                        addressOutput = _b.sent();
+                        if (addressOutput.output.amount === 0) {
+                            finished = true;
+                        }
+                        else if (!addressOutput.isSpent) {
+                            unspentAddress = addr;
+                            unspentAddressIndex = localStartIndex + i;
+                            unspentAmount += addressOutput.output.amount;
+                        }
+                        _b.label = 7;
+                    case 7:
+                        _i++;
+                        return [3 /*break*/, 5];
+                    case 8:
+                        if (unspentAddress) {
+                            finished = true;
+                        }
+                        _b.label = 9;
+                    case 9:
+                        i++;
+                        return [3 /*break*/, 2];
+                    case 10:
+                        localStartIndex += DEFAULT_CHUNK_SIZE;
+                        _b.label = 11;
+                    case 11:
+                        if (!finished) return [3 /*break*/, 1];
+                        _b.label = 12;
+                    case 12: return [2 /*return*/, unspentAddress && unspentAddressIndex !== undefined ? {
+                            address: unspentAddress,
+                            index: unspentAddressIndex,
+                            amount: unspentAmount
+                        } : undefined];
+                }
+            });
+        });
+    }
+
+    /**
+     * Retrieve a data message.
+     * @param client The client to send the transfer with.
+     * @param messageId The message id of the data to get.
+     * @returns The message index and data.
+     */
+    function retrieveData(client, messageId) {
+        return __awaiter(this, void 0, Promise, function () {
+            var message, indexationPayload;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, client.message(messageId)];
+                    case 1:
+                        message = _a.sent();
+                        if (message === null || message === void 0 ? void 0 : message.payload) {
+                            indexationPayload = void 0;
+                            if (message.payload.type === 0) {
+                                indexationPayload = message.payload.essence.payload;
+                            }
+                            else if (message.payload.type === 2) {
+                                indexationPayload = message.payload;
+                            }
+                            if (indexationPayload) {
+                                return [2 /*return*/, {
+                                        index: indexationPayload.index,
+                                        data: Buffer.from(indexationPayload.data, "hex")
+                                    }];
+                            }
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
+    }
 
     /**
      * Keep track of the write index within a buffer.
@@ -1419,14 +1871,16 @@
      * Send a transfer from the balance on the seed.
      * @param client The client to send the transfer with.
      * @param seed The seed to use for address generation.
+     * @param basePath The base path to start looking for addresses.
      * @param outputs The outputs to send.
-     * @param index Optional index name.
-     * @param data Optional index data.
+     * @param startIndex Optional start index for the wallet count address, defaults to 0.
+     * @param indexation Optional indexation name.
+     * @param indexationData Optional index data.
      * @returns The id of the message created and the remainder address if one was needed.
      */
-    function sendTransfer(client, seed, outputs, index, data) {
+    function sendAdvanced(client, seed, basePath, outputs, startIndex, indexation, indexationData) {
         return __awaiter(this, void 0, Promise, function () {
-            var requiredBalance, startIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, remainderKeyPair, addresses, _i, addresses_1, address, addressOutputIds, _a, _b, addressOutputId, addressOutput, input, writeBuffer, remainderAddress, outputsWithSerialization, _c, outputs_1, output, sigLockedOutput, writeBuffer, sortedInputs, sortedOutputs, transactionEssence, binaryEssenceBuffer, essenceFinalBuffer, unlockBlocks, addressToUnlockBlock, _d, sortedInputs_1, input, transactionPayload, tips, message, messageId;
+            var requiredBalance, localStartIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, remainderKeyPair, addresses, _i, addresses_1, address, addressOutputIds, _a, _b, addressOutputId, addressOutput, input, writeBuffer, remainderAddress, outputsWithSerialization, _c, outputs_1, output, sigLockedOutput, writeBuffer, sortedInputs, sortedOutputs, transactionEssence, binaryEssenceBuffer, essenceFinalBuffer, unlockBlocks, addressToUnlockBlock, _d, sortedInputs_1, input, transactionPayload, tips, message, messageId;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
@@ -1434,19 +1888,19 @@
                             throw new Error("You must specify some outputs");
                         }
                         requiredBalance = outputs.reduce(function (total, output) { return total + output.amount; }, 0);
-                        startIndex = 0;
+                        localStartIndex = startIndex !== null && startIndex !== void 0 ? startIndex : 0;
                         consumedBalance = 0;
                         inputsAndSignatureKeyPairs = [];
                         finished = false;
                         _e.label = 1;
                     case 1:
-                        addresses = generateAddressKeyPairs(seed, startIndex, 20);
+                        addresses = getAddressesKeyPairs(seed, basePath, localStartIndex, DEFAULT_CHUNK_SIZE);
                         _i = 0, addresses_1 = addresses;
                         _e.label = 2;
                     case 2:
                         if (!(_i < addresses_1.length)) return [3 /*break*/, 9];
                         address = addresses_1[_i];
-                        return [4 /*yield*/, client.addressOutputs(Ed25519.signAddress(address.publicKey))];
+                        return [4 /*yield*/, client.addressOutputs(Ed25519.publicKeyToAddress(address.publicKey))];
                     case 3:
                         addressOutputIds = _e.sent();
                         if (!(addressOutputIds.outputIds.length === 0)) return [3 /*break*/, 4];
@@ -1492,7 +1946,7 @@
                         _i++;
                         return [3 /*break*/, 2];
                     case 9:
-                        startIndex += 20;
+                        localStartIndex += DEFAULT_CHUNK_SIZE;
                         _e.label = 10;
                     case 10:
                         if (!finished) return [3 /*break*/, 1];
@@ -1502,7 +1956,7 @@
                             throw new Error("There are not enough funds in the inputs for the required balance");
                         }
                         if (requiredBalance < consumedBalance && remainderKeyPair) {
-                            remainderAddress = Ed25519.signAddress(remainderKeyPair.publicKey);
+                            remainderAddress = Ed25519.publicKeyToAddress(remainderKeyPair.publicKey);
                             outputs.push({
                                 amount: consumedBalance - requiredBalance,
                                 address: remainderAddress
@@ -1532,7 +1986,13 @@
                             type: 0,
                             inputs: sortedInputs.map(function (i) { return i.input; }),
                             outputs: sortedOutputs.map(function (o) { return o.output; }),
-                            payload: index && data ? { type: 2, index: index, data: data } : undefined
+                            payload: indexation && indexationData
+                                ? {
+                                    type: 2,
+                                    index: indexation,
+                                    data: indexationData.toString("hex")
+                                }
+                                : undefined
                         };
                         binaryEssenceBuffer = new WriteBuffer();
                         serializeTransactionEssence(binaryEssenceBuffer, transactionEssence);
@@ -1582,112 +2042,80 @@
                         messageId = _e.sent();
                         return [2 /*return*/, {
                                 messageId: messageId,
+                                message: message,
                                 remainderAddress: remainderAddress
                             }];
                 }
             });
         });
     }
+
     /**
-     * Generate a list of address key pairs.
-     * @param seed The seed.
-     * @param startIndex The start index to generate from.
-     * @param count The number of address seeds
-     * @returns A list of the signature key pairs for the addresses.
+     * Send a transfer from the balance on the seed.
+     * @param client The client to send the transfer with.
+     * @param seed The seed to use for address generation.
+     * @param basePath The base path to start looking for addresses.
+     * @param address The address to send the funds to.
+     * @param amount The amount to send.
+     * @param startIndex The start index for the wallet count address, defaults to 0.
+     * @returns The id of the message created and the contructed message.
      */
-    function generateAddressKeyPairs(seed, startIndex, count) {
-        var keyPairs = [];
-        for (var i = startIndex; i < startIndex + count; i++) {
-            if (i === 0) {
-                keyPairs.push(seed.generateKeyPair());
-            }
-            else {
-                var bip32Path = new Bip32Path();
-                bip32Path.push(i);
-                var subSeed = seed.generateSubseed(bip32Path);
-                keyPairs.push(subSeed.generateKeyPair());
-            }
-        }
-        return keyPairs;
+    function send(client, seed, basePath, address, amount, startIndex) {
+        return __awaiter(this, void 0, Promise, function () {
+            var response;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, sendAdvanced(client, seed, basePath, [{ address: address, amount: amount }], startIndex)];
+                    case 1:
+                        response = _a.sent();
+                        return [2 /*return*/, {
+                                messageId: response.messageId,
+                                message: response.message
+                            }];
+                }
+            });
+        });
     }
 
     /**
-     * Class to help with seeds.
+     * Send a data message.
+     * @param client The client to send the transfer with.
+     * @param index The index name.
+     * @param data The index data.
+     * @returns The id of the message created and the message.
      */
-    var Ed25519Seed = /** @class */ (function () {
-        function Ed25519Seed() {
-            /**
-             * The secret key for the seed.
-             */
-            this._secretKey = Buffer.alloc(0);
-        }
-        /**
-         * Create a seed from the bytes.
-         * @param buffer The binary representation of the seed.
-         * @returns The seed.
-         */
-        Ed25519Seed.fromBytes = function (buffer) {
-            var seed = new Ed25519Seed();
-            seed._secretKey = buffer;
-            return seed;
-        };
-        /**
-         * Create a seed from the hex string.
-         * @param hex The hex representation of the seed.
-         * @returns The seed.
-         */
-        Ed25519Seed.fromString = function (hex) {
-            var seed = new Ed25519Seed();
-            seed._secretKey = Buffer.from(hex, "hex");
-            return seed;
-        };
-        /**
-         * Generate a new random seed.
-         * @returns The random seed.
-         */
-        Ed25519Seed.random = function () {
-            return Ed25519Seed.fromBytes(Buffer.from(nacl.randomBytes(Ed25519Seed.SEED_SIZE_BYTES)));
-        };
-        /**
-         * Generate a key pair from the seed.
-         * @returns The key pair.
-         */
-        Ed25519Seed.prototype.generateKeyPair = function () {
-            var signKeyPair = nacl.sign.keyPair.fromSeed(this._secretKey);
-            return {
-                publicKey: Buffer.from(signKeyPair.publicKey).toString("hex"),
-                privateKey: Buffer.from(signKeyPair.secretKey).toString("hex")
-            };
-        };
-        /**
-         * Generate the subseeed from bip32 path.
-         * @param path The path of the subseed to generate.
-         * @returns The private key.
-         */
-        Ed25519Seed.prototype.generateSubseed = function (path) {
-            var key = ed25519HdKey.derivePath(path.toString(), this._secretKey.toString("hex")).key;
-            return Ed25519Seed.fromBytes(key);
-        };
-        /**
-         * Return the key as bytes.
-         * @returns The key as bytes.
-         */
-        Ed25519Seed.prototype.toBytes = function () {
-            return this._secretKey;
-        };
-        /**
-         * Return the key as string.
-         * @returns The key as string.
-         */
-        Ed25519Seed.prototype.toString = function () {
-            return this._secretKey.toString("hex");
-        };
-        /**
-         * SeedSize is the size, in bytes, of private key seeds.
-         */
-        Ed25519Seed.SEED_SIZE_BYTES = 32;
-        return Ed25519Seed;
-    }());
+    function sendData(client, index, data) {
+        return __awaiter(this, void 0, Promise, function () {
+            var indexationPayload, tips, message, messageId;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        indexationPayload = {
+                            type: 2,
+                            index: index,
+                            data: data.toString("hex")
+                        };
+                        return [4 /*yield*/, client.tips()];
+                    case 1:
+                        tips = _a.sent();
+                        message = {
+                            version: 1,
+                            parent1MessageId: tips.tip1MessageId,
+                            parent2MessageId: tips.tip2MessageId,
+                            payload: indexationPayload,
+                            nonce: 0
+                        };
+                        return [4 /*yield*/, client.messageSubmit(message)];
+                    case 2:
+                        messageId = _a.sent();
+                        return [2 /*return*/, {
+                                message: message,
+                                messageId: messageId
+                            }];
+                }
+            });
+        });
+    }
 
     /**
      * Log a message to the console.
@@ -1980,8 +2408,8 @@
     exports.BYTE_SIZE = BYTE_SIZE;
     exports.Bip32Path = Bip32Path;
     exports.Blake2b = Blake2b;
-    exports.Client = Client;
     exports.ClientError = ClientError;
+    exports.DEFAULT_CHUNK_SIZE = DEFAULT_CHUNK_SIZE;
     exports.Ed25519 = Ed25519;
     exports.Ed25519Seed = Ed25519Seed;
     exports.MESSAGE_ID_LENGTH = MESSAGE_ID_LENGTH;
@@ -2004,6 +2432,8 @@
     exports.ReadBuffer = ReadBuffer;
     exports.SMALL_TYPE_LENGTH = SMALL_TYPE_LENGTH;
     exports.STRING_LENGTH = STRING_LENGTH;
+    exports.SingleNodeClient = SingleNodeClient;
+    exports.Slip0010 = Slip0010;
     exports.TRANSACTION_ID_LENGTH = TRANSACTION_ID_LENGTH;
     exports.TYPE_LENGTH = TYPE_LENGTH;
     exports.UINT16_SIZE = UINT16_SIZE;
@@ -2030,7 +2460,12 @@
     exports.deserializeUTXOInput = deserializeUTXOInput;
     exports.deserializeUnlockBlock = deserializeUnlockBlock;
     exports.deserializeUnlockBlocks = deserializeUnlockBlocks;
-    exports.generateAddressKeyPairs = generateAddressKeyPairs;
+    exports.getAddressBalances = getAddressBalances;
+    exports.getAddresses = getAddresses;
+    exports.getAddressesKeyPairs = getAddressesKeyPairs;
+    exports.getAllUnspentAddresses = getAllUnspentAddresses;
+    exports.getBalance = getBalance;
+    exports.getUnspentAddress = getUnspentAddress;
     exports.isHex = isHex;
     exports.logAddress = logAddress;
     exports.logInput = logInput;
@@ -2039,8 +2474,10 @@
     exports.logPayload = logPayload;
     exports.logSignature = logSignature;
     exports.logUnlockBlock = logUnlockBlock;
+    exports.retrieveData = retrieveData;
+    exports.send = send;
+    exports.sendAdvanced = sendAdvanced;
     exports.sendData = sendData;
-    exports.sendTransfer = sendTransfer;
     exports.serializeAddress = serializeAddress;
     exports.serializeEd25519Address = serializeEd25519Address;
     exports.serializeEd25519Signature = serializeEd25519Signature;

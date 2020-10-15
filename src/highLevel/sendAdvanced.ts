@@ -1,36 +1,43 @@
-import { Client } from "../api/client";
+import { IClient } from "../api/models/IClient";
 import { serializeInput } from "../binary/input";
 import { serializeOutput } from "../binary/output";
 import { serializeTransactionEssence } from "../binary/transaction";
 import { Bip32Path } from "../crypto/bip32Path";
 import { Ed25519 } from "../crypto/ed25519";
+import { IKeyPair } from "../models/IKeyPair";
 import { IMessage } from "../models/IMessage";
 import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
 import { ISeed } from "../models/ISeed";
 import { ISigLockedSingleOutput } from "../models/ISigLockedSingleOutput";
-import { ISignatureKeyPair } from "../models/ISignatureKeyPair";
 import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
 import { ITransactionEssence } from "../models/ITransactionEssence";
 import { ITransactionPayload } from "../models/ITransactionPayload";
 import { IUTXOInput } from "../models/IUTXOInput";
 import { WriteBuffer } from "../utils/writeBuffer";
+import { DEFAULT_CHUNK_SIZE } from "./common";
+import { getAddressesKeyPairs } from "./getAddressesKeyPairs";
 
 /**
  * Send a transfer from the balance on the seed.
  * @param client The client to send the transfer with.
  * @param seed The seed to use for address generation.
+ * @param basePath The base path to start looking for addresses.
  * @param outputs The outputs to send.
- * @param index Optional index name.
- * @param data Optional index data.
+ * @param startIndex Optional start index for the wallet count address, defaults to 0.
+ * @param indexation Optional indexation name.
+ * @param indexationData Optional index data.
  * @returns The id of the message created and the remainder address if one was needed.
  */
-export async function sendTransfer(
-    client: Client,
+export async function sendAdvanced(
+    client: IClient,
     seed: ISeed,
+    basePath: Bip32Path,
     outputs: { address: string; amount: number }[],
-    index?: string,
-    data?: string): Promise<{
+    startIndex?: number,
+    indexation?: string,
+    indexationData?: Buffer): Promise<{
         messageId: string;
+        message: IMessage;
         remainderAddress?: string;
     }> {
     if (!outputs || outputs.length === 0) {
@@ -39,21 +46,21 @@ export async function sendTransfer(
 
     const requiredBalance = outputs.reduce((total, output) => total + output.amount, 0);
 
-    let startIndex = 0;
+    let localStartIndex = startIndex ?? 0;
     let consumedBalance = 0;
     const inputsAndSignatureKeyPairs: {
         input: IUTXOInput;
-        addressKeyPair: ISignatureKeyPair;
+        addressKeyPair: IKeyPair;
         serialized: string;
     }[] = [];
     let finished = false;
-    let remainderKeyPair: ISignatureKeyPair | undefined;
+    let remainderKeyPair: IKeyPair | undefined;
 
     do {
-        const addresses = generateAddressKeyPairs(seed, startIndex, 20);
+        const addresses = getAddressesKeyPairs(seed, basePath, localStartIndex, DEFAULT_CHUNK_SIZE);
 
         for (const address of addresses) {
-            const addressOutputIds = await client.addressOutputs(Ed25519.signAddress(address.publicKey));
+            const addressOutputIds = await client.addressOutputs(Ed25519.publicKeyToAddress(address.publicKey));
 
             if (addressOutputIds.outputIds.length === 0) {
                 finished = true;
@@ -90,7 +97,7 @@ export async function sendTransfer(
             }
         }
 
-        startIndex += 20;
+        localStartIndex += DEFAULT_CHUNK_SIZE;
     } while (!finished);
 
     if (consumedBalance < requiredBalance) {
@@ -101,7 +108,7 @@ export async function sendTransfer(
     // back to the address from the seed that didn't have any outputs or balance
     let remainderAddress;
     if (requiredBalance < consumedBalance && remainderKeyPair) {
-        remainderAddress = Ed25519.signAddress(remainderKeyPair.publicKey);
+        remainderAddress = Ed25519.publicKeyToAddress(remainderKeyPair.publicKey);
         outputs.push({
             amount: consumedBalance - requiredBalance,
             address: remainderAddress
@@ -138,7 +145,13 @@ export async function sendTransfer(
         type: 0,
         inputs: sortedInputs.map(i => i.input),
         outputs: sortedOutputs.map(o => o.output),
-        payload: index && data ? { type: 2, index, data } : undefined
+        payload: indexation && indexationData
+            ? {
+                type: 2,
+                index: indexation,
+                data: indexationData.toString("hex")
+            }
+            : undefined
     };
 
     const binaryEssenceBuffer = new WriteBuffer();
@@ -149,7 +162,7 @@ export async function sendTransfer(
     const unlockBlocks: (ISignatureUnlockBlock | IReferenceUnlockBlock)[] = [];
     const addressToUnlockBlock: {
         [address: string]: {
-            keyPair: ISignatureKeyPair;
+            keyPair: IKeyPair;
             unlockIndex: number;
         };
     } = {};
@@ -196,30 +209,7 @@ export async function sendTransfer(
 
     return {
         messageId,
+        message,
         remainderAddress
     };
-}
-
-/**
- * Generate a list of address key pairs.
- * @param seed The seed.
- * @param startIndex The start index to generate from.
- * @param count The number of address seeds
- * @returns A list of the signature key pairs for the addresses.
- */
-export function generateAddressKeyPairs(seed: ISeed, startIndex: number, count: number): ISignatureKeyPair[] {
-    const keyPairs: ISignatureKeyPair[] = [];
-
-    for (let i = startIndex; i < startIndex + count; i++) {
-        if (i === 0) {
-            keyPairs.push(seed.generateKeyPair());
-        } else {
-            const bip32Path = new Bip32Path();
-            bip32Path.push(i);
-            const subSeed = seed.generateSubseed(bip32Path);
-            keyPairs.push(subSeed.generateKeyPair());
-        }
-    }
-
-    return keyPairs;
 }

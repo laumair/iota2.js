@@ -1,4 +1,5 @@
 /// <reference types="node" />
+import { IClient } from "../api/models/IClient";
 import { IMessage } from "../models/IMessage";
 import { IAddress } from "./models/IAddress";
 import { IAddressOutputs } from "./models/IAddressOutputs";
@@ -12,7 +13,7 @@ import { ITips } from "./models/ITips";
 /**
  * Client for API communication.
  */
-export declare class Client {
+export declare class SingleNodeClient implements IClient {
     /**
      * The endpoint for the API.
      */

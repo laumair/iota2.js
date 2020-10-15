@@ -1,4 +1,5 @@
 import fetch from "cross-fetch";
+import { IClient } from "../api/models/IClient";
 import { IMessageId } from "../api/models/IMessageId";
 import { IMessage } from "../models/IMessage";
 import { ClientError } from "./clientError";
@@ -16,7 +17,7 @@ import { ITips } from "./models/ITips";
 /**
  * Client for API communication.
  */
-export class Client {
+export class SingleNodeClient implements IClient {
     /**
      * The endpoint for the API.
      */

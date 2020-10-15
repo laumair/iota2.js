@@ -22,8 +22,17 @@ export declare class Bip32Path {
      */
     push(index: number): void;
     /**
-     * Pop an index from the path.
-     * @returns The popped index
+     * Push a new hardened index on to the path.
+     * @param index The index to add to the path.
      */
-    pop(): number | undefined;
+    pushHardened(index: number): void;
+    /**
+     * Pop an index from the path.
+     */
+    pop(): void;
+    /**
+     * Get the segments.
+     * @returns The segments as numbers.
+     */
+    numberSegments(): number[];
 }

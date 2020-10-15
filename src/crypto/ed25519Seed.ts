@@ -1,8 +1,8 @@
-import { derivePath } from "ed25519-hd-key";
 import * as nacl from "tweetnacl";
+import { IKeyPair } from "../models/IKeyPair";
 import { ISeed } from "../models/ISeed";
-import { ISignatureKeyPair } from "../models/ISignatureKeyPair";
 import { Bip32Path } from "./bip32Path";
+import { Slip0010 } from "./slip0010";
 
 /**
  * Class to help with seeds.
@@ -49,10 +49,10 @@ export class Ed25519Seed implements ISeed {
     }
 
     /**
-     * Generate a key pair from the seed.
+     * Get the key pair from the seed.
      * @returns The key pair.
      */
-    public generateKeyPair(): ISignatureKeyPair {
+    public keyPair(): IKeyPair {
         const signKeyPair = nacl.sign.keyPair.fromSeed(this._secretKey);
 
         return {
@@ -62,13 +62,13 @@ export class Ed25519Seed implements ISeed {
     }
 
     /**
-     * Generate the subseeed from bip32 path.
-     * @param path The path of the subseed to generate.
-     * @returns The private key.
+     * Generate a new seed from the path.
+     * @param path The path to generate the seed for.
+     * @returns The generated seed.
      */
-    public generateSubseed(path: Bip32Path): ISeed {
-        const { key } = derivePath(path.toString(), this._secretKey.toString("hex"));
-        return Ed25519Seed.fromBytes(key);
+    public generateSeedFromPath(path: Bip32Path): ISeed {
+        const keys = Slip0010.derivePath(this._secretKey, path);
+        return Ed25519Seed.fromBytes(keys.privateKey);
     }
 
     /**

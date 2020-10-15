@@ -21,8 +21,8 @@ export default {
     external: [
         "blakejs",
         "cross-fetch",
-        "ed25519-hd-key",
-        "tweetnacl",
+        "crypto",
+        "tweetnacl"
     ],
     output: {
         file: `dist/iota2.js${process.env.MINIFY ? '.min' : ''}.js`,
@@ -32,7 +32,7 @@ export default {
         globals: {
             "blakejs": "blakejs",
             "cross-fetch": "cross-fetch",
-            "ed25519-hd-key": "ed25519-hd-key",
+            "crypto": "crypto",
             "tweetnacl": "tweetnacl"
         }
     },

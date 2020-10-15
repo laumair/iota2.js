@@ -11,18 +11,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendData = void 0;
 /**
- * Send a data transfer.
+ * Send a data message.
  * @param client The client to send the transfer with.
  * @param index The index name.
  * @param data The index data.
- * @returns The id of the message created.
+ * @returns The id of the message created and the message.
  */
 function sendData(client, index, data) {
     return __awaiter(this, void 0, void 0, function* () {
         const indexationPayload = {
             type: 2,
             index,
-            data
+            data: data.toString("hex")
         };
         const tips = yield client.tips();
         const message = {
@@ -32,8 +32,12 @@ function sendData(client, index, data) {
             payload: indexationPayload,
             nonce: 0
         };
-        return client.messageSubmit(message);
+        const messageId = yield client.messageSubmit(message);
+        return {
+            message,
+            messageId
+        };
     });
 }
 exports.sendData = sendData;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGF0YS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9idWlsZGVycy9kYXRhLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OztBQUlBOzs7Ozs7R0FNRztBQUNILFNBQXNCLFFBQVEsQ0FBQyxNQUFjLEVBQUUsS0FBYSxFQUFFLElBQVk7O1FBQ3RFLE1BQU0saUJBQWlCLEdBQXVCO1lBQzFDLElBQUksRUFBRSxDQUFDO1lBQ1AsS0FBSztZQUNMLElBQUk7U0FDUCxDQUFDO1FBRUYsTUFBTSxJQUFJLEdBQUcsTUFBTSxNQUFNLENBQUMsSUFBSSxFQUFFLENBQUM7UUFFakMsTUFBTSxPQUFPLEdBQWE7WUFDdEIsT0FBTyxFQUFFLENBQUM7WUFDVixnQkFBZ0IsRUFBRSxJQUFJLENBQUMsYUFBYTtZQUNwQyxnQkFBZ0IsRUFBRSxJQUFJLENBQUMsYUFBYTtZQUNwQyxPQUFPLEVBQUUsaUJBQWlCO1lBQzFCLEtBQUssRUFBRSxDQUFDO1NBQ1gsQ0FBQztRQUVGLE9BQU8sTUFBTSxDQUFDLGFBQWEsQ0FBQyxPQUFPLENBQUMsQ0FBQztJQUN6QyxDQUFDO0NBQUE7QUFsQkQsNEJBa0JDIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoic2VuZERhdGEuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvaGlnaExldmVsL3NlbmREYXRhLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OztBQUlBOzs7Ozs7R0FNRztBQUNILFNBQXNCLFFBQVEsQ0FBQyxNQUFlLEVBQUUsS0FBYSxFQUFFLElBQVk7O1FBSXZFLE1BQU0saUJBQWlCLEdBQXVCO1lBQzFDLElBQUksRUFBRSxDQUFDO1lBQ1AsS0FBSztZQUNMLElBQUksRUFBRSxJQUFJLENBQUMsUUFBUSxDQUFDLEtBQUssQ0FBQztTQUM3QixDQUFDO1FBRUYsTUFBTSxJQUFJLEdBQUcsTUFBTSxNQUFNLENBQUMsSUFBSSxFQUFFLENBQUM7UUFFakMsTUFBTSxPQUFPLEdBQWE7WUFDdEIsT0FBTyxFQUFFLENBQUM7WUFDVixnQkFBZ0IsRUFBRSxJQUFJLENBQUMsYUFBYTtZQUNwQyxnQkFBZ0IsRUFBRSxJQUFJLENBQUMsYUFBYTtZQUNwQyxPQUFPLEVBQUUsaUJBQWlCO1lBQzFCLEtBQUssRUFBRSxDQUFDO1NBQ1gsQ0FBQztRQUVGLE1BQU0sU0FBUyxHQUFHLE1BQU0sTUFBTSxDQUFDLGFBQWEsQ0FBQyxPQUFPLENBQUMsQ0FBQztRQUN0RCxPQUFPO1lBQ0gsT0FBTztZQUNQLFNBQVM7U0FDWixDQUFDO0lBQ04sQ0FBQztDQUFBO0FBekJELDRCQXlCQyJ9
