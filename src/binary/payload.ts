@@ -4,12 +4,12 @@ import { ITransactionPayload } from "../models/ITransactionPayload";
 import { ITypeBase } from "../models/ITypeBase";
 import { ReadBuffer } from "../utils/readBuffer";
 import { WriteBuffer } from "../utils/writeBuffer";
-import { STRING_LENGTH, TYPE_LENGTH, UINT32_SIZE, UINT64_SIZE } from "./common";
+import { BYTE_SIZE, STRING_LENGTH, TYPE_LENGTH, UINT32_SIZE, UINT64_SIZE } from "./common";
 import { deserializeTransactionEssence, serializeTransactionEssence } from "./transaction";
 import { deserializeUnlockBlocks, serializeUnlockBlocks } from "./unlockBlock";
 
 export const MIN_PAYLOAD_LENGTH: number = TYPE_LENGTH;
-export const MIN_MILESTONE_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + (2 * UINT64_SIZE) + (2 * 64);
+export const MIN_MILESTONE_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + (2 * UINT64_SIZE) + 64 + BYTE_SIZE;
 export const MIN_INDEXATION_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + STRING_LENGTH + STRING_LENGTH;
 export const MIN_TRANSACTION_PAYLOAD_LENGTH: number = MIN_PAYLOAD_LENGTH + UINT32_SIZE;
 
@@ -150,14 +150,18 @@ export function deserializeMilestonePayload(readBuffer: ReadBuffer): IMilestoneP
     const index = readBuffer.readUInt64("payloadMilestone.index");
     const timestamp = readBuffer.readUInt64("payloadMilestone.timestamp");
     const inclusionMerkleProof = readBuffer.readFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64);
-    const signature = readBuffer.readFixedBufferHex("payloadMilestone.signature", 64);
+    const signaturesCount = readBuffer.readByte("payloadMilestone.signaturesCount");
+    const signatures = [];
+    for (let i = 0; i < signaturesCount; i++) {
+        signatures.push(readBuffer.readFixedBufferHex("payloadMilestone.signature", 64));
+    }
 
     return {
         type,
         index: Number(index),
         timestamp: Number(timestamp),
         inclusionMerkleProof,
-        signature
+        signatures
     };
 }
 
@@ -172,7 +176,10 @@ export function serializeMilestonePayload(writeBuffer: WriteBuffer,
     writeBuffer.writeUInt64("payloadMilestone.index", BigInt(object.index));
     writeBuffer.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
     writeBuffer.writeFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64, object.inclusionMerkleProof);
-    writeBuffer.writeFixedBufferHex("payloadMilestone.signature", 64, object.signature);
+    writeBuffer.writeByte("payloadMilestone.signaturesCount", object.signatures.length);
+    for (let i = 0; i < object.signatures.length; i++) {
+        writeBuffer.writeFixedBufferHex("payloadMilestone.signature", 64, object.signatures[i]);
+    }
 }
 
 /**

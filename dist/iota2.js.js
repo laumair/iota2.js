@@ -981,7 +981,7 @@
     }
 
     var MIN_PAYLOAD_LENGTH = TYPE_LENGTH;
-    var MIN_MILESTONE_PAYLOAD_LENGTH = MIN_PAYLOAD_LENGTH + (2 * UINT64_SIZE) + (2 * 64);
+    var MIN_MILESTONE_PAYLOAD_LENGTH = MIN_PAYLOAD_LENGTH + (2 * UINT64_SIZE) + 64 + BYTE_SIZE;
     var MIN_INDEXATION_PAYLOAD_LENGTH = MIN_PAYLOAD_LENGTH + STRING_LENGTH + STRING_LENGTH;
     var MIN_TRANSACTION_PAYLOAD_LENGTH = MIN_PAYLOAD_LENGTH + UINT32_SIZE;
     /**
@@ -1103,13 +1103,17 @@
         var index = readBuffer.readUInt64("payloadMilestone.index");
         var timestamp = readBuffer.readUInt64("payloadMilestone.timestamp");
         var inclusionMerkleProof = readBuffer.readFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64);
-        var signature = readBuffer.readFixedBufferHex("payloadMilestone.signature", 64);
+        var signaturesCount = readBuffer.readByte("payloadMilestone.signaturesCount");
+        var signatures = [];
+        for (var i = 0; i < signaturesCount; i++) {
+            signatures.push(readBuffer.readFixedBufferHex("payloadMilestone.signature", 64));
+        }
         return {
             type: type,
             index: Number(index),
             timestamp: Number(timestamp),
             inclusionMerkleProof: inclusionMerkleProof,
-            signature: signature
+            signatures: signatures
         };
     }
     /**
@@ -1122,7 +1126,10 @@
         writeBuffer.writeUInt64("payloadMilestone.index", BigInt(object.index));
         writeBuffer.writeUInt64("payloadMilestone.timestamp", BigInt(object.timestamp));
         writeBuffer.writeFixedBufferHex("payloadMilestone.inclusionMerkleProof", 64, object.inclusionMerkleProof);
-        writeBuffer.writeFixedBufferHex("payloadMilestone.signature", 64, object.signature);
+        writeBuffer.writeByte("payloadMilestone.signaturesCount", object.signatures.length);
+        for (var i = 0; i < object.signatures.length; i++) {
+            writeBuffer.writeFixedBufferHex("payloadMilestone.signature", 64, object.signatures[i]);
+        }
     }
     /**
      * Deserialize the indexation payload from binary.
@@ -2172,7 +2179,7 @@
                 console.log(prefix + "\tIndex:", payload.index);
                 console.log(prefix + "\tTimestamp:", payload.timestamp);
                 console.log(prefix + "\tInclusion Merkle Proof:", payload.inclusionMerkleProof);
-                console.log(prefix + "\tSignature:", payload.signature);
+                console.log(prefix + "\tSignatures:", payload.signatures);
             }
             else if (unknownPayload.type === 2) {
                 var payload = unknownPayload;

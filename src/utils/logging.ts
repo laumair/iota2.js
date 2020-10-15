@@ -62,7 +62,7 @@ export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>):
             console.log(`${prefix}\tIndex:`, payload.index);
             console.log(`${prefix}\tTimestamp:`, payload.timestamp);
             console.log(`${prefix}\tInclusion Merkle Proof:`, payload.inclusionMerkleProof);
-            console.log(`${prefix}\tSignature:`, payload.signature);
+            console.log(`${prefix}\tSignatures:`, payload.signatures);
         } else if (unknownPayload.type === 2) {
             const payload = unknownPayload as IIndexationPayload;
             console.log(`${prefix}Indexation Payload`);

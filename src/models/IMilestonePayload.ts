@@ -20,7 +20,7 @@ export interface IMilestonePayload extends ITypeBase<1> {
     inclusionMerkleProof: string;
 
     /**
-     * The signature in Ed25519 format.
+     * The signatures.
      */
-    signature: string;
+    signatures: string[];
 }
