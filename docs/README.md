@@ -181,7 +181,7 @@
 <dt><a href="#send">send(client, seed, basePath, address, amount, startIndex)</a> ⇒</dt>
 <dd><p>Send a transfer from the balance on the seed.</p>
 </dd>
-<dt><a href="#sendAdvanced">sendAdvanced(client, seed, basePath, outputs, startIndex, indexation, indexationData)</a> ⇒</dt>
+<dt><a href="#sendAdvanced">sendAdvanced(client, seed, basePath, outputs, startIndex, index, data)</a> ⇒</dt>
 <dd><p>Send a transfer from the balance on the seed.</p>
 </dd>
 <dt><a href="#sendData">sendData(client, index, data)</a> ⇒</dt>
@@ -1658,7 +1658,7 @@ Send a transfer from the balance on the seed.
 
 <a name="sendAdvanced"></a>
 
-## sendAdvanced(client, seed, basePath, outputs, startIndex, indexation, indexationData) ⇒
+## sendAdvanced(client, seed, basePath, outputs, startIndex, index, data) ⇒
 Send a transfer from the balance on the seed.
 
 **Kind**: global function  
@@ -1671,8 +1671,8 @@ Send a transfer from the balance on the seed.
 | basePath | The base path to start looking for addresses. |
 | outputs | The outputs to send. |
 | startIndex | Optional start index for the wallet count address, defaults to 0. |
-| indexation | Optional indexation name. |
-| indexationData | Optional index data. |
+| index | Optional indexation name. |
+| data | Optional index data. |
 
 <a name="sendData"></a>
 

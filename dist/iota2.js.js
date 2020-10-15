@@ -1874,11 +1874,11 @@
      * @param basePath The base path to start looking for addresses.
      * @param outputs The outputs to send.
      * @param startIndex Optional start index for the wallet count address, defaults to 0.
-     * @param indexation Optional indexation name.
-     * @param indexationData Optional index data.
+     * @param index Optional indexation name.
+     * @param data Optional index data.
      * @returns The id of the message created and the remainder address if one was needed.
      */
-    function sendAdvanced(client, seed, basePath, outputs, startIndex, indexation, indexationData) {
+    function sendAdvanced(client, seed, basePath, outputs, startIndex, index, data) {
         return __awaiter(this, void 0, Promise, function () {
             var requiredBalance, localStartIndex, consumedBalance, inputsAndSignatureKeyPairs, finished, remainderKeyPair, addresses, _i, addresses_1, address, addressOutputIds, _a, _b, addressOutputId, addressOutput, input, writeBuffer, remainderAddress, outputsWithSerialization, _c, outputs_1, output, sigLockedOutput, writeBuffer, sortedInputs, sortedOutputs, transactionEssence, binaryEssenceBuffer, essenceFinalBuffer, unlockBlocks, addressToUnlockBlock, _d, sortedInputs_1, input, transactionPayload, tips, message, messageId;
             return __generator(this, function (_e) {
@@ -1986,11 +1986,11 @@
                             type: 0,
                             inputs: sortedInputs.map(function (i) { return i.input; }),
                             outputs: sortedOutputs.map(function (o) { return o.output; }),
-                            payload: indexation && indexationData
+                            payload: index && data
                                 ? {
                                     type: 2,
-                                    index: indexation,
-                                    data: indexationData.toString("hex")
+                                    index: index,
+                                    data: data.toString("hex")
                                 }
                                 : undefined
                         };

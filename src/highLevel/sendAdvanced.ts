@@ -24,8 +24,8 @@ import { getAddressesKeyPairs } from "./getAddressesKeyPairs";
  * @param basePath The base path to start looking for addresses.
  * @param outputs The outputs to send.
  * @param startIndex Optional start index for the wallet count address, defaults to 0.
- * @param indexation Optional indexation name.
- * @param indexationData Optional index data.
+ * @param index Optional indexation name.
+ * @param data Optional index data.
  * @returns The id of the message created and the remainder address if one was needed.
  */
 export async function sendAdvanced(
@@ -34,8 +34,8 @@ export async function sendAdvanced(
     basePath: Bip32Path,
     outputs: { address: string; amount: number }[],
     startIndex?: number,
-    indexation?: string,
-    indexationData?: Buffer): Promise<{
+    index?: string,
+    data?: Buffer): Promise<{
         messageId: string;
         message: IMessage;
         remainderAddress?: string;
@@ -145,11 +145,11 @@ export async function sendAdvanced(
         type: 0,
         inputs: sortedInputs.map(i => i.input),
         outputs: sortedOutputs.map(o => o.output),
-        payload: indexation && indexationData
+        payload: index && data
             ? {
                 type: 2,
-                index: indexation,
-                data: indexationData.toString("hex")
+                index,
+                data: data.toString("hex")
             }
             : undefined
     };

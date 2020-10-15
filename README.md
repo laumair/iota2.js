@@ -77,3 +77,4 @@ You can see the model definitions for the request and receive objects in the [ty
 Please find other examples in the [./examples](./examples) folder.
 * Simple - Performs basic API operations.
 * Transaction - Demonstrates how to send a transaction and call some of the other higher level functions.
+* Data - Storing and retrieving data on the tangle.
