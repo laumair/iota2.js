@@ -179,14 +179,14 @@
             consoleLog("New Address Balance", newAddressBalance);
 
             const unspentAddress = await Iota2.getUnspentAddress(client, newSeed, new Iota2.Bip32Path());
-            consoleLog("First Unspent Address", unspentAddress);
+            consoleLog("First Unspent Address", JSON.stringify(unspentAddress));
 
             const allUspentAddresses = await Iota2.getAllUnspentAddresses(client, newSeed, new Iota2.Bip32Path());
-            consoleLog("Unspent Addresses", allUspentAddresses);
+            consoleLog("Unspent Addresses", JSON.stringify(allUspentAddresses));
         }
 
         run()
-            .then(() => consoleLog("done"))
+            .then(() => consoleLog("Done"))
             .catch((err) => consoleLog(err.toString()));
 
     </script>

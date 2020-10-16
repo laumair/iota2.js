@@ -1999,7 +1999,7 @@
 	            const hex = val.toString(16);
 	            const buffer = Buffer.from(hex.padStart(width * 2, "0"), "hex");
 	            buffer.reverse();
-	            this._buffer.write(buffer.toString("hex"), this._writeIndex);
+	            this._buffer.write(buffer.toString("hex"), this._writeIndex, "hex");
 	        }
 	        this._writeIndex += 8;
 	    }
