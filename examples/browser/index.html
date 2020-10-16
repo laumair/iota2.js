@@ -1,0 +1,195 @@
+<html>
+
+<head>
+    <title>iota2.js Simple Browser Example</title>
+</head>
+
+<body>
+    <h1>iota2.js Simple Browser Example</h1>
+    <pre id="console"></pre>
+    <script src="../../dist/iota2.browser.js"></script>
+    <script>
+        function consoleLog(message, obj) {
+            const con = document.getElementById("console");
+            con.innerHTML += (message || "").replace("\t", "&nbsp;&nbsp;&nbsp;") + " " + (obj ?? "") + "<br/>";
+        }
+        function consoleLink(lnk) {
+            const con = document.getElementById("console");
+            con.innerHTML += `<a href="${lnk}" target="_blank">${lnk}</a><br/>`;
+        }
+
+        async function run() {
+            Iota2.setLogger(consoleLog);
+            const client = new Iota2.SingleNodeClient("http://localhost:14265");
+
+            const health = await client.health();
+            consoleLog("Is the node healthy", health ? "Yes" : "No");
+            consoleLog();
+
+            const info = await client.info();
+            consoleLog("Node Info");
+            consoleLog("\tName:", info.name);
+            consoleLog("\tVersion:", info.version);
+            consoleLog("\tIs Healthy:", info.isHealthy);
+            consoleLog("\tCoordinator Public Key:", info.coordinatorPublicKey);
+            consoleLog("\tLatest Milestone Message Id:", info.latestMilestoneMessageId);
+            consoleLog("\tLatest Milestone Index:", info.latestMilestoneIndex);
+            consoleLog("\tSolid Milestone Message Id:", info.solidMilestoneMessageId);
+            consoleLog("\tSolid Milestone Index:", info.solidMilestoneIndex);
+            consoleLog("\tPruning Index:", info.pruningIndex);
+            consoleLog("\tFeatures:", info.features);
+            consoleLog();
+
+            const tips = await client.tips();
+            consoleLog("Tips");
+            consoleLog("\tTip 1 Message Id:", tips.tip1MessageId);
+            consoleLog("\tTip 2 Message Id:", tips.tip2MessageId);
+            consoleLog();
+
+            const submitMessage = {
+                version: 1,
+                parent1MessageId: tips.tip1MessageId,
+                parent2MessageId: tips.tip2MessageId,
+                payload: {
+                    type: 2,
+                    index: "Foo",
+                    data: Iota2.Buffer.from("Bar").toString("hex")
+                }
+            };
+
+            const messageIdCreated = await client.messageSubmit(submitMessage);
+            consoleLog("Submit Message:");
+            consoleLog("\tMessage Id", messageIdCreated);
+            consoleLog();
+
+            const message = await client.message(messageIdCreated);
+            consoleLog("Get Message");
+            Iota2.logMessage("", message);
+            consoleLog();
+
+            const messageMetadata = await client.messageMetadata(messageIdCreated);
+            consoleLog("Message Metadata");
+            consoleLog("\tMessage Id:", messageMetadata.messageId);
+            consoleLog("\tParent 1 Message Id:", messageMetadata.parent1MessageId);
+            consoleLog("\tParent 2 Message Id:", messageMetadata.parent2MessageId);
+            consoleLog("\tIs Solid:", messageMetadata.isSolid);
+            consoleLog("\tReferenced By Milestone Index:", messageMetadata.referencedByMilestoneIndex);
+            consoleLog("\tLedger Inclusion State:", messageMetadata.ledgerInclusionState);
+            consoleLog("\tShould Promote:", messageMetadata.shouldPromote);
+            consoleLog("\tShould Reattach:", messageMetadata.shouldReattach);
+            consoleLog();
+
+            const messageRaw = await client.messageRaw(messageIdCreated);
+            consoleLog("Message Raw");
+            consoleLog("\tRaw:", messageRaw.toString("hex"));
+            consoleLog();
+
+            const decoded = Iota2.deserializeMessage(new Iota2.ReadBuffer(messageRaw));
+            consoleLog("Message Decoded");
+            Iota2.logMessage("", decoded);
+            consoleLog();
+
+            const messages = await client.messagesFind("Foo");
+            consoleLog("Messages");
+            consoleLog("\tIndex:", messages.index);
+            consoleLog("\tMax Results:", messages.maxResults);
+            consoleLog("\tCount:", messages.count);
+            consoleLog("\tMessage Ids:", messages.messageIds);
+            consoleLog();
+
+            const children = await client.messageChildren(tips.tip1MessageId);
+            consoleLog("Children");
+            consoleLog("\tMessage Id:", children.messageId);
+            consoleLog("\tMax Results:", children.maxResults);
+            consoleLog("\tCount:", children.count);
+            consoleLog("\tChildren Message Ids:", children.childrenMessageIds);
+            consoleLog();
+
+            const milestone = await client.milestone(info.latestMilestoneIndex);
+            consoleLog("Milestone");
+            consoleLog("\tMessage Index:", milestone.milestoneIndex);
+            consoleLog("\tMessage Id:", milestone.messageId);
+            consoleLog("\tTimestamp:", milestone.timestamp);
+            consoleLog();
+
+            const milestoneMessage = await client.message(milestone.messageId);
+            consoleLog("Milestone Message");
+            Iota2.logMessage("", milestoneMessage);
+            consoleLog();
+
+            const output = await client.output("00000000000000000000000000000000000000000000000000000000000000000000");
+            consoleLog("Output");
+            consoleLog("\tMessage Id:", output.messageId);
+            consoleLog("\tTransaction Id:", output.transactionId);
+            consoleLog("\tOutput Index:", output.outputIndex);
+            consoleLog("\tIs Spent:", output.isSpent);
+            Iota2.logOutput("\t", output.output);
+            consoleLog();
+
+            const address = await client.address(output.output.address.address);
+            consoleLog("Address");
+            consoleLog("\tAddress:", address.address);
+            consoleLog("\tMax Results:", address.maxResults);
+            consoleLog("\tCount:", address.count);
+            consoleLog("\tBalance:", address.balance);
+            consoleLog();
+
+            const addressOutputs = await client.addressOutputs(output.output.address.address);
+            consoleLog("Address Outputs");
+            consoleLog("\tAddress:", addressOutputs.address);
+            consoleLog("\tMax Results:", addressOutputs.maxResults);
+            consoleLog("\tCount:", addressOutputs.count);
+            consoleLog("\tOutput Ids:", addressOutputs.outputIds);
+            consoleLog();
+
+            const genesisSeed = Iota2.Ed25519Seed.fromString("256a818b2aac458941f7274985a410e57fb750f3a3a67969ece5bd9ae7eef5b2");
+            consoleLog("Genesis");
+            consoleLog("\tSeed:", genesisSeed.toString());
+
+            const genesisSeedKeyPair = genesisSeed.keyPair();
+            consoleLog("\tPrivate Key:", genesisSeedKeyPair.privateKey);
+            consoleLog("\tPublic Key:", genesisSeedKeyPair.publicKey);
+
+            const genesisAddressPath = new Iota2.Bip32Path("m/0");
+            const firstAddressSeed = genesisSeed.generateSeedFromPath(genesisAddressPath);
+            consoleLog(`\tAddress for ${genesisAddressPath.toString()}:`, Iota2.Ed25519.publicKeyToAddress(firstAddressSeed.keyPair().publicKey));
+            consoleLog();
+
+            const newSeed = Iota2.Ed25519Seed.fromString("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410");
+
+            const newAddressPath = new Iota2.Bip32Path("m/0");
+            const newAddressSeed = newSeed.generateSeedFromPath(newAddressPath);
+            const newAddress = Iota2.Ed25519.publicKeyToAddress(newAddressSeed.keyPair().publicKey);
+            consoleLog("New");
+            consoleLog("\tSeed:", newSeed.toString());
+            consoleLog(`\tAddress ${newAddressPath.toString()}:`, newAddress);
+            consoleLog();
+
+            const { messageId, remainderAddress } = await Iota2.sendAdvanced(client, genesisSeed, new Iota2.Bip32Path(), [
+                {
+                    address: newAddress,
+                    amount: 100
+                }
+            ], 0, "foo", Iota2.Buffer.from("bar"));
+
+            consoleLog("Created Message Id", messageId);
+            consoleLog("Remainder Address", remainderAddress);
+
+            const newAddressBalance = await Iota2.getBalance(client, newSeed, new Iota2.Bip32Path());
+            consoleLog("New Address Balance", newAddressBalance);
+
+            const unspentAddress = await Iota2.getUnspentAddress(client, newSeed, new Iota2.Bip32Path());
+            consoleLog("First Unspent Address", unspentAddress);
+
+            const allUspentAddresses = await Iota2.getAllUnspentAddresses(client, newSeed, new Iota2.Bip32Path());
+            consoleLog("Unspent Addresses", allUspentAddresses);
+        }
+
+        run()
+            .then(() => consoleLog("done"))
+            .catch((err) => consoleLog(err.toString()));
+
+    </script>
+</body>
+
+</html>

@@ -7,6 +7,7 @@ async function run() {
 
     const health = await client.health();
     console.log("Is the node healthy", health ? "Yes" : "No");
+    console.log();
 
     const info = await client.info();
     console.log("Node Info");
@@ -68,6 +69,7 @@ async function run() {
     const decoded = deserializeMessage(new ReadBuffer(messageRaw));
     console.log("Message Decoded");
     logMessage("", decoded);
+    console.log();
 
     const messages = await client.messagesFind("Foo");
     console.log("Messages");

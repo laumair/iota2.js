@@ -131,7 +131,18 @@ export class ReadBuffer {
             throw new Error(`${name} length ${8
                 } exceeds the remaining data ${this.unused()}`);
         }
-        const val = this._buffer.readBigUInt64LE(this._readIndex);
+
+        let val;
+
+        if (this._buffer.readBigUInt64LE) {
+            val = this._buffer.readBigUInt64LE(this._readIndex);
+        } else {
+            // Polyfill if buffer has no bigint support
+            const buffer = this._buffer.slice(this._readIndex, this._readIndex + 8);
+            buffer.reverse();
+            val = BigInt(`0x${buffer.toString("hex")}`);
+        }
+
         if (moveIndex) {
             this._readIndex += 8;
         }

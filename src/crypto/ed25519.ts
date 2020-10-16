@@ -52,7 +52,7 @@ export class Ed25519 {
      * @returns The address.
      */
     public static publicKeyToAddress(publicKey: string): string {
-        return Blake2b.sum256(publicKey);
+        return Blake2b.sum256(Buffer.from(publicKey, "hex")).toString("hex");
     }
 
     /**

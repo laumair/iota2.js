@@ -1,3 +1,4 @@
+export { Buffer } from "buffer";
 export * from "./api/clientError";
 export * from "./api/models/IAddress";
 export * from "./api/models/IAddressOutputs";

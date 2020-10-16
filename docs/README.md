@@ -187,6 +187,12 @@
 <dt><a href="#sendData">sendData(client, index, data)</a> ⇒</dt>
 <dd><p>Send a data message.</p>
 </dd>
+<dt><a href="#logger">logger(message, data)</a> ⇒</dt>
+<dd><p>The logger used by the log methods.</p>
+</dd>
+<dt><a href="#setLogger">setLogger(log)</a></dt>
+<dd><p>Set the logger for output.</p>
+</dd>
 <dt><a href="#logMessage">logMessage(prefix, message)</a></dt>
 <dd><p>Log a message to the console.</p>
 </dd>
@@ -1687,6 +1693,30 @@ Send a data message.
 | client | The client to send the transfer with. |
 | index | The index name. |
 | data | The index data. |
+
+<a name="logger"></a>
+
+## logger(message, data) ⇒
+The logger used by the log methods.
+
+**Kind**: global function  
+**Returns**: Nothing.  
+
+| Param | Description |
+| --- | --- |
+| message | The message to output. |
+| data | The data to output. |
+
+<a name="setLogger"></a>
+
+## setLogger(log)
+Set the logger for output.
+
+**Kind**: global function  
+
+| Param | Description |
+| --- | --- |
+| log | The logger. |
 
 <a name="logMessage"></a>
 

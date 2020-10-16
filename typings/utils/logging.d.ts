@@ -1,6 +1,11 @@
 import { IMessage } from "../models/IMessage";
 import { ITypeBase } from "../models/ITypeBase";
 /**
+ * Set the logger for output.
+ * @param log The logger.
+ */
+export declare function setLogger(log: (message: string, data?: unknown) => void): void;
+/**
  * Log a message to the console.
  * @param prefix The prefix for the output.
  * @param message The message to log.

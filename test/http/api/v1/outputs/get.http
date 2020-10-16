@@ -3,3 +3,4 @@
 ### Outputs data
 GET http://localhost:14265/api/v1/outputs/00000000000000000000000000000000000000000000000000000000000000000000
 Content-Type: application/json
+

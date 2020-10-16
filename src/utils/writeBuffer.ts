@@ -133,7 +133,16 @@ export class WriteBuffer {
     public writeUInt64(name: string, val: bigint): void {
         this.expand(8);
 
-        this._buffer.writeBigUInt64LE(val, this._writeIndex);
+        if (this._buffer.writeBigUInt64LE) {
+            this._buffer.writeBigUInt64LE(val, this._writeIndex);
+        } else {
+            // Polyfill if buffer has no bigint support
+            const width = 8;
+            const hex = val.toString(16);
+            const buffer = Buffer.from(hex.padStart(width * 2, "0"), "hex");
+            buffer.reverse();
+            this._buffer.write(buffer.toString("hex"), this._writeIndex);
+        }
         this._writeIndex += 8;
     }
 

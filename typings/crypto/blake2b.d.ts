@@ -1,3 +1,4 @@
+/// <reference types="node" />
 /**
  * Class to help with Blake2B Signature scheme.
  */
@@ -11,5 +12,5 @@ export declare class Blake2b {
      * @param data The data to operate on.
      * @returns The sum 256 of the data.
      */
-    static sum256(data: string): string;
+    static sum256(data: Buffer): Buffer;
 }

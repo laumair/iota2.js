@@ -14,7 +14,7 @@ export class Blake2b {
      * @param data The data to operate on.
      * @returns The sum 256 of the data.
      */
-    public static sum256(data: string): string {
-        return Buffer.from(blake2b(Buffer.from(data, "hex"), undefined, Blake2b.SIZE_256)).toString("hex");
+    public static sum256(data: Buffer): Buffer {
+        return Buffer.from(blake2b(data, undefined, Blake2b.SIZE_256));
     }
 }
