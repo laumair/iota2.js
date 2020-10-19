@@ -165,7 +165,7 @@
             consoleLog(`\tAddress ${newAddressPath.toString()}:`, newAddress);
             consoleLog();
 
-            const { messageId, remainderAddress } = await Iota2.sendAdvanced(client, genesisSeed, new Iota2.Bip32Path(), [
+            const { messageId } = await Iota2.sendAdvanced(client, genesisSeed, new Iota2.Bip32Path(), [
                 {
                     address: newAddress,
                     amount: 100
@@ -173,7 +173,6 @@
             ], 0, "foo", Iota2.Buffer.from("bar"));
 
             consoleLog("Created Message Id", messageId);
-            consoleLog("Remainder Address", remainderAddress);
 
             const newAddressBalance = await Iota2.getBalance(client, newSeed, new Iota2.Bip32Path());
             consoleLog("New Address Balance", newAddressBalance);
@@ -181,7 +180,7 @@
             const unspentAddress = await Iota2.getUnspentAddress(client, newSeed, new Iota2.Bip32Path());
             consoleLog("First Unspent Address", JSON.stringify(unspentAddress));
 
-            const allUspentAddresses = await Iota2.getAllUnspentAddresses(client, newSeed, new Iota2.Bip32Path());
+            const allUspentAddresses = await Iota2.getUnspentAddresses(client, newSeed, new Iota2.Bip32Path());
             consoleLog("Unspent Addresses", JSON.stringify(allUspentAddresses));
         }
 
