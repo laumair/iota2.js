@@ -12,5 +12,5 @@ import { ISeed } from "../models/ISeed";
 export declare function getUnspentAddress(client: IClient, seed: ISeed, basePath: Bip32Path, startIndex?: number): Promise<{
     address: string;
     index: number;
-    amount: number;
+    balance: number;
 } | undefined>;

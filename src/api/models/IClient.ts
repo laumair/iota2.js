@@ -68,10 +68,10 @@ export interface IClient {
 
     /**
      * Find messages by index.
-     * @param index The index value.
+     * @param idnexationKey The index value.
      * @returns The messageId.
      */
-    messagesFind(index: string): Promise<IMessages>;
+    messagesFind(idnexationKey: string): Promise<IMessages>;
 
     /**
      * Get the children of a message.

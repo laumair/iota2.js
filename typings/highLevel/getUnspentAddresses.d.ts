@@ -7,10 +7,11 @@ import { ISeed } from "../models/ISeed";
  * @param seed The seed to use for address generation.
  * @param basePath The base path to start looking for addresses.
  * @param startIndex Optional start index for the wallet count address, defaults to 0.
+ * @param countLimit Limit the number of items to find.
  * @returns All the unspent addresses.
  */
-export declare function getAllUnspentAddresses(client: IClient, seed: ISeed, basePath: Bip32Path, startIndex?: number): Promise<{
+export declare function getUnspentAddresses(client: IClient, seed: ISeed, basePath: Bip32Path, startIndex?: number, countLimit?: number): Promise<{
     address: string;
     index: number;
-    amount: number;
+    balance: number;
 }[]>;

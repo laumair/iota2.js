@@ -157,23 +157,20 @@
 <dt><a href="#serializeReferenceUnlockBlock">serializeReferenceUnlockBlock(writeBuffer, object)</a></dt>
 <dd><p>Serialize the reference unlock block to binary.</p>
 </dd>
-<dt><a href="#getAddressBalances">getAddressBalances(client, addresses)</a> ⇒</dt>
-<dd><p>Get the balance for a list of addresses.</p>
-</dd>
 <dt><a href="#getAddresses">getAddresses(seed, basePath, startIndex, count)</a> ⇒</dt>
 <dd><p>Generate a list of address key pairs.</p>
 </dd>
 <dt><a href="#getAddressesKeyPairs">getAddressesKeyPairs(seed, basePath, startIndex, count)</a> ⇒</dt>
 <dd><p>Generate a list of address key pairs.</p>
 </dd>
-<dt><a href="#getAllUnspentAddresses">getAllUnspentAddresses(client, seed, basePath, startIndex)</a> ⇒</dt>
-<dd><p>Get all the unspent addresses.</p>
-</dd>
 <dt><a href="#getBalance">getBalance(client, seed, basePath, startIndex)</a> ⇒</dt>
-<dd><p>Get the balance for the address.</p>
+<dd><p>Get the balance for a list of addresses.</p>
 </dd>
 <dt><a href="#getUnspentAddress">getUnspentAddress(client, seed, basePath, startIndex)</a> ⇒</dt>
 <dd><p>Get the first unspent address.</p>
+</dd>
+<dt><a href="#getUnspentAddresses">getUnspentAddresses(client, seed, basePath, startIndex, countLimit)</a> ⇒</dt>
+<dd><p>Get all the unspent addresses.</p>
 </dd>
 <dt><a href="#retrieveData">retrieveData(client, messageId)</a> ⇒</dt>
 <dd><p>Retrieve a data message.</p>
@@ -181,10 +178,10 @@
 <dt><a href="#send">send(client, seed, basePath, address, amount, startIndex)</a> ⇒</dt>
 <dd><p>Send a transfer from the balance on the seed.</p>
 </dd>
-<dt><a href="#sendAdvanced">sendAdvanced(client, seed, basePath, outputs, startIndex, index, data)</a> ⇒</dt>
+<dt><a href="#sendAdvanced">sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey, indexationData)</a> ⇒</dt>
 <dd><p>Send a transfer from the balance on the seed.</p>
 </dd>
-<dt><a href="#sendData">sendData(client, index, data)</a> ⇒</dt>
+<dt><a href="#sendData">sendData(client, indexationKey, indexationData)</a> ⇒</dt>
 <dd><p>Send a data message.</p>
 </dd>
 <dt><a href="#logger">logger(message, data)</a> ⇒</dt>
@@ -252,7 +249,7 @@ Client for API communication.
     * [.messageRaw(messageId)](#SingleNodeClient+messageRaw) ⇒
     * [.messageSubmit(message)](#SingleNodeClient+messageSubmit) ⇒
     * [.messageSubmitRaw(message)](#SingleNodeClient+messageSubmitRaw) ⇒
-    * [.messagesFind(index)](#SingleNodeClient+messagesFind) ⇒
+    * [.messagesFind(indexationKey)](#SingleNodeClient+messagesFind) ⇒
     * [.messageChildren(messageId)](#SingleNodeClient+messageChildren) ⇒
     * [.output(outputId)](#SingleNodeClient+output) ⇒
     * [.address(address)](#SingleNodeClient+address) ⇒
@@ -352,7 +349,7 @@ Submit message in raw format.
 
 <a name="SingleNodeClient+messagesFind"></a>
 
-### singleNodeClient.messagesFind(index) ⇒
+### singleNodeClient.messagesFind(indexationKey) ⇒
 Find messages by index.
 
 **Kind**: instance method of [<code>SingleNodeClient</code>](#SingleNodeClient)  
@@ -360,7 +357,7 @@ Find messages by index.
 
 | Param | Description |
 | --- | --- |
-| index | The index value. |
+| indexationKey | The index value. |
 
 <a name="SingleNodeClient+messageChildren"></a>
 
@@ -1544,19 +1541,6 @@ Serialize the reference unlock block to binary.
 | writeBuffer | The buffer to write the data to. |
 | object | The object to serialize. |
 
-<a name="getAddressBalances"></a>
-
-## getAddressBalances(client, addresses) ⇒
-Get the balance for a list of addresses.
-
-**Kind**: global function  
-**Returns**: The balances.  
-
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| addresses | The list of addresses to get the balance for. |
-
 <a name="getAddresses"></a>
 
 ## getAddresses(seed, basePath, startIndex, count) ⇒
@@ -1587,35 +1571,20 @@ Generate a list of address key pairs.
 | startIndex | <code>0</code> | The start index to generate from, defaults to 0. |
 | count |  | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
 
-<a name="getAllUnspentAddresses"></a>
-
-## getAllUnspentAddresses(client, seed, basePath, startIndex) ⇒
-Get all the unspent addresses.
-
-**Kind**: global function  
-**Returns**: All the unspent addresses.  
-
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| seed | The seed to use for address generation. |
-| basePath | The base path to start looking for addresses. |
-| startIndex | Optional start index for the wallet count address, defaults to 0. |
-
 <a name="getBalance"></a>
 
 ## getBalance(client, seed, basePath, startIndex) ⇒
-Get the balance for the address.
+Get the balance for a list of addresses.
 
 **Kind**: global function  
 **Returns**: The balance.  
 
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| seed | The seed to use for address generation. |
-| basePath | The base path to start looking for addresses. |
-| startIndex | Optional start index for the wallet count address, defaults to 0. |
+| Param | Default | Description |
+| --- | --- | --- |
+| client |  | The client to send the transfer with. |
+| seed |  | The seed. |
+| basePath |  | The base path to start looking for addresses. |
+| startIndex | <code>0</code> | The start index to generate from, defaults to 0. |
 
 <a name="getUnspentAddress"></a>
 
@@ -1631,6 +1600,22 @@ Get the first unspent address.
 | seed | The seed to use for address generation. |
 | basePath | The base path to start looking for addresses. |
 | startIndex | Optional start index for the wallet count address, defaults to 0. |
+
+<a name="getUnspentAddresses"></a>
+
+## getUnspentAddresses(client, seed, basePath, startIndex, countLimit) ⇒
+Get all the unspent addresses.
+
+**Kind**: global function  
+**Returns**: All the unspent addresses.  
+
+| Param | Description |
+| --- | --- |
+| client | The client to send the transfer with. |
+| seed | The seed to use for address generation. |
+| basePath | The base path to start looking for addresses. |
+| startIndex | Optional start index for the wallet count address, defaults to 0. |
+| countLimit | Limit the number of items to find. |
 
 <a name="retrieveData"></a>
 
@@ -1664,7 +1649,7 @@ Send a transfer from the balance on the seed.
 
 <a name="sendAdvanced"></a>
 
-## sendAdvanced(client, seed, basePath, outputs, startIndex, index, data) ⇒
+## sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey, indexationData) ⇒
 Send a transfer from the balance on the seed.
 
 **Kind**: global function  
@@ -1677,12 +1662,12 @@ Send a transfer from the balance on the seed.
 | basePath | The base path to start looking for addresses. |
 | outputs | The outputs to send. |
 | startIndex | Optional start index for the wallet count address, defaults to 0. |
-| index | Optional indexation name. |
-| data | Optional index data. |
+| indexationKey | Optional indexation key. |
+| indexationData | Optional index data. |
 
 <a name="sendData"></a>
 
-## sendData(client, index, data) ⇒
+## sendData(client, indexationKey, indexationData) ⇒
 Send a data message.
 
 **Kind**: global function  
@@ -1691,8 +1676,8 @@ Send a data message.
 | Param | Description |
 | --- | --- |
 | client | The client to send the transfer with. |
-| index | The index name. |
-| data | The index data. |
+| indexationKey | The index name. |
+| indexationData | The index data. |
 
 <a name="logger"></a>
 

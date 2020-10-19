@@ -10,15 +10,14 @@ import { ISeed } from "../models/ISeed";
  * @param basePath The base path to start looking for addresses.
  * @param outputs The outputs to send.
  * @param startIndex Optional start index for the wallet count address, defaults to 0.
- * @param index Optional indexation name.
- * @param data Optional index data.
+ * @param indexationKey Optional indexation key.
+ * @param indexationData Optional index data.
  * @returns The id of the message created and the remainder address if one was needed.
  */
 export declare function sendAdvanced(client: IClient, seed: ISeed, basePath: Bip32Path, outputs: {
     address: string;
     amount: number;
-}[], startIndex?: number, index?: string, data?: Buffer): Promise<{
+}[], startIndex?: number, indexationKey?: string, indexationData?: Buffer): Promise<{
     messageId: string;
     message: IMessage;
-    remainderAddress?: string;
 }>;

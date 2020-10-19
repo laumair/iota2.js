@@ -1,9 +1,7 @@
 import { IClient } from "../api/models/IClient";
 import { Bip32Path } from "../crypto/bip32Path";
-import { Ed25519 } from "../crypto/ed25519";
 import { ISeed } from "../models/ISeed";
-import { DEFAULT_CHUNK_SIZE } from "./common";
-import { getAddressesKeyPairs } from "./getAddressesKeyPairs";
+import { getUnspentAddresses } from "./getUnspentAddresses";
 
 /**
  * Get the first unspent address.
@@ -20,48 +18,9 @@ export async function getUnspentAddress(
     startIndex?: number): Promise<{
         address: string;
         index: number;
-        amount: number;
+        balance: number;
     } | undefined> {
-    let localStartIndex = startIndex ?? 0;
-    let finished = false;
-    let unspentAddress: string | undefined;
-    let unspentAddressIndex: number | undefined;
-    let unspentAmount = 0;
+    const allUnspent = await getUnspentAddresses(client, seed, basePath, startIndex, 1);
 
-    do {
-        const addresses = getAddressesKeyPairs(seed, basePath, localStartIndex, DEFAULT_CHUNK_SIZE);
-
-        for (let i = 0; i < addresses.length; i++) {
-            const addr = Ed25519.publicKeyToAddress(addresses[i].publicKey);
-            const addressOutputIds = await client.addressOutputs(addr);
-
-            if (addressOutputIds.outputIds.length === 0) {
-                finished = true;
-            } else {
-                for (const addressOutputId of addressOutputIds.outputIds) {
-                    const addressOutput = await client.output(addressOutputId);
-
-                    if (addressOutput.output.amount === 0) {
-                        finished = true;
-                    } else if (!addressOutput.isSpent) {
-                        unspentAddress = addr;
-                        unspentAddressIndex = localStartIndex + i;
-                        unspentAmount += addressOutput.output.amount;
-                    }
-                }
-            }
-
-            if (unspentAddress) {
-                finished = true;
-            }
-        }
-
-        localStartIndex += DEFAULT_CHUNK_SIZE;
-    } while (!finished);
-
-    return unspentAddress && unspentAddressIndex !== undefined ? {
-        address: unspentAddress,
-        index: unspentAddressIndex,
-        amount: unspentAmount
-    } : undefined;
+    return allUnspent.length > 0 ? allUnspent[0] : undefined;
 }

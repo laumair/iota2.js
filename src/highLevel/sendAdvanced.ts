@@ -14,8 +14,6 @@ import { ITransactionEssence } from "../models/ITransactionEssence";
 import { ITransactionPayload } from "../models/ITransactionPayload";
 import { IUTXOInput } from "../models/IUTXOInput";
 import { WriteBuffer } from "../utils/writeBuffer";
-import { DEFAULT_CHUNK_SIZE } from "./common";
-import { getAddressesKeyPairs } from "./getAddressesKeyPairs";
 
 /**
  * Send a transfer from the balance on the seed.
@@ -24,8 +22,8 @@ import { getAddressesKeyPairs } from "./getAddressesKeyPairs";
  * @param basePath The base path to start looking for addresses.
  * @param outputs The outputs to send.
  * @param startIndex Optional start index for the wallet count address, defaults to 0.
- * @param index Optional indexation name.
- * @param data Optional index data.
+ * @param indexationKey Optional indexation key.
+ * @param indexationData Optional index data.
  * @returns The id of the message created and the remainder address if one was needed.
  */
 export async function sendAdvanced(
@@ -34,11 +32,10 @@ export async function sendAdvanced(
     basePath: Bip32Path,
     outputs: { address: string; amount: number }[],
     startIndex?: number,
-    index?: string,
-    data?: Buffer): Promise<{
+    indexationKey?: string,
+    indexationData?: Buffer): Promise<{
         messageId: string;
         message: IMessage;
-        remainderAddress?: string;
     }> {
     if (!outputs || outputs.length === 0) {
         throw new Error("You must specify some outputs");
@@ -54,65 +51,57 @@ export async function sendAdvanced(
         serialized: string;
     }[] = [];
     let finished = false;
-    let remainderKeyPair: IKeyPair | undefined;
 
     do {
-        const addresses = getAddressesKeyPairs(seed, basePath, localStartIndex, DEFAULT_CHUNK_SIZE);
+        basePath.push(localStartIndex);
+        const addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
+        basePath.pop();
 
-        for (const address of addresses) {
-            const addressOutputIds = await client.addressOutputs(Ed25519.publicKeyToAddress(address.publicKey));
+        const address = Ed25519.publicKeyToAddress(addressKeyPair.publicKey);
+        const addressOutputIds = await client.addressOutputs(address);
 
-            if (addressOutputIds.outputIds.length === 0) {
-                finished = true;
-                remainderKeyPair = address;
-            } else {
-                for (const addressOutputId of addressOutputIds.outputIds) {
-                    const addressOutput = await client.output(addressOutputId);
+        for (const addressOutputId of addressOutputIds.outputIds) {
+            const addressOutput = await client.output(addressOutputId);
 
-                    if (addressOutput.isSpent) {
-                        if (addressOutput.output.amount !== 0) {
-                            throw new Error("Spent address");
-                        }
-                    } else if (addressOutput.output.amount !== 0) {
-                        if (consumedBalance < requiredBalance) {
-                            consumedBalance += addressOutput.output.amount;
+            if (!addressOutput.isSpent &&
+                addressOutput.output.amount !== 0 &&
+                consumedBalance < requiredBalance) {
+                consumedBalance += addressOutput.output.amount;
 
-                            const input: IUTXOInput = {
-                                type: 0,
-                                transactionId: addressOutput.transactionId,
-                                transactionOutputIndex: addressOutput.outputIndex
-                            };
+                const input: IUTXOInput = {
+                    type: 0,
+                    transactionId: addressOutput.transactionId,
+                    transactionOutputIndex: addressOutput.outputIndex
+                };
 
-                            const writeBuffer = new WriteBuffer();
-                            serializeInput(writeBuffer, input);
+                const writeBuffer = new WriteBuffer();
+                serializeInput(writeBuffer, input);
 
-                            inputsAndSignatureKeyPairs.push({
-                                input,
-                                addressKeyPair: address,
-                                serialized: writeBuffer.finalBuffer().toString("hex")
-                            });
-                        }
+                inputsAndSignatureKeyPairs.push({
+                    input,
+                    addressKeyPair,
+                    serialized: writeBuffer.finalBuffer().toString("hex")
+                });
+
+                if (consumedBalance >= requiredBalance) {
+                    // We didn't use all the balance from the last input
+                    // so return the rest to the same address.
+                    if (consumedBalance - requiredBalance > 0) {
+                        outputs.push({
+                            amount: consumedBalance - requiredBalance,
+                            address
+                        });
                     }
+                    finished = true;
                 }
             }
         }
 
-        localStartIndex += DEFAULT_CHUNK_SIZE;
+        localStartIndex++;
     } while (!finished);
 
     if (consumedBalance < requiredBalance) {
         throw new Error("There are not enough funds in the inputs for the required balance");
-    }
-
-    // We have consumed more than we need to so add a remainder output
-    // back to the address from the seed that didn't have any outputs or balance
-    let remainderAddress;
-    if (requiredBalance < consumedBalance && remainderKeyPair) {
-        remainderAddress = Ed25519.publicKeyToAddress(remainderKeyPair.publicKey);
-        outputs.push({
-            amount: consumedBalance - requiredBalance,
-            address: remainderAddress
-        });
     }
 
     const outputsWithSerialization: {
@@ -145,11 +134,11 @@ export async function sendAdvanced(
         type: 0,
         inputs: sortedInputs.map(i => i.input),
         outputs: sortedOutputs.map(o => o.output),
-        payload: index && data
+        payload: indexationKey && indexationData
             ? {
                 type: 2,
-                index,
-                data: data.toString("hex")
+                index: indexationKey,
+                data: indexationData.toString("hex")
             }
             : undefined
     };
@@ -209,7 +198,6 @@ export async function sendAdvanced(
 
     return {
         messageId,
-        message,
-        remainderAddress
+        message
     };
 }

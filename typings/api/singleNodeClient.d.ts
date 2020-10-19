@@ -70,10 +70,10 @@ export declare class SingleNodeClient implements IClient {
     messageSubmitRaw(message: Buffer): Promise<string>;
     /**
      * Find messages by index.
-     * @param index The index value.
+     * @param indexationKey The index value.
      * @returns The messageId.
      */
-    messagesFind(index: string): Promise<IMessages>;
+    messagesFind(indexationKey: string): Promise<IMessages>;
     /**
      * Get the children of a message.
      * @param messageId The id of the message to get the children for.

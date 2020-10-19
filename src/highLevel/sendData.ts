@@ -5,18 +5,18 @@ import { IMessage } from "../models/IMessage";
 /**
  * Send a data message.
  * @param client The client to send the transfer with.
- * @param index The index name.
- * @param data The index data.
+ * @param indexationKey The index name.
+ * @param indexationData The index data.
  * @returns The id of the message created and the message.
  */
-export async function sendData(client: IClient, index: string, data: Buffer): Promise<{
+export async function sendData(client: IClient, indexationKey: string, indexationData: Buffer): Promise<{
     message: IMessage;
     messageId: string;
 }> {
     const indexationPayload: IIndexationPayload = {
         type: 2,
-        index,
-        data: data.toString("hex")
+        index: indexationKey,
+        data: indexationData.toString("hex")
     };
 
     const tips = await client.tips();

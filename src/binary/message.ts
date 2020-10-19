@@ -9,6 +9,8 @@ const MIN_MESSAGE_LENGTH: number = BYTE_SIZE +
     MIN_PAYLOAD_LENGTH +
     UINT64_SIZE;
 
+const EMPTY_MESSAGE_ID_HEX: string = "0".repeat(MESSAGE_ID_LENGTH * 2);
+
 /**
  * Deserialize the message from binary.
  * @param readBuffer The message to deserialize.
@@ -56,8 +58,10 @@ export function serializeMessage(writeBuffer: WriteBuffer,
     object: IMessage): void {
     writeBuffer.writeByte("message.version", object.version);
 
-    writeBuffer.writeFixedBufferHex("message.parent1MessageId", MESSAGE_ID_LENGTH, object.parent1MessageId);
-    writeBuffer.writeFixedBufferHex("message.parent2MessageId", MESSAGE_ID_LENGTH, object.parent2MessageId);
+    writeBuffer.writeFixedBufferHex("message.parent1MessageId",
+        MESSAGE_ID_LENGTH, object.parent1MessageId ?? EMPTY_MESSAGE_ID_HEX);
+    writeBuffer.writeFixedBufferHex("message.parent2MessageId",
+        MESSAGE_ID_LENGTH, object.parent2MessageId ?? EMPTY_MESSAGE_ID_HEX);
 
     serializePayload(writeBuffer, object.payload);
 

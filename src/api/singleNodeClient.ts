@@ -117,13 +117,13 @@ export class SingleNodeClient implements IClient {
 
     /**
      * Find messages by index.
-     * @param index The index value.
+     * @param indexationKey The index value.
      * @returns The messageId.
      */
-    public async messagesFind(index: string): Promise<IMessages> {
+    public async messagesFind(indexationKey: string): Promise<IMessages> {
         return this.fetchJson<unknown, IMessages>(
             "get",
-            `/api/v1/messages?index=${encodeURIComponent(index)}`
+            `/api/v1/messages?index=${encodeURIComponent(indexationKey)}`
         );
     }
 

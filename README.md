@@ -57,12 +57,11 @@ These methods are also implemented.
 
 There are also high level operations:
 
-* getAddressBalances - Get the balance for a list of addresses.
 * getAddresses - Given a seed, path, start index and count, generate the addresses.
 * getAddressesKeyPairs - Given a seed, path, start index and count, generate the address key pairs.
-* getAllUnspentAddresses - Given a seed, path, and start index find all the unspent addresses.
-* getBalance - Given a seed, path, and start index calculate the balance for the seed.
+* getBalance - Given a seed, path calcualte the total balance available on it's addresses.
 * getUnspentAddress - Given a seed, path, and start index find the next unspent address.
+* getUnspentAddresses - Given a seed, path, and start index find all the unspent addresses.
 * retrieveData - Given a message id return the index and data from it.
 * send - Given a seed, path, destination address and amount make a single transfer.
 * sendAdvanced - Given a seed, path, list of destinations make multiple transfers, can also include index data.
@@ -78,3 +77,9 @@ Please find other examples in the [./examples](./examples) folder.
 * Simple - Performs basic API operations.
 * Transaction - Demonstrates how to send a transaction and call some of the other higher level functions.
 * Data - Storing and retrieving data on the tangle.
+
+## Notes
+
+We are using Seed + Bip32 indexing for addresses, so the default address for a seed is calculated from path `m/0`, this is different from the default genesis balance address in Hornet, so it will not currently work.
+
+To remedy this modify your hornet `create_snapshot_alphanet.sh` script and change `6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92` to `625d17d4a4b21cd5edeb57544b9d2d66ce22985fb61f17d1d7cae958d0068618`, you will then need to clean the DB and bootstrap the hornet node again.

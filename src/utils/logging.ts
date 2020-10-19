@@ -16,7 +16,8 @@ import { IUTXOInput } from "../models/IUTXOInput";
  * @param data The data to output.
  * @returns Nothing.
  */
-let logger: (message: string, data?: unknown) => void = (message: string, data: unknown) => console.log(message, data);
+let logger: (message: string, data?: unknown) => void = (message: string, data: unknown) =>
+    (data ? console.log(message, data) : console.log(message));
 
 /**
  * Set the logger for output.
