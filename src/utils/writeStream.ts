@@ -1,18 +1,20 @@
+/* eslint-disable no-bitwise */
 import { isHex } from "../binary/common";
+import { Converter } from "./converter";
 
 /**
- * Keep track of the write index within a buffer.
+ * Keep track of the write index within a stream.
  */
-export class WriteBuffer {
+export class WriteStream {
     /**
-     * Chunk size to expand the buffer.
+     * Chunk size to expand the storage.
      */
     private static readonly CHUNK_SIZE: number = 4096;
 
     /**
-     * The buffer.
+     * The storage.
      */
-    private _buffer: Buffer;
+    private _storage: Uint8Array;
 
     /**
      * The current write index.
@@ -20,19 +22,19 @@ export class WriteBuffer {
     private _writeIndex: number;
 
     /**
-     * Create a new instance of ReadBuffer.
+     * Create a new instance of ReadStream.
      */
     constructor() {
-        this._buffer = Buffer.alloc(WriteBuffer.CHUNK_SIZE);
+        this._storage = new Uint8Array(WriteStream.CHUNK_SIZE);
         this._writeIndex = 0;
     }
 
     /**
-     * Get the length of the buffer.
-     * @returns The buffer length.
+     * Get the length of the stream.
+     * @returns The stream length.
      */
     public length(): number {
-        return this._buffer.length;
+        return this._storage.length;
     }
 
     /**
@@ -40,15 +42,23 @@ export class WriteBuffer {
      * @returns The amount of unused data.
      */
     public unused(): number {
-        return this._buffer.length - this._writeIndex;
+        return this._storage.length - this._writeIndex;
     }
 
     /**
-     * Get the final buffer.
-     * @returns The final buffer.
+     * Get the final stream as bytes.
+     * @returns The final stream.
      */
-    public finalBuffer(): Buffer {
-        return this._buffer.slice(0, this._writeIndex);
+    public finalBytes(): Uint8Array {
+        return this._storage.subarray(0, this._writeIndex);
+    }
+
+    /**
+     * Get the final stream as hex.
+     * @returns The final stream as hex.
+     */
+    public finalHex(): string {
+        return Converter.bytesToHex(this._storage.subarray(0, this._writeIndex));
     }
 
     /**
@@ -68,12 +78,12 @@ export class WriteBuffer {
     }
 
     /**
-     * Write fixed length buffer.
+     * Write fixed length stream.
      * @param name The name of the data we are trying to write.
      * @param length The length of the data to write.
      * @param val The data to write.
      */
-    public writeFixedBufferHex(name: string, length: number, val: string): void {
+    public writeFixedHex(name: string, length: number, val: string): void {
         if (!isHex(val)) {
             throw new Error(`The ${val} should be in hex format`);
         }
@@ -85,69 +95,64 @@ export class WriteBuffer {
 
         this.expand(length);
 
-        this._buffer.write(val, this._writeIndex, "hex");
+        this._storage.set(Converter.hexToBytes(val), this._writeIndex);
         this._writeIndex += length;
     }
 
     /**
-     * Write a byte to the buffer.
+     * Write a byte to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     public writeByte(name: string, val: number): void {
         this.expand(1);
 
-        this._buffer.writeUInt8(val, this._writeIndex);
-        this._writeIndex += 1;
+        this._storage[this._writeIndex++] = val & 0xFF;
     }
 
     /**
-     * Write a UInt16 to the buffer.
+     * Write a UInt16 to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     public writeUInt16(name: string, val: number): void {
         this.expand(2);
 
-        this._buffer.writeUInt16LE(val, this._writeIndex);
-        this._writeIndex += 2;
+        this._storage[this._writeIndex++] = val & 0xFF;
+        this._storage[this._writeIndex++] = val >>> 8;
     }
 
     /**
-     * Write a UInt32 to the buffer.
+     * Write a UInt32 to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     public writeUInt32(name: string, val: number): void {
         this.expand(4);
 
-        this._buffer.writeUInt32LE(val, this._writeIndex);
-        this._writeIndex += 4;
+        this._storage[this._writeIndex++] = val & 0xFF;
+        this._storage[this._writeIndex++] = val >>> 8;
+        this._storage[this._writeIndex++] = val >>> 16;
+        this._storage[this._writeIndex++] = val >>> 24;
     }
 
     /**
-     * Write a UInt64 to the buffer.
+     * Write a UInt64 to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     public writeUInt64(name: string, val: bigint): void {
         this.expand(8);
 
-        if (this._buffer.writeBigUInt64LE) {
-            this._buffer.writeBigUInt64LE(val, this._writeIndex);
-        } else {
-            // Polyfill if buffer has no bigint support
-            const width = 8;
-            const hex = val.toString(16);
-            const buffer = Buffer.from(hex.padStart(width * 2, "0"), "hex");
-            buffer.reverse();
-            this._buffer.write(buffer.toString("hex"), this._writeIndex, "hex");
-        }
+        const hex = val.toString(16).padStart(16, "0");
+        const arr = Converter.hexToBytes(hex, true);
+        this._storage.set(arr, this._writeIndex);
+
         this._writeIndex += 8;
     }
 
     /**
-     * Write a string to the buffer.
+     * Write a string to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      * @returns The string.
@@ -156,19 +161,22 @@ export class WriteBuffer {
         this.writeUInt16(name, val.length);
 
         this.expand(val.length);
-        this._buffer.write(val, this._writeIndex);
+
+        this._storage.set(Converter.asciiToBytes(val), this._writeIndex);
         this._writeIndex += val.length;
 
         return val;
     }
 
     /**
-     * Expand the buffer if there is not enough spave.
+     * Expand the storage if there is not enough spave.
      * @param additional The amount of space needed.
      */
     private expand(additional: number): void {
-        if (this._writeIndex + additional > this._buffer.byteLength) {
-            this._buffer = Buffer.concat([this._buffer, Buffer.alloc(WriteBuffer.CHUNK_SIZE)]);
+        if (this._writeIndex + additional > this._storage.byteLength) {
+            const newArr = new Uint8Array(this._storage.length + WriteStream.CHUNK_SIZE);
+            newArr.set(this._storage, 0);
+            this._storage = newArr;
         }
     }
 }

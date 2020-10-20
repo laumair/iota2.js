@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IMessage } from "../../models/IMessage";
 import { IAddress } from "./IAddress";
 import { IAddressOutputs } from "./IAddressOutputs";
@@ -45,7 +44,7 @@ export interface IClient {
      * @param messageId The message to get the data for.
      * @returns The message raw data.
      */
-    messageRaw(messageId: string): Promise<Buffer>;
+    messageRaw(messageId: string): Promise<Uint8Array>;
     /**
      * Submit message.
      * @param message The message to submit.
@@ -57,7 +56,7 @@ export interface IClient {
      * @param message The message to submit.
      * @returns The messageId.
      */
-    messageSubmitRaw(message: Buffer): Promise<string>;
+    messageSubmitRaw(message: Uint8Array): Promise<string>;
     /**
      * Find messages by index.
      * @param idnexationKey The index value.

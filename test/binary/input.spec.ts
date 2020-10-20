@@ -1,8 +1,9 @@
 /* eslint-disable max-len */
 import { deserializeInput, deserializeInputs, deserializeUTXOInput, serializeInput, serializeInputs, serializeUTXOInput } from "../../src/binary/input";
 import { IUTXOInput } from "../../src/models/IUTXOInput";
-import { ReadBuffer } from "../../src/utils/readBuffer";
-import { WriteBuffer } from "../../src/utils/writeBuffer";
+import { Converter } from "../../src/utils/converter";
+import { ReadStream } from "../../src/utils/readStream";
+import { WriteStream } from "../../src/utils/writeStream";
 
 describe("Binary Input", () => {
     test("Can serialize and deserialize inputs", () => {
@@ -19,11 +20,11 @@ describe("Binary Input", () => {
             }
         ];
 
-        const serialized = new WriteBuffer();
+        const serialized = new WriteStream();
         serializeInputs(serialized, inputs);
-        const hex = serialized.finalBuffer().toString("hex");
+        const hex = serialized.finalHex();
         expect(hex).toEqual("0200006920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f923930004566920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1a05b");
-        const deserialized = deserializeInputs(new ReadBuffer(Buffer.from(hex, "hex")));
+        const deserialized = deserializeInputs(new ReadStream(Converter.hexToBytes(hex)));
         expect(deserialized.length).toEqual(2);
         expect(deserialized[0].type).toEqual(0);
         expect(deserialized[0].transactionId).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
@@ -40,11 +41,11 @@ describe("Binary Input", () => {
             transactionOutputIndex: 12345
         };
 
-        const serialized = new WriteBuffer();
+        const serialized = new WriteStream();
         serializeInput(serialized, object);
-        const hex = serialized.finalBuffer().toString("hex");
+        const hex = serialized.finalHex();
         expect(hex).toEqual("006920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f923930");
-        const deserialized = deserializeInput(new ReadBuffer(Buffer.from(hex, "hex")));
+        const deserialized = deserializeInput(new ReadStream(Converter.hexToBytes(hex)));
         expect(deserialized.type).toEqual(0);
         expect(deserialized.transactionId).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
         expect(deserialized.transactionOutputIndex).toEqual(12345);
@@ -57,11 +58,11 @@ describe("Binary Input", () => {
             transactionOutputIndex: 12345
         };
 
-        const serialized = new WriteBuffer();
+        const serialized = new WriteStream();
         serializeUTXOInput(serialized, object);
-        const hex = serialized.finalBuffer().toString("hex");
+        const hex = serialized.finalHex();
         expect(hex).toEqual("006920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f923930");
-        const deserialized = deserializeUTXOInput(new ReadBuffer(Buffer.from(hex, "hex")));
+        const deserialized = deserializeUTXOInput(new ReadStream(Converter.hexToBytes(hex)));
         expect(deserialized.type).toEqual(0);
         expect(deserialized.transactionId).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
         expect(deserialized.transactionOutputIndex).toEqual(12345);

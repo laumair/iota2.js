@@ -1,27 +1,26 @@
-/// <reference types="node" />
 /**
- * Keep track of the write index within a buffer.
+ * Keep track of the write index within a stream.
  */
-export declare class WriteBuffer {
+export declare class WriteStream {
     /**
-     * Chunk size to expand the buffer.
+     * Chunk size to expand the storage.
      */
     private static readonly CHUNK_SIZE;
     /**
-     * The buffer.
+     * The storage.
      */
-    private _buffer;
+    private _storage;
     /**
      * The current write index.
      */
     private _writeIndex;
     /**
-     * Create a new instance of ReadBuffer.
+     * Create a new instance of ReadStream.
      */
     constructor();
     /**
-     * Get the length of the buffer.
-     * @returns The buffer length.
+     * Get the length of the stream.
+     * @returns The stream length.
      */
     length(): number;
     /**
@@ -30,10 +29,15 @@ export declare class WriteBuffer {
      */
     unused(): number;
     /**
-     * Get the final buffer.
-     * @returns The final buffer.
+     * Get the final stream as bytes.
+     * @returns The final stream.
      */
-    finalBuffer(): Buffer;
+    finalBytes(): Uint8Array;
+    /**
+     * Get the final stream as hex.
+     * @returns The final stream as hex.
+     */
+    finalHex(): string;
     /**
      * Get the current write index.
      * @returns The current write index.
@@ -45,45 +49,45 @@ export declare class WriteBuffer {
      */
     setWriteIndex(writeIndex: number): void;
     /**
-     * Write fixed length buffer.
+     * Write fixed length stream.
      * @param name The name of the data we are trying to write.
      * @param length The length of the data to write.
      * @param val The data to write.
      */
-    writeFixedBufferHex(name: string, length: number, val: string): void;
+    writeFixedHex(name: string, length: number, val: string): void;
     /**
-     * Write a byte to the buffer.
+     * Write a byte to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     writeByte(name: string, val: number): void;
     /**
-     * Write a UInt16 to the buffer.
+     * Write a UInt16 to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     writeUInt16(name: string, val: number): void;
     /**
-     * Write a UInt32 to the buffer.
+     * Write a UInt32 to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     writeUInt32(name: string, val: number): void;
     /**
-     * Write a UInt64 to the buffer.
+     * Write a UInt64 to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      */
     writeUInt64(name: string, val: bigint): void;
     /**
-     * Write a string to the buffer.
+     * Write a string to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
      * @returns The string.
      */
     writeString(name: string, val: string): string;
     /**
-     * Expand the buffer if there is not enough spave.
+     * Expand the storage if there is not enough spave.
      * @param additional The amount of space needed.
      */
     private expand;

@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Bip32Path } from "../crypto/bip32Path";
 import { IKeyPair } from "./IKeyPair";
 /**
@@ -20,7 +19,7 @@ export interface ISeed {
      * Return the key as bytes.
      * @returns The key as bytes.
      */
-    toBytes(): Buffer;
+    toBytes(): Uint8Array;
     /**
      * Return the key as string.
      * @returns The key as string.

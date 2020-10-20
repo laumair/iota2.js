@@ -9,6 +9,7 @@ import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
 import { ITransactionPayload } from "../models/ITransactionPayload";
 import { ITypeBase } from "../models/ITypeBase";
 import { IUTXOInput } from "../models/IUTXOInput";
+import { Converter } from "./converter";
 
 /**
  * The logger used by the log methods.
@@ -17,7 +18,7 @@ import { IUTXOInput } from "../models/IUTXOInput";
  * @returns Nothing.
  */
 let logger: (message: string, data?: unknown) => void = (message: string, data: unknown) =>
-    (data ? console.log(message, data) : console.log(message));
+    (data !== undefined ? console.log(message, data) : console.log(message));
 
 /**
  * Set the logger for output.
@@ -84,7 +85,7 @@ export function logPayload(prefix: string, unknownPayload?: ITypeBase<unknown>):
             const payload = unknownPayload as IIndexationPayload;
             logger(`${prefix}Indexation Payload`);
             logger(`${prefix}\tIndex:`, payload.index);
-            logger(`${prefix}\tData:`, Buffer.from(payload.data, "hex").toString());
+            logger(`${prefix}\tData:`, Converter.hexToAscii(payload.data));
         }
     }
 }

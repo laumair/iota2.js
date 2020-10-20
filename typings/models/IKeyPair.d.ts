@@ -5,9 +5,9 @@ export interface IKeyPair {
     /**
      * The public key.
      */
-    publicKey: string;
+    publicKey: Uint8Array;
     /**
      * The private key.
      */
-    privateKey: string;
+    privateKey: Uint8Array;
 }

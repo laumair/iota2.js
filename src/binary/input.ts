@@ -1,7 +1,7 @@
 import { ITypeBase } from "../models/ITypeBase";
 import { IUTXOInput } from "../models/IUTXOInput";
-import { ReadBuffer } from "../utils/readBuffer";
-import { WriteBuffer } from "../utils/writeBuffer";
+import { ReadStream } from "../utils/readStream";
+import { WriteStream } from "../utils/writeStream";
 import { SMALL_TYPE_LENGTH, TRANSACTION_ID_LENGTH, UINT16_SIZE } from "./common";
 
 export const MIN_INPUT_LENGTH: number = SMALL_TYPE_LENGTH;
@@ -9,15 +9,15 @@ export const MIN_UTXO_INPUT_LENGTH: number = MIN_INPUT_LENGTH + TRANSACTION_ID_L
 
 /**
  * Deserialize the inputs from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeInputs(readBuffer: ReadBuffer): IUTXOInput[] {
-    const numInputs = readBuffer.readUInt16("inputs.numInputs");
+export function deserializeInputs(readStream: ReadStream): IUTXOInput[] {
+    const numInputs = readStream.readUInt16("inputs.numInputs");
 
     const inputs: IUTXOInput[] = [];
     for (let i = 0; i < numInputs; i++) {
-        inputs.push(deserializeInput(readBuffer));
+        inputs.push(deserializeInput(readStream));
     }
 
     return inputs;
@@ -25,34 +25,34 @@ export function deserializeInputs(readBuffer: ReadBuffer): IUTXOInput[] {
 
 /**
  * Serialize the inputs to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param objects The objects to serialize.
  */
-export function serializeInputs(writeBuffer: WriteBuffer,
+export function serializeInputs(writeStream: WriteStream,
     objects: IUTXOInput[]): void {
-    writeBuffer.writeUInt16("inputs.numInputs", objects.length);
+    writeStream.writeUInt16("inputs.numInputs", objects.length);
 
     for (let i = 0; i < objects.length; i++) {
-        serializeInput(writeBuffer, objects[i]);
+        serializeInput(writeStream, objects[i]);
     }
 }
 
 /**
  * Deserialize the input from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeInput(readBuffer: ReadBuffer): IUTXOInput {
-    if (!readBuffer.hasRemaining(MIN_INPUT_LENGTH)) {
-        throw new Error(`Input data is ${readBuffer.length()
+export function deserializeInput(readStream: ReadStream): IUTXOInput {
+    if (!readStream.hasRemaining(MIN_INPUT_LENGTH)) {
+        throw new Error(`Input data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_INPUT_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("input.type", false);
+    const type = readStream.readByte("input.type", false);
     let input;
 
     if (type === 0) {
-        input = deserializeUTXOInput(readBuffer);
+        input = deserializeUTXOInput(readStream);
     } else {
         throw new Error(`Unrecognized input type ${type}`);
     }
@@ -62,13 +62,13 @@ export function deserializeInput(readBuffer: ReadBuffer): IUTXOInput {
 
 /**
  * Serialize the input to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeInput(writeBuffer: WriteBuffer,
+export function serializeInput(writeStream: WriteStream,
     object: IUTXOInput): void {
     if (object.type === 0) {
-        serializeUTXOInput(writeBuffer, object);
+        serializeUTXOInput(writeStream, object);
     } else {
         throw new Error(`Unrecognized input type ${(object as ITypeBase<unknown>).type}`);
     }
@@ -76,22 +76,22 @@ export function serializeInput(writeBuffer: WriteBuffer,
 
 /**
  * Deserialize the utxo input from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeUTXOInput(readBuffer: ReadBuffer): IUTXOInput {
-    if (!readBuffer.hasRemaining(MIN_UTXO_INPUT_LENGTH)) {
-        throw new Error(`UTXO Input data is ${readBuffer.length()
+export function deserializeUTXOInput(readStream: ReadStream): IUTXOInput {
+    if (!readStream.hasRemaining(MIN_UTXO_INPUT_LENGTH)) {
+        throw new Error(`UTXO Input data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_UTXO_INPUT_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("utxoInput.type");
+    const type = readStream.readByte("utxoInput.type");
     if (type !== 0) {
         throw new Error(`Type mismatch in utxoInput ${type}`);
     }
 
-    const transactionId = readBuffer.readFixedBufferHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH);
-    const transactionOutputIndex = readBuffer.readUInt16("utxoInput.transactionOutputIndex");
+    const transactionId = readStream.readFixedHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH);
+    const transactionOutputIndex = readStream.readUInt16("utxoInput.transactionOutputIndex");
 
     return {
         type,
@@ -102,12 +102,12 @@ export function deserializeUTXOInput(readBuffer: ReadBuffer): IUTXOInput {
 
 /**
  * Serialize the utxo input to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeUTXOInput(writeBuffer: WriteBuffer,
+export function serializeUTXOInput(writeStream: WriteStream,
     object: IUTXOInput): void {
-    writeBuffer.writeByte("utxoInput.type", object.type);
-    writeBuffer.writeFixedBufferHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH, object.transactionId);
-    writeBuffer.writeUInt16("utxoInput.transactionOutputIndex", object.transactionOutputIndex);
+    writeStream.writeByte("utxoInput.type", object.type);
+    writeStream.writeFixedHex("utxoInput.transactionId", TRANSACTION_ID_LENGTH, object.transactionId);
+    writeStream.writeUInt16("utxoInput.transactionOutputIndex", object.transactionOutputIndex);
 }

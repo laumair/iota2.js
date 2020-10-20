@@ -1,4 +1,5 @@
 import * as nacl from "tweetnacl";
+import { ArrayHelper } from "../utils/arrayHelper";
 import { Blake2b } from "./blake2b";
 
 /**
@@ -31,8 +32,8 @@ export class Ed25519 {
      * @param data The data to sign.
      * @returns The signature.
      */
-    public static signData(privateKey: string, data: Buffer): string {
-        return Buffer.from(nacl.sign.detached(data, Buffer.from(privateKey, "hex"))).toString("hex");
+    public static signData(privateKey: Uint8Array, data: Uint8Array): Uint8Array {
+        return nacl.sign.detached(data, privateKey);
     }
 
     /**
@@ -42,8 +43,8 @@ export class Ed25519 {
      * @param data The data to verify.
      * @returns True if the data and address is verified.
      */
-    public static verifyData(publicKey: string, signature: string, data: Buffer): boolean {
-        return nacl.sign.detached.verify(data, Buffer.from(signature, "hex"), Buffer.from(publicKey, "hex"));
+    public static verifyData(publicKey: Uint8Array, signature: Uint8Array, data: Uint8Array): boolean {
+        return nacl.sign.detached.verify(data, signature, publicKey);
     }
 
     /**
@@ -51,8 +52,8 @@ export class Ed25519 {
      * @param publicKey The public key to convert.
      * @returns The address.
      */
-    public static publicKeyToAddress(publicKey: string): string {
-        return Blake2b.sum256(Buffer.from(publicKey, "hex")).toString("hex");
+    public static publicKeyToAddress(publicKey: Uint8Array): Uint8Array {
+        return Blake2b.sum256(publicKey);
     }
 
     /**
@@ -61,8 +62,7 @@ export class Ed25519 {
      * @param address The address to verify.
      * @returns True if the data and address is verified.
      */
-    public static verifyAddress(publicKey: string, address: string): boolean {
-        const addressFromPublicKey = Ed25519.publicKeyToAddress(publicKey);
-        return addressFromPublicKey === address;
+    public static verifyAddress(publicKey: Uint8Array, address: Uint8Array): boolean {
+        return ArrayHelper.equal(Ed25519.publicKeyToAddress(publicKey), address);
     }
 }

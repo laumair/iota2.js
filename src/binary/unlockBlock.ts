@@ -1,8 +1,8 @@
 import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
 import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
 import { ITypeBase } from "../models/ITypeBase";
-import { ReadBuffer } from "../utils/readBuffer";
-import { WriteBuffer } from "../utils/writeBuffer";
+import { ReadStream } from "../utils/readStream";
+import { WriteStream } from "../utils/writeStream";
 import { SMALL_TYPE_LENGTH, UINT16_SIZE } from "./common";
 import { deserializeSignature, MIN_SIGNATURE_LENGTH, serializeSignature } from "./signature";
 
@@ -13,50 +13,50 @@ export const MIN_REFERENCE_UNLOCK_BLOCK_LENGTH: number = MIN_UNLOCK_BLOCK_LENGTH
 
 /**
  * Deserialize the unlock blocks from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeUnlockBlocks(readBuffer: ReadBuffer): (IReferenceUnlockBlock | ISignatureUnlockBlock)[] {
-    const numUnlockBlocks = readBuffer.readUInt16("transactionEssence.numUnlockBlocks");
+export function deserializeUnlockBlocks(readStream: ReadStream): (IReferenceUnlockBlock | ISignatureUnlockBlock)[] {
+    const numUnlockBlocks = readStream.readUInt16("transactionEssence.numUnlockBlocks");
     const unlockBlocks: (IReferenceUnlockBlock | ISignatureUnlockBlock)[] = [];
     for (let i = 0; i < numUnlockBlocks; i++) {
-        unlockBlocks.push(deserializeUnlockBlock(readBuffer));
+        unlockBlocks.push(deserializeUnlockBlock(readStream));
     }
     return unlockBlocks;
 }
 
 /**
  * Serialize the unlock blocks to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param objects The objects to serialize.
  */
-export function serializeUnlockBlocks(writeBuffer: WriteBuffer,
+export function serializeUnlockBlocks(writeStream: WriteStream,
     objects: (IReferenceUnlockBlock | ISignatureUnlockBlock)[]): void {
-    writeBuffer.writeUInt16("transactionEssence.numUnlockBlocks", objects.length);
+    writeStream.writeUInt16("transactionEssence.numUnlockBlocks", objects.length);
 
     for (let i = 0; i < objects.length; i++) {
-        serializeUnlockBlock(writeBuffer, objects[i]);
+        serializeUnlockBlock(writeStream, objects[i]);
     }
 }
 
 /**
  * Deserialize the unlock block from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeUnlockBlock(readBuffer: ReadBuffer): IReferenceUnlockBlock | ISignatureUnlockBlock {
-    if (!readBuffer.hasRemaining(MIN_UNLOCK_BLOCK_LENGTH)) {
-        throw new Error(`Unlock Block data is ${readBuffer.length()
+export function deserializeUnlockBlock(readStream: ReadStream): IReferenceUnlockBlock | ISignatureUnlockBlock {
+    if (!readStream.hasRemaining(MIN_UNLOCK_BLOCK_LENGTH)) {
+        throw new Error(`Unlock Block data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_UNLOCK_BLOCK_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("unlockBlock.type", false);
+    const type = readStream.readByte("unlockBlock.type", false);
     let unlockBlock;
 
     if (type === 0) {
-        unlockBlock = deserializeSignatureUnlockBlock(readBuffer);
+        unlockBlock = deserializeSignatureUnlockBlock(readStream);
     } else if (type === 1) {
-        unlockBlock = deserializeReferenceUnlockBlock(readBuffer);
+        unlockBlock = deserializeReferenceUnlockBlock(readStream);
     } else {
         throw new Error(`Unrecognized unlock block type ${type}`);
     }
@@ -66,15 +66,15 @@ export function deserializeUnlockBlock(readBuffer: ReadBuffer): IReferenceUnlock
 
 /**
  * Serialize the unlock block to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeUnlockBlock(writeBuffer: WriteBuffer,
+export function serializeUnlockBlock(writeStream: WriteStream,
     object: IReferenceUnlockBlock | ISignatureUnlockBlock): void {
     if (object.type === 0) {
-        serializeSignatureUnlockBlock(writeBuffer, object);
+        serializeSignatureUnlockBlock(writeStream, object);
     } else if (object.type === 1) {
-        serializeReferenceUnlockBlock(writeBuffer, object);
+        serializeReferenceUnlockBlock(writeStream, object);
     } else {
         throw new Error(`Unrecognized unlock block type ${(object as ITypeBase<unknown>).type}`);
     }
@@ -82,21 +82,21 @@ export function serializeUnlockBlock(writeBuffer: WriteBuffer,
 
 /**
  * Deserialize the signature unlock block from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeSignatureUnlockBlock(readBuffer: ReadBuffer): ISignatureUnlockBlock {
-    if (!readBuffer.hasRemaining(MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH)) {
-        throw new Error(`Signature Unlock Block data is ${readBuffer.length()
+export function deserializeSignatureUnlockBlock(readStream: ReadStream): ISignatureUnlockBlock {
+    if (!readStream.hasRemaining(MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH)) {
+        throw new Error(`Signature Unlock Block data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_SIGNATURE_UNLOCK_BLOCK_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("signatureUnlockBlock.type");
+    const type = readStream.readByte("signatureUnlockBlock.type");
     if (type !== 0) {
         throw new Error(`Type mismatch in signatureUnlockBlock ${type}`);
     }
 
-    const signature = deserializeSignature(readBuffer);
+    const signature = deserializeSignature(readStream);
 
     return {
         type,
@@ -106,32 +106,32 @@ export function deserializeSignatureUnlockBlock(readBuffer: ReadBuffer): ISignat
 
 /**
  * Serialize the signature unlock block to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeSignatureUnlockBlock(writeBuffer: WriteBuffer,
+export function serializeSignatureUnlockBlock(writeStream: WriteStream,
     object: ISignatureUnlockBlock): void {
-    writeBuffer.writeByte("signatureUnlockBlock.type", object.type);
-    serializeSignature(writeBuffer, object.signature);
+    writeStream.writeByte("signatureUnlockBlock.type", object.type);
+    serializeSignature(writeStream, object.signature);
 }
 
 /**
  * Deserialize the reference unlock block from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeReferenceUnlockBlock(readBuffer: ReadBuffer): IReferenceUnlockBlock {
-    if (!readBuffer.hasRemaining(MIN_REFERENCE_UNLOCK_BLOCK_LENGTH)) {
-        throw new Error(`Reference Unlock Block data is ${readBuffer.length()
+export function deserializeReferenceUnlockBlock(readStream: ReadStream): IReferenceUnlockBlock {
+    if (!readStream.hasRemaining(MIN_REFERENCE_UNLOCK_BLOCK_LENGTH)) {
+        throw new Error(`Reference Unlock Block data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_REFERENCE_UNLOCK_BLOCK_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("referenceUnlockBlock.type");
+    const type = readStream.readByte("referenceUnlockBlock.type");
     if (type !== 1) {
         throw new Error(`Type mismatch in referenceUnlockBlock ${type}`);
     }
 
-    const reference = readBuffer.readUInt16("referenceUnlockBlock.reference");
+    const reference = readStream.readUInt16("referenceUnlockBlock.reference");
 
     return {
         type,
@@ -141,11 +141,11 @@ export function deserializeReferenceUnlockBlock(readBuffer: ReadBuffer): IRefere
 
 /**
  * Serialize the reference unlock block to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeReferenceUnlockBlock(writeBuffer: WriteBuffer,
+export function serializeReferenceUnlockBlock(writeStream: WriteStream,
     object: IReferenceUnlockBlock): void {
-    writeBuffer.writeByte("referenceUnlockBlock.type", object.type);
-    writeBuffer.writeUInt16("referenceUnlockBlock.reference", object.reference);
+    writeStream.writeByte("referenceUnlockBlock.type", object.type);
+    writeStream.writeUInt16("referenceUnlockBlock.reference", object.reference);
 }

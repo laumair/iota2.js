@@ -1,7 +1,8 @@
 import { deserializeAddress, deserializeEd25519Address, serializeAddress, serializeEd25519Address } from "../../src/binary/address";
 import { IEd25519Address } from "../../src/models/IEd25519Address";
-import { ReadBuffer } from "../../src/utils/readBuffer";
-import { WriteBuffer } from "../../src/utils/writeBuffer";
+import { Converter } from "../../src/utils/converter";
+import { ReadStream } from "../../src/utils/readStream";
+import { WriteStream } from "../../src/utils/writeStream";
 
 describe("Binary Address", () => {
     test("Can serialize and deserialize address", () => {
@@ -10,11 +11,11 @@ describe("Binary Address", () => {
             address: "6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92"
         };
 
-        const serialized = new WriteBuffer();
+        const serialized = new WriteStream();
         serializeAddress(serialized, object);
-        const hex = serialized.finalBuffer().toString("hex");
+        const hex = serialized.finalHex();
         expect(hex).toEqual("016920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
-        const deserialized = deserializeAddress(new ReadBuffer(Buffer.from(hex, "hex")));
+        const deserialized = deserializeAddress(new ReadStream(Converter.hexToBytes(hex)));
         expect(deserialized.type).toEqual(1);
         expect(deserialized.address).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
     });
@@ -25,11 +26,11 @@ describe("Binary Address", () => {
             address: "6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92"
         };
 
-        const serialized = new WriteBuffer();
+        const serialized = new WriteStream();
         serializeEd25519Address(serialized, object);
-        const hex = serialized.finalBuffer().toString("hex");
+        const hex = serialized.finalHex();
         expect(hex).toEqual("016920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
-        const deserialized = deserializeEd25519Address(new ReadBuffer(Buffer.from(hex, "hex")));
+        const deserialized = deserializeEd25519Address(new ReadStream(Converter.hexToBytes(hex)));
         expect(deserialized.type).toEqual(1);
         expect(deserialized.address).toEqual("6920b176f613ec7be59e68fc68f597eb3393af80f74c7c3db78198147d5f1f92");
     });

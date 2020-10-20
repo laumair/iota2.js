@@ -1,16 +1,16 @@
 import { ITransactionEssence } from "../models/ITransactionEssence";
-import { ReadBuffer } from "../utils/readBuffer";
-import { WriteBuffer } from "../utils/writeBuffer";
+import { ReadStream } from "../utils/readStream";
+import { WriteStream } from "../utils/writeStream";
 export declare const MIN_TRANSACTION_ESSENCE_LENGTH: number;
 /**
  * Deserialize the transaction essence from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export declare function deserializeTransactionEssence(readBuffer: ReadBuffer): ITransactionEssence;
+export declare function deserializeTransactionEssence(readStream: ReadStream): ITransactionEssence;
 /**
  * Serialize the transaction essence to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export declare function serializeTransactionEssence(writeBuffer: WriteBuffer, object: ITransactionEssence): void;
+export declare function serializeTransactionEssence(writeStream: WriteStream, object: ITransactionEssence): void;

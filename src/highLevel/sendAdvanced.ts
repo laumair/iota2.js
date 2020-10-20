@@ -13,7 +13,8 @@ import { ISignatureUnlockBlock } from "../models/ISignatureUnlockBlock";
 import { ITransactionEssence } from "../models/ITransactionEssence";
 import { ITransactionPayload } from "../models/ITransactionPayload";
 import { IUTXOInput } from "../models/IUTXOInput";
-import { WriteBuffer } from "../utils/writeBuffer";
+import { Converter } from "../utils/converter";
+import { WriteStream } from "../utils/writeStream";
 
 /**
  * Send a transfer from the balance on the seed.
@@ -33,7 +34,7 @@ export async function sendAdvanced(
     outputs: { address: string; amount: number }[],
     startIndex?: number,
     indexationKey?: string,
-    indexationData?: Buffer): Promise<{
+    indexationData?: Uint8Array): Promise<{
         messageId: string;
         message: IMessage;
     }> {
@@ -57,7 +58,7 @@ export async function sendAdvanced(
         const addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
         basePath.pop();
 
-        const address = Ed25519.publicKeyToAddress(addressKeyPair.publicKey);
+        const address = Converter.bytesToHex(Ed25519.publicKeyToAddress(addressKeyPair.publicKey));
         const addressOutputIds = await client.addressOutputs(address);
 
         for (const addressOutputId of addressOutputIds.outputIds) {
@@ -74,13 +75,13 @@ export async function sendAdvanced(
                     transactionOutputIndex: addressOutput.outputIndex
                 };
 
-                const writeBuffer = new WriteBuffer();
-                serializeInput(writeBuffer, input);
+                const writeStream = new WriteStream();
+                serializeInput(writeStream, input);
 
                 inputsAndSignatureKeyPairs.push({
                     input,
                     addressKeyPair,
-                    serialized: writeBuffer.finalBuffer().toString("hex")
+                    serialized: writeStream.finalHex()
                 });
 
                 if (consumedBalance >= requiredBalance) {
@@ -118,11 +119,11 @@ export async function sendAdvanced(
             },
             amount: output.amount
         };
-        const writeBuffer = new WriteBuffer();
-        serializeOutput(writeBuffer, sigLockedOutput);
+        const writeStream = new WriteStream();
+        serializeOutput(writeStream, sigLockedOutput);
         outputsWithSerialization.push({
             output: sigLockedOutput,
-            serialized: writeBuffer.finalBuffer().toString("hex")
+            serialized: writeStream.finalHex()
         });
     }
 
@@ -138,14 +139,14 @@ export async function sendAdvanced(
             ? {
                 type: 2,
                 index: indexationKey,
-                data: indexationData.toString("hex")
+                data: Converter.bytesToHex(indexationData)
             }
             : undefined
     };
 
-    const binaryEssenceBuffer = new WriteBuffer();
-    serializeTransactionEssence(binaryEssenceBuffer, transactionEssence);
-    const essenceFinalBuffer = binaryEssenceBuffer.finalBuffer();
+    const binaryEssence = new WriteStream();
+    serializeTransactionEssence(binaryEssence, transactionEssence);
+    const essenceFinal = binaryEssence.finalBytes();
 
     // Create the unlock blocks
     const unlockBlocks: (ISignatureUnlockBlock | IReferenceUnlockBlock)[] = [];
@@ -157,21 +158,24 @@ export async function sendAdvanced(
     } = {};
 
     for (const input of sortedInputs) {
-        if (addressToUnlockBlock[input.addressKeyPair.publicKey]) {
+        const hexInputAddressPublic = Converter.bytesToHex(input.addressKeyPair.publicKey);
+        if (addressToUnlockBlock[hexInputAddressPublic]) {
             unlockBlocks.push({
                 type: 1,
-                reference: addressToUnlockBlock[input.addressKeyPair.publicKey].unlockIndex
+                reference: addressToUnlockBlock[hexInputAddressPublic].unlockIndex
             });
         } else {
             unlockBlocks.push({
                 type: 0,
                 signature: {
                     type: 1,
-                    publicKey: input.addressKeyPair.publicKey,
-                    signature: Ed25519.signData(input.addressKeyPair.privateKey, essenceFinalBuffer)
+                    publicKey: hexInputAddressPublic,
+                    signature: Converter.bytesToHex(
+                        Ed25519.signData(input.addressKeyPair.privateKey, essenceFinal)
+                    )
                 }
             });
-            addressToUnlockBlock[input.addressKeyPair.publicKey] = {
+            addressToUnlockBlock[hexInputAddressPublic] = {
                 keyPair: input.addressKeyPair,
                 unlockIndex: unlockBlocks.length - 1
             };

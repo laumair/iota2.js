@@ -10,9 +10,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Buffer = void 0;
-var buffer_1 = require("buffer");
-Object.defineProperty(exports, "Buffer", { enumerable: true, get: function () { return buffer_1.Buffer; } });
 __exportStar(require("./api/clientError"), exports);
 __exportStar(require("./api/models/IAddress"), exports);
 __exportStar(require("./api/models/IAddressOutputs"), exports);
@@ -40,6 +37,8 @@ __exportStar(require("./crypto/bip32Path"), exports);
 __exportStar(require("./crypto/blake2b"), exports);
 __exportStar(require("./crypto/ed25519"), exports);
 __exportStar(require("./crypto/ed25519Seed"), exports);
+__exportStar(require("./crypto/hmacSha512"), exports);
+__exportStar(require("./crypto/sha512"), exports);
 __exportStar(require("./crypto/slip0010"), exports);
 __exportStar(require("./highLevel/common"), exports);
 __exportStar(require("./highLevel/getBalance"), exports);
@@ -65,7 +64,8 @@ __exportStar(require("./models/ITransactionEssence"), exports);
 __exportStar(require("./models/ITransactionPayload"), exports);
 __exportStar(require("./models/ITypeBase"), exports);
 __exportStar(require("./models/IUTXOInput"), exports);
+__exportStar(require("./utils/converter"), exports);
 __exportStar(require("./utils/logging"), exports);
-__exportStar(require("./utils/readBuffer"), exports);
-__exportStar(require("./utils/writeBuffer"), exports);
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7OztBQUFBLGlDQUFnQztBQUF2QixnR0FBQSxNQUFNLE9BQUE7QUFDZixvREFBa0M7QUFDbEMsd0RBQXNDO0FBQ3RDLCtEQUE2QztBQUM3Qyx5REFBdUM7QUFDdkMsdURBQXFDO0FBQ3JDLHFEQUFtQztBQUNuQywwREFBd0M7QUFDeEMsZ0VBQThDO0FBQzlDLHlEQUF1QztBQUN2QywwREFBd0M7QUFDeEMsdURBQXFDO0FBQ3JDLHlEQUF1QztBQUN2QyxxREFBbUM7QUFDbkMseURBQXVDO0FBQ3ZDLG1EQUFpQztBQUNqQyxrREFBZ0M7QUFDaEMsaURBQStCO0FBQy9CLG1EQUFpQztBQUNqQyxrREFBZ0M7QUFDaEMsbURBQWlDO0FBQ2pDLHFEQUFtQztBQUNuQyx1REFBcUM7QUFDckMsdURBQXFDO0FBQ3JDLHFEQUFtQztBQUNuQyxtREFBaUM7QUFDakMsbURBQWlDO0FBQ2pDLHVEQUFxQztBQUNyQyxvREFBa0M7QUFDbEMscURBQW1DO0FBQ25DLHlEQUF1QztBQUN2QywyREFBeUM7QUFDekMsbUVBQWlEO0FBQ2pELGtFQUFnRDtBQUNoRCxnRUFBOEM7QUFDOUMsMkRBQXlDO0FBQ3pDLG1EQUFpQztBQUNqQywyREFBeUM7QUFDekMsdURBQXFDO0FBQ3JDLDJEQUF5QztBQUN6Qyw2REFBMkM7QUFDM0MsOERBQTRDO0FBQzVDLG9EQUFrQztBQUNsQyxvREFBa0M7QUFDbEMsNkRBQTJDO0FBQzNDLGlFQUErQztBQUMvQyxpREFBK0I7QUFDL0Isa0VBQWdEO0FBQ2hELGlFQUErQztBQUMvQywrREFBNkM7QUFDN0MsK0RBQTZDO0FBQzdDLHFEQUFtQztBQUNuQyxzREFBb0M7QUFDcEMsa0RBQWdDO0FBQ2hDLHFEQUFtQztBQUNuQyxzREFBb0MifQ==
+__exportStar(require("./utils/readStream"), exports);
+__exportStar(require("./utils/writeStream"), exports);
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5kZXguanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi9zcmMvaW5kZXgudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7O0FBQUEsb0RBQWtDO0FBQ2xDLHdEQUFzQztBQUN0QywrREFBNkM7QUFDN0MseURBQXVDO0FBQ3ZDLHVEQUFxQztBQUNyQyxxREFBbUM7QUFDbkMsMERBQXdDO0FBQ3hDLGdFQUE4QztBQUM5Qyx5REFBdUM7QUFDdkMsMERBQXdDO0FBQ3hDLHVEQUFxQztBQUNyQyx5REFBdUM7QUFDdkMscURBQW1DO0FBQ25DLHlEQUF1QztBQUN2QyxtREFBaUM7QUFDakMsa0RBQWdDO0FBQ2hDLGlEQUErQjtBQUMvQixtREFBaUM7QUFDakMsa0RBQWdDO0FBQ2hDLG1EQUFpQztBQUNqQyxxREFBbUM7QUFDbkMsdURBQXFDO0FBQ3JDLHVEQUFxQztBQUNyQyxxREFBbUM7QUFDbkMsbURBQWlDO0FBQ2pDLG1EQUFpQztBQUNqQyx1REFBcUM7QUFDckMsc0RBQW9DO0FBQ3BDLGtEQUFnQztBQUNoQyxvREFBa0M7QUFDbEMscURBQW1DO0FBQ25DLHlEQUF1QztBQUN2QywyREFBeUM7QUFDekMsbUVBQWlEO0FBQ2pELGtFQUFnRDtBQUNoRCxnRUFBOEM7QUFDOUMsMkRBQXlDO0FBQ3pDLG1EQUFpQztBQUNqQywyREFBeUM7QUFDekMsdURBQXFDO0FBQ3JDLDJEQUF5QztBQUN6Qyw2REFBMkM7QUFDM0MsOERBQTRDO0FBQzVDLG9EQUFrQztBQUNsQyxvREFBa0M7QUFDbEMsNkRBQTJDO0FBQzNDLGlFQUErQztBQUMvQyxpREFBK0I7QUFDL0Isa0VBQWdEO0FBQ2hELGlFQUErQztBQUMvQywrREFBNkM7QUFDN0MsK0RBQTZDO0FBQzdDLHFEQUFtQztBQUNuQyxzREFBb0M7QUFDcEMsb0RBQWtDO0FBQ2xDLGtEQUFnQztBQUNoQyxxREFBbUM7QUFDbkMsc0RBQW9DIn0=

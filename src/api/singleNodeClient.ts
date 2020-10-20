@@ -1,4 +1,3 @@
-import fetch from "cross-fetch";
 import { IClient } from "../api/models/IClient";
 import { IMessageId } from "../api/models/IMessageId";
 import { IMessage } from "../models/IMessage";
@@ -13,6 +12,7 @@ import { IMilestone } from "./models/IMilestone";
 import { IOutput } from "./models/IOutput";
 import { IResponse } from "./models/IResponse";
 import { ITips } from "./models/ITips";
+
 
 /**
  * Client for API communication.
@@ -89,7 +89,7 @@ export class SingleNodeClient implements IClient {
      * @param messageId The message to get the data for.
      * @returns The message raw data.
      */
-    public async messageRaw(messageId: string): Promise<Buffer> {
+    public async messageRaw(messageId: string): Promise<Uint8Array> {
         return this.fetchBinary("get", `/api/v1/messages/${messageId}/raw`);
     }
 
@@ -109,7 +109,7 @@ export class SingleNodeClient implements IClient {
      * @param message The message to submit.
      * @returns The messageId.
      */
-    public async messageSubmitRaw(message: Buffer): Promise<string> {
+    public async messageSubmitRaw(message: Uint8Array): Promise<string> {
         const response = await this.fetchBinary<IMessageId>("post", "/api/v1/messages", message);
 
         return (response as IMessageId).messageId;
@@ -246,7 +246,10 @@ export class SingleNodeClient implements IClient {
      * @returns The response.
      * @private
      */
-    private async fetchBinary<T>(method: "get" | "post", route: string, requestData?: Buffer): Promise<Buffer | T> {
+    private async fetchBinary<T>(
+        method: "get" | "post",
+        route: string,
+        requestData?: Uint8Array): Promise<Uint8Array | T> {
         const response = await fetch(
             `${this._endpoint}${route}`,
             {
@@ -261,7 +264,7 @@ export class SingleNodeClient implements IClient {
         let responseData: IResponse<T> | undefined;
         if (response.ok) {
             if (method === "get") {
-                return Buffer.from(await response.arrayBuffer());
+                return new Uint8Array(await response.arrayBuffer());
             }
             responseData = await response.json();
 

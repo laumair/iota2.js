@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IClient } from "../api/models/IClient";
 import { Bip32Path } from "../crypto/bip32Path";
 import { IMessage } from "../models/IMessage";
@@ -17,7 +16,7 @@ import { ISeed } from "../models/ISeed";
 export declare function sendAdvanced(client: IClient, seed: ISeed, basePath: Bip32Path, outputs: {
     address: string;
     amount: number;
-}[], startIndex?: number, indexationKey?: string, indexationData?: Buffer): Promise<{
+}[], startIndex?: number, indexationKey?: string, indexationData?: Uint8Array): Promise<{
     messageId: string;
     message: IMessage;
 }>;

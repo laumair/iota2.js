@@ -1,11 +1,15 @@
+/* eslint-disable no-bitwise */
+
+import { Converter } from "./converter";
+
 /**
- * Keep track of the read index within a buffer.
+ * Keep track of the read index within a stream.
  */
-export class ReadBuffer {
+export class ReadStream {
     /**
-     * The buffer.
+     * The storage.
      */
-    private readonly _buffer: Buffer;
+    private readonly _storage: Uint8Array;
 
     /**
      * The current read index.
@@ -13,30 +17,30 @@ export class ReadBuffer {
     private _readIndex: number;
 
     /**
-     * Create a new instance of ReadBuffer.
-     * @param buffer The buffer to access.
+     * Create a new instance of ReadStream.
+     * @param storage The data to access.
      * @param readStartIndex The index to start the reading from.
      */
-    constructor(buffer: Buffer, readStartIndex: number = 0) {
-        this._buffer = buffer;
+    constructor(storage: Uint8Array, readStartIndex: number = 0) {
+        this._storage = new Uint8Array(storage);
         this._readIndex = readStartIndex;
     }
 
     /**
-     * Get the length of the buffer.
-     * @returns The buffer length.
+     * Get the length of the storage.
+     * @returns The storage length.
      */
     public length(): number {
-        return this._buffer.length;
+        return this._storage.byteLength;
     }
 
     /**
-     * Does the buffer have enough data remaining.
+     * Does the storage have enough data remaining.
      * @param remaining The amount of space needed.
      * @returns True if it has enough data.
      */
     public hasRemaining(remaining: number): boolean {
-        return this._readIndex + remaining <= this._buffer.length;
+        return this._readIndex + remaining <= this._storage.byteLength;
     }
 
     /**
@@ -44,30 +48,30 @@ export class ReadBuffer {
      * @returns The amount of unused data.
      */
     public unused(): number {
-        return this._buffer.length - this._readIndex;
+        return this._storage.byteLength - this._readIndex;
     }
 
     /**
-     * Read fixed length buffer.
+     * Read fixed length as hex.
      * @param name The name of the data we are trying to read.
      * @param length The length of the data to read.
      * @param moveIndex Move the index pointer on.
-     * @returns The buffer.
+     * @returns The hex formatted data.
      */
-    public readFixedBufferHex(name: string, length: number, moveIndex: boolean = true): string {
+    public readFixedHex(name: string, length: number, moveIndex: boolean = true): string {
         if (!this.hasRemaining(length)) {
             throw new Error(`${name} length ${length
                 } exceeds the remaining data ${this.unused()}`);
         }
-        const val = this._buffer.slice(this._readIndex, this._readIndex + length);
+        const hex = Converter.bytesToHex(this._storage, this._readIndex, length);
         if (moveIndex) {
             this._readIndex += length;
         }
-        return val.toString("hex");
+        return hex;
     }
 
     /**
-     * Read a byte from the buffer.
+     * Read a byte from the stream.
      * @param name The name of the data we are trying to read.
      * @param moveIndex Move the index pointer on.
      * @returns The value.
@@ -77,7 +81,7 @@ export class ReadBuffer {
             throw new Error(`${name} length ${1
                 } exceeds the remaining data ${this.unused()}`);
         }
-        const val = this._buffer.readUInt8(this._readIndex);
+        const val = this._storage[this._readIndex];
         if (moveIndex) {
             this._readIndex += 1;
         }
@@ -85,7 +89,7 @@ export class ReadBuffer {
     }
 
     /**
-     * Read a UInt16 from the buffer.
+     * Read a UInt16 from the stream.
      * @param name The name of the data we are trying to read.
      * @param moveIndex Move the index pointer on.
      * @returns The value.
@@ -95,7 +99,10 @@ export class ReadBuffer {
             throw new Error(`${name} length ${2
                 } exceeds the remaining data ${this.unused()}`);
         }
-        const val = this._buffer.readUInt16LE(this._readIndex);
+        const val =
+            this._storage[this._readIndex] |
+            (this._storage[this._readIndex + 1] << 8);
+
         if (moveIndex) {
             this._readIndex += 2;
         }
@@ -103,7 +110,7 @@ export class ReadBuffer {
     }
 
     /**
-     * Read a UInt32 from the buffer.
+     * Read a UInt32 from the stream.
      * @param name The name of the data we are trying to read.
      * @param moveIndex Move the index pointer on.
      * @returns The value.
@@ -113,7 +120,13 @@ export class ReadBuffer {
             throw new Error(`${name} length ${4
                 } exceeds the remaining data ${this.unused()}`);
         }
-        const val = this._buffer.readUInt32LE(this._readIndex);
+
+        const val =
+            (this._storage[this._readIndex]) |
+            (this._storage[this._readIndex + 1] * 0x100) |
+            (this._storage[this._readIndex + 2] * 0x10000) +
+            (this._storage[this._readIndex + 3] * 0x1000000);
+
         if (moveIndex) {
             this._readIndex += 4;
         }
@@ -121,7 +134,7 @@ export class ReadBuffer {
     }
 
     /**
-     * Read a UInt64 from the buffer.
+     * Read a UInt64 from the stream.
      * @param name The name of the data we are trying to read.
      * @param moveIndex Move the index pointer on.
      * @returns The value.
@@ -132,16 +145,8 @@ export class ReadBuffer {
                 } exceeds the remaining data ${this.unused()}`);
         }
 
-        let val;
-
-        if (this._buffer.readBigUInt64LE) {
-            val = this._buffer.readBigUInt64LE(this._readIndex);
-        } else {
-            // Polyfill if buffer has no bigint support
-            const buffer = this._buffer.slice(this._readIndex, this._readIndex + 8);
-            buffer.reverse();
-            val = BigInt(`0x${buffer.toString("hex")}`);
-        }
+        // We reverse the string conversion as this is LE
+        const val = BigInt(`0x${Converter.bytesToHex(this._storage, this._readIndex, 8, true)}`);
 
         if (moveIndex) {
             this._readIndex += 8;
@@ -150,7 +155,7 @@ export class ReadBuffer {
     }
 
     /**
-     * Read a string from the buffer.
+     * Read a string from the stream.
      * @param name The name of the data we are trying to read.
      * @param moveIndex Move the index pointer on.
      * @returns The string.
@@ -162,11 +167,10 @@ export class ReadBuffer {
             throw new Error(`${name} length ${stringLength
                 } exceeds the remaining data ${this.unused()}`);
         }
-        const val = this._buffer.slice(this._readIndex, this._readIndex + stringLength);
+        const val = Converter.bytesToAscii(this._storage, this._readIndex, stringLength);
         if (moveIndex) {
             this._readIndex += stringLength;
         }
-
-        return val.toString();
+        return val;
     }
 }

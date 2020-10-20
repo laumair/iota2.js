@@ -1,15 +1,15 @@
 import { IMessage } from "../models/IMessage";
-import { ReadBuffer } from "../utils/readBuffer";
-import { WriteBuffer } from "../utils/writeBuffer";
+import { ReadStream } from "../utils/readStream";
+import { WriteStream } from "../utils/writeStream";
 /**
  * Deserialize the message from binary.
- * @param readBuffer The message to deserialize.
+ * @param readStream The message to deserialize.
  * @returns The deserialized message.
  */
-export declare function deserializeMessage(readBuffer: ReadBuffer): IMessage;
+export declare function deserializeMessage(readStream: ReadStream): IMessage;
 /**
  * Serialize the message essence to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export declare function serializeMessage(writeBuffer: WriteBuffer, object: IMessage): void;
+export declare function serializeMessage(writeStream: WriteStream, object: IMessage): void;

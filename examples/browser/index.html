@@ -53,7 +53,7 @@
                 payload: {
                     type: 2,
                     index: "Foo",
-                    data: Iota2.Buffer.from("Bar").toString("hex")
+                    data: Iota2.Converter.asciiToHex("Bar")
                 }
             };
 
@@ -81,10 +81,10 @@
 
             const messageRaw = await client.messageRaw(messageIdCreated);
             consoleLog("Message Raw");
-            consoleLog("\tRaw:", messageRaw.toString("hex"));
+            consoleLog("\tRaw:", Iota2.Converter.bytesToHex(messageRaw));
             consoleLog();
 
-            const decoded = Iota2.deserializeMessage(new Iota2.ReadBuffer(messageRaw));
+            const decoded = Iota2.deserializeMessage(new Iota2.ReadStream(messageRaw));
             consoleLog("Message Decoded");
             Iota2.logMessage("", decoded);
             consoleLog();
@@ -142,26 +142,26 @@
             consoleLog("\tOutput Ids:", addressOutputs.outputIds);
             consoleLog();
 
-            const genesisSeed = Iota2.Ed25519Seed.fromString("256a818b2aac458941f7274985a410e57fb750f3a3a67969ece5bd9ae7eef5b2");
+            const genesisSeed = Iota2.Ed25519Seed.fromBytes(Iota2.Converter.hexToBytes("256a818b2aac458941f7274985a410e57fb750f3a3a67969ece5bd9ae7eef5b2"));
             consoleLog("Genesis");
-            consoleLog("\tSeed:", genesisSeed.toString());
+            consoleLog("\tSeed:", Iota2.Converter.bytesToHex(genesisSeed.toBytes()));
 
             const genesisSeedKeyPair = genesisSeed.keyPair();
-            consoleLog("\tPrivate Key:", genesisSeedKeyPair.privateKey);
-            consoleLog("\tPublic Key:", genesisSeedKeyPair.publicKey);
+            consoleLog("\tPrivate Key:", Iota2.Converter.bytesToHex(genesisSeedKeyPair.privateKey));
+            consoleLog("\tPublic Key:", Iota2.Converter.bytesToHex(genesisSeedKeyPair.publicKey));
 
             const genesisAddressPath = new Iota2.Bip32Path("m/0");
             const firstAddressSeed = genesisSeed.generateSeedFromPath(genesisAddressPath);
-            consoleLog(`\tAddress for ${genesisAddressPath.toString()}:`, Iota2.Ed25519.publicKeyToAddress(firstAddressSeed.keyPair().publicKey));
+            consoleLog(`\tAddress for ${genesisAddressPath.toString()}:`, Iota2.Converter.bytesToHex(Iota2.Ed25519.publicKeyToAddress(firstAddressSeed.keyPair().publicKey)));
             consoleLog();
 
-            const newSeed = Iota2.Ed25519Seed.fromString("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410");
+            const newSeed = Iota2.Ed25519Seed.fromBytes(Iota2.Converter.hexToBytes("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410"));
 
             const newAddressPath = new Iota2.Bip32Path("m/0");
             const newAddressSeed = newSeed.generateSeedFromPath(newAddressPath);
-            const newAddress = Iota2.Ed25519.publicKeyToAddress(newAddressSeed.keyPair().publicKey);
+            const newAddress = Iota2.Converter.bytesToHex(Iota2.Ed25519.publicKeyToAddress(newAddressSeed.keyPair().publicKey));
             consoleLog("New");
-            consoleLog("\tSeed:", newSeed.toString());
+            consoleLog("\tSeed:", Iota2.Converter.bytesToHex(newSeed.toBytes()));
             consoleLog(`\tAddress ${newAddressPath.toString()}:`, newAddress);
             consoleLog();
 
@@ -170,7 +170,7 @@
                     address: newAddress,
                     amount: 100
                 }
-            ], 0, "foo", Iota2.Buffer.from("bar"));
+            ], 0, "foo", Iota2.Converter.asciiToBytes("bar"));
 
             consoleLog("Created Message Id", messageId);
 
@@ -185,8 +185,8 @@
         }
 
         run()
-            .then(() => consoleLog("Done"))
-            .catch((err) => consoleLog(err.toString()));
+            .then(() => consoleLog("Done"));
+            //.catch((err) => consoleLog(err.toString()));
 
     </script>
 </body>

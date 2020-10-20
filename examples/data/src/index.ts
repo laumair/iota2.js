@@ -1,4 +1,4 @@
-import { sendData, retrieveData, SingleNodeClient } from "@iota/iota2.js";
+import { sendData, retrieveData, SingleNodeClient, Converter } from "@iota/iota2.js";
 
 const API_ENDPOINT = "http://localhost:14265";
 
@@ -9,7 +9,7 @@ async function run() {
 
     for (let i = 0; i < 10; i++) {
         console.log("Sending Data")
-        const sendResult = await sendData(client, myIndex, Buffer.from(`This is data ${i}`));
+        const sendResult = await sendData(client, myIndex, Converter.asciiToBytes(`This is data ${i}`));
         console.log("Received Message Id", sendResult.messageId);
     }
 
@@ -25,7 +25,7 @@ async function run() {
         if (firstResult) {
             console.log("First Result");
             console.log("\tIndex: ", firstResult.index);
-            console.log("\tData: ", firstResult.data.toString());
+            console.log("\tData: ", Converter.bytesToAscii(firstResult.data));
         }
 
     } else {

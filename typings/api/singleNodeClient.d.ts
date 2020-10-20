@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IClient } from "../api/models/IClient";
 import { IMessage } from "../models/IMessage";
 import { IAddress } from "./models/IAddress";
@@ -55,7 +54,7 @@ export declare class SingleNodeClient implements IClient {
      * @param messageId The message to get the data for.
      * @returns The message raw data.
      */
-    messageRaw(messageId: string): Promise<Buffer>;
+    messageRaw(messageId: string): Promise<Uint8Array>;
     /**
      * Submit message.
      * @param message The message to submit.
@@ -67,7 +66,7 @@ export declare class SingleNodeClient implements IClient {
      * @param message The message to submit.
      * @returns The messageId.
      */
-    messageSubmitRaw(message: Buffer): Promise<string>;
+    messageSubmitRaw(message: Uint8Array): Promise<string>;
     /**
      * Find messages by index.
      * @param indexationKey The index value.

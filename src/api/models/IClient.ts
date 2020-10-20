@@ -50,7 +50,7 @@ export interface IClient {
      * @param messageId The message to get the data for.
      * @returns The message raw data.
      */
-    messageRaw(messageId: string): Promise<Buffer>;
+    messageRaw(messageId: string): Promise<Uint8Array>;
 
     /**
      * Submit message.
@@ -64,7 +64,7 @@ export interface IClient {
      * @param message The message to submit.
      * @returns The messageId.
      */
-    messageSubmitRaw(message: Buffer): Promise<string>;
+    messageSubmitRaw(message: Uint8Array): Promise<string>;
 
     /**
      * Find messages by index.

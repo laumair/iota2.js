@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IKeyPair } from "../models/IKeyPair";
 import { ISeed } from "../models/ISeed";
 import { Bip32Path } from "./bip32Path";
@@ -16,16 +15,10 @@ export declare class Ed25519Seed implements ISeed {
     private _secretKey;
     /**
      * Create a seed from the bytes.
-     * @param buffer The binary representation of the seed.
+     * @param bytes The binary representation of the seed.
      * @returns The seed.
      */
-    static fromBytes(buffer: Buffer): Ed25519Seed;
-    /**
-     * Create a seed from the hex string.
-     * @param hex The hex representation of the seed.
-     * @returns The seed.
-     */
-    static fromString(hex: string): Ed25519Seed;
+    static fromBytes(bytes: Uint8Array): Ed25519Seed;
     /**
      * Generate a new random seed.
      * @returns The random seed.
@@ -46,10 +39,5 @@ export declare class Ed25519Seed implements ISeed {
      * Return the key as bytes.
      * @returns The key as bytes.
      */
-    toBytes(): Buffer;
-    /**
-     * Return the key as string.
-     * @returns The key as string.
-     */
-    toString(): string;
+    toBytes(): Uint8Array;
 }

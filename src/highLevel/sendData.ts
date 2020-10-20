@@ -1,6 +1,7 @@
 import { IClient } from "../api/models/IClient";
 import { IIndexationPayload } from "../models/IIndexationPayload";
 import { IMessage } from "../models/IMessage";
+import { Converter } from "../utils/converter";
 
 /**
  * Send a data message.
@@ -9,14 +10,14 @@ import { IMessage } from "../models/IMessage";
  * @param indexationData The index data.
  * @returns The id of the message created and the message.
  */
-export async function sendData(client: IClient, indexationKey: string, indexationData: Buffer): Promise<{
+export async function sendData(client: IClient, indexationKey: string, indexationData: Uint8Array): Promise<{
     message: IMessage;
     messageId: string;
 }> {
     const indexationPayload: IIndexationPayload = {
         type: 2,
         index: indexationKey,
-        data: indexationData.toString("hex")
+        data: Converter.bytesToHex(indexationData)
     };
 
     const tips = await client.tips();

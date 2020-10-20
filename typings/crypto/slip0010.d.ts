@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Bip32Path } from "./bip32Path";
 /**
  * Class to help with slip0010 key derivation.
@@ -10,9 +9,9 @@ export declare class Slip0010 {
      * @param seed The seed to generate the master key from.
      * @returns The key and chain code.
      */
-    static getMasterKeyFromSeed(seed: Buffer): {
-        privateKey: Buffer;
-        chainCode: Buffer;
+    static getMasterKeyFromSeed(seed: Uint8Array): {
+        privateKey: Uint8Array;
+        chainCode: Uint8Array;
     };
     /**
      * Derive a key from the path.
@@ -20,9 +19,9 @@ export declare class Slip0010 {
      * @param path The path.
      * @returns The key and chain code.
      */
-    static derivePath(seed: Buffer, path: Bip32Path): {
-        privateKey: Buffer;
-        chainCode: Buffer;
+    static derivePath(seed: Uint8Array, path: Bip32Path): {
+        privateKey: Uint8Array;
+        chainCode: Uint8Array;
     };
     /**
      * Get the public key from the private key.
@@ -30,5 +29,5 @@ export declare class Slip0010 {
      * @param withZeroByte Include a zero bute prefix.
      * @returns The public key.
      */
-    static getPublicKey(privateKey: Buffer, withZeroByte?: boolean): Buffer;
+    static getPublicKey(privateKey: Uint8Array, withZeroByte?: boolean): Uint8Array;
 }

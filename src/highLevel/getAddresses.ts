@@ -1,6 +1,7 @@
 import { Bip32Path } from "../crypto/bip32Path";
 import { Ed25519 } from "../crypto/ed25519";
 import { ISeed } from "../models/ISeed";
+import { Converter } from "../utils/converter";
 import { DEFAULT_CHUNK_SIZE } from "./common";
 import { getAddressesKeyPairs } from "./getAddressesKeyPairs";
 
@@ -17,5 +18,6 @@ export function getAddresses(
     basePath: Bip32Path,
     startIndex: number = 0,
     count: number = DEFAULT_CHUNK_SIZE): string[] {
-    return getAddressesKeyPairs(seed, basePath, startIndex, count).map(kp => Ed25519.publicKeyToAddress(kp.publicKey));
+    return getAddressesKeyPairs(seed, basePath, startIndex, count)
+        .map(kp => Converter.bytesToHex(Ed25519.publicKeyToAddress(kp.publicKey)));
 }

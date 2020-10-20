@@ -1,6 +1,6 @@
 import { IMessage } from "../models/IMessage";
-import { ReadBuffer } from "../utils/readBuffer";
-import { WriteBuffer } from "../utils/writeBuffer";
+import { ReadStream } from "../utils/readStream";
+import { WriteStream } from "../utils/writeStream";
 import { BYTE_SIZE, MESSAGE_ID_LENGTH, UINT64_SIZE } from "./common";
 import { deserializePayload, MIN_PAYLOAD_LENGTH, serializePayload } from "./payload";
 
@@ -13,30 +13,30 @@ const EMPTY_MESSAGE_ID_HEX: string = "0".repeat(MESSAGE_ID_LENGTH * 2);
 
 /**
  * Deserialize the message from binary.
- * @param readBuffer The message to deserialize.
+ * @param readStream The message to deserialize.
  * @returns The deserialized message.
  */
-export function deserializeMessage(readBuffer: ReadBuffer): IMessage {
-    if (!readBuffer.hasRemaining(MIN_MESSAGE_LENGTH)) {
-        throw new Error(`Message data is ${readBuffer.length()
+export function deserializeMessage(readStream: ReadStream): IMessage {
+    if (!readStream.hasRemaining(MIN_MESSAGE_LENGTH)) {
+        throw new Error(`Message data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_MESSAGE_LENGTH}`);
     }
 
-    const version = readBuffer.readByte("message.version");
+    const version = readStream.readByte("message.version");
     if (version !== 1) {
         throw new Error(`Unsupported message version number: ${version}`);
     }
 
-    const parent1MessageId = readBuffer.readFixedBufferHex("message.parent1MessageId", MESSAGE_ID_LENGTH);
-    const parent2MessageId = readBuffer.readFixedBufferHex("message.parent2MessageId", MESSAGE_ID_LENGTH);
+    const parent1MessageId = readStream.readFixedHex("message.parent1MessageId", MESSAGE_ID_LENGTH);
+    const parent2MessageId = readStream.readFixedHex("message.parent2MessageId", MESSAGE_ID_LENGTH);
 
-    const payload = deserializePayload(readBuffer);
+    const payload = deserializePayload(readStream);
 
-    const nonce = readBuffer.readUInt64("message.nonce");
+    const nonce = readStream.readUInt64("message.nonce");
 
-    const unused = readBuffer.unused();
+    const unused = readStream.unused();
     if (unused !== 0) {
-        throw new Error(`Message data length ${readBuffer.length()
+        throw new Error(`Message data length ${readStream.length()
             } has unused data ${unused}`);
     }
 
@@ -51,19 +51,19 @@ export function deserializeMessage(readBuffer: ReadBuffer): IMessage {
 
 /**
  * Serialize the message essence to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeMessage(writeBuffer: WriteBuffer,
+export function serializeMessage(writeStream: WriteStream,
     object: IMessage): void {
-    writeBuffer.writeByte("message.version", object.version);
+    writeStream.writeByte("message.version", object.version);
 
-    writeBuffer.writeFixedBufferHex("message.parent1MessageId",
+    writeStream.writeFixedHex("message.parent1MessageId",
         MESSAGE_ID_LENGTH, object.parent1MessageId ?? EMPTY_MESSAGE_ID_HEX);
-    writeBuffer.writeFixedBufferHex("message.parent2MessageId",
+    writeStream.writeFixedHex("message.parent2MessageId",
         MESSAGE_ID_LENGTH, object.parent2MessageId ?? EMPTY_MESSAGE_ID_HEX);
 
-    serializePayload(writeBuffer, object.payload);
+    serializePayload(writeStream, object.payload);
 
-    writeBuffer.writeUInt64("message.nonce", BigInt(object.nonce));
+    writeStream.writeUInt64("message.nonce", BigInt(object.nonce));
 }

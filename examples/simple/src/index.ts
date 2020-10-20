@@ -1,4 +1,4 @@
-import { deserializeMessage, IMessage, logMessage, logOutput, ReadBuffer, SingleNodeClient } from "@iota/iota2.js";
+import { Converter, deserializeMessage, IMessage, logMessage, logOutput, ReadStream, SingleNodeClient } from "@iota/iota2.js";
 
 const API_ENDPOINT = "http://localhost:14265";
 
@@ -36,7 +36,7 @@ async function run() {
         payload: {
             type: 2,
             index: "Foo",
-            data: Buffer.from("Bar").toString("hex")
+            data: Converter.asciiToHex("Bar")
         }
     };
 
@@ -64,9 +64,9 @@ async function run() {
 
     const messageRaw = await client.messageRaw(messageId);
     console.log("Message Raw");
-    console.log("\tRaw:", messageRaw.toString("hex"));
+    console.log("\tRaw:", Converter.bytesToHex(messageRaw));
     console.log();
-    const decoded = deserializeMessage(new ReadBuffer(messageRaw));
+    const decoded = deserializeMessage(new ReadStream(messageRaw));
     console.log("Message Decoded");
     logMessage("", decoded);
     console.log();

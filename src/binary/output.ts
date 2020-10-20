@@ -1,7 +1,7 @@
 import { ISigLockedSingleOutput } from "../models/ISigLockedSingleOutput";
 import { ITypeBase } from "../models/ITypeBase";
-import { ReadBuffer } from "../utils/readBuffer";
-import { WriteBuffer } from "../utils/writeBuffer";
+import { ReadStream } from "../utils/readStream";
+import { WriteStream } from "../utils/writeStream";
 import { deserializeAddress, MIN_ADDRESS_LENGTH, MIN_ED25519_ADDRESS_LENGTH, serializeAddress } from "./address";
 import { SMALL_TYPE_LENGTH } from "./common";
 
@@ -10,15 +10,15 @@ export const MIN_SIG_LOCKED_OUTPUT_LENGTH: number = MIN_OUTPUT_LENGTH + MIN_ADDR
 
 /**
  * Deserialize the outputs from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeOutputs(readBuffer: ReadBuffer): ISigLockedSingleOutput[] {
-    const numOutputs = readBuffer.readUInt16("outputs.numOutputs");
+export function deserializeOutputs(readStream: ReadStream): ISigLockedSingleOutput[] {
+    const numOutputs = readStream.readUInt16("outputs.numOutputs");
 
     const inputs: ISigLockedSingleOutput[] = [];
     for (let i = 0; i < numOutputs; i++) {
-        inputs.push(deserializeOutput(readBuffer));
+        inputs.push(deserializeOutput(readStream));
     }
 
     return inputs;
@@ -26,34 +26,34 @@ export function deserializeOutputs(readBuffer: ReadBuffer): ISigLockedSingleOutp
 
 /**
  * Serialize the outputs to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param objects The objects to serialize.
  */
-export function serializeOutputs(writeBuffer: WriteBuffer,
+export function serializeOutputs(writeStream: WriteStream,
     objects: ISigLockedSingleOutput[]): void {
-    writeBuffer.writeUInt16("outputs.numOutputs", objects.length);
+    writeStream.writeUInt16("outputs.numOutputs", objects.length);
 
     for (let i = 0; i < objects.length; i++) {
-        serializeOutput(writeBuffer, objects[i]);
+        serializeOutput(writeStream, objects[i]);
     }
 }
 
 /**
  * Deserialize the output from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeOutput(readBuffer: ReadBuffer): ISigLockedSingleOutput {
-    if (!readBuffer.hasRemaining(MIN_OUTPUT_LENGTH)) {
-        throw new Error(`Output data is ${readBuffer.length()
+export function deserializeOutput(readStream: ReadStream): ISigLockedSingleOutput {
+    if (!readStream.hasRemaining(MIN_OUTPUT_LENGTH)) {
+        throw new Error(`Output data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_OUTPUT_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("output.type", false);
+    const type = readStream.readByte("output.type", false);
     let input;
 
     if (type === 0) {
-        input = deserializeSigLockedSingleOutput(readBuffer);
+        input = deserializeSigLockedSingleOutput(readStream);
     } else {
         throw new Error(`Unrecognized output type ${type}`);
     }
@@ -63,13 +63,13 @@ export function deserializeOutput(readBuffer: ReadBuffer): ISigLockedSingleOutpu
 
 /**
  * Serialize the output to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeOutput(writeBuffer: WriteBuffer,
+export function serializeOutput(writeStream: WriteStream,
     object: ISigLockedSingleOutput): void {
     if (object.type === 0) {
-        serializeSigLockedSingleOutput(writeBuffer, object);
+        serializeSigLockedSingleOutput(writeStream, object);
     } else {
         throw new Error(`Unrecognized output type ${(object as ITypeBase<unknown>).type}`);
     }
@@ -77,22 +77,22 @@ export function serializeOutput(writeBuffer: WriteBuffer,
 
 /**
  * Deserialize the signature locked single output from binary.
- * @param readBuffer The buffer to read the data from.
+ * @param readStream The stream to read the data from.
  * @returns The deserialized object.
  */
-export function deserializeSigLockedSingleOutput(readBuffer: ReadBuffer): ISigLockedSingleOutput {
-    if (!readBuffer.hasRemaining(MIN_SIG_LOCKED_OUTPUT_LENGTH)) {
-        throw new Error(`Signature Locked Single Output data is ${readBuffer.length()
+export function deserializeSigLockedSingleOutput(readStream: ReadStream): ISigLockedSingleOutput {
+    if (!readStream.hasRemaining(MIN_SIG_LOCKED_OUTPUT_LENGTH)) {
+        throw new Error(`Signature Locked Single Output data is ${readStream.length()
             } in length which is less than the minimimum size required of ${MIN_SIG_LOCKED_OUTPUT_LENGTH}`);
     }
 
-    const type = readBuffer.readByte("sigLockedSingleOutput.type");
+    const type = readStream.readByte("sigLockedSingleOutput.type");
     if (type !== 0) {
         throw new Error(`Type mismatch in sigLockedSingleOutput ${type}`);
     }
 
-    const address = deserializeAddress(readBuffer);
-    const amount = readBuffer.readUInt64("sigLockedSingleOutput.amount");
+    const address = deserializeAddress(readStream);
+    const amount = readStream.readUInt64("sigLockedSingleOutput.amount");
 
     return {
         type,
@@ -104,12 +104,12 @@ export function deserializeSigLockedSingleOutput(readBuffer: ReadBuffer): ISigLo
 
 /**
  * Serialize the signature locked single output to binary.
- * @param writeBuffer The buffer to write the data to.
+ * @param writeStream The stream to write the data to.
  * @param object The object to serialize.
  */
-export function serializeSigLockedSingleOutput(writeBuffer: WriteBuffer,
+export function serializeSigLockedSingleOutput(writeStream: WriteStream,
     object: ISigLockedSingleOutput): void {
-    writeBuffer.writeByte("sigLockedSingleOutput.type", object.type);
-    serializeAddress(writeBuffer, object.address);
-    writeBuffer.writeUInt64("sigLockedSingleOutput.amount", BigInt(object.amount));
+    writeStream.writeByte("sigLockedSingleOutput.type", object.type);
+    serializeAddress(writeStream, object.address);
+    writeStream.writeUInt64("sigLockedSingleOutput.amount", BigInt(object.amount));
 }

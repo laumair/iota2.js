@@ -1,5 +1,6 @@
 import { IClient } from "../api/models/IClient";
 import { IIndexationPayload } from "../models/IIndexationPayload";
+import { Converter } from "../utils/converter";
 
 /**
  * Retrieve a data message.
@@ -9,7 +10,7 @@ import { IIndexationPayload } from "../models/IIndexationPayload";
  */
 export async function retrieveData(client: IClient, messageId: string): Promise<{
     index: string;
-    data: Buffer;
+    data: Uint8Array;
 } | undefined> {
     const message = await client.message(messageId);
 
@@ -25,7 +26,7 @@ export async function retrieveData(client: IClient, messageId: string): Promise<
         if (indexationPayload) {
             return {
                 index: indexationPayload.index,
-                data: Buffer.from(indexationPayload.data, "hex")
+                data: Converter.hexToBytes(indexationPayload.data)
             };
         }
     }

@@ -1,6 +1,8 @@
-import createHmac from "create-hmac";
+/* eslint-disable no-bitwise */
 import * as nacl from "tweetnacl";
+import { Converter } from "../utils/converter";
 import { Bip32Path } from "./bip32Path";
+import { HmacSha512 } from "./hmacSha512";
 
 /**
  * Class to help with slip0010 key derivation.
@@ -12,15 +14,15 @@ export class Slip0010 {
      * @param seed The seed to generate the master key from.
      * @returns The key and chain code.
      */
-    public static getMasterKeyFromSeed(seed: Buffer): {
-        privateKey: Buffer;
-        chainCode: Buffer;
+    public static getMasterKeyFromSeed(seed: Uint8Array): {
+        privateKey: Uint8Array;
+        chainCode: Uint8Array;
     } {
-        const hmac = createHmac("sha512", "ed25519 seed");
+        const hmac = new HmacSha512(Converter.asciiToBytes("ed25519 seed"));
         const fullKey = hmac.update(seed).digest();
         return {
-            privateKey: fullKey.slice(0, 32),
-            chainCode: fullKey.slice(32)
+            privateKey: Uint8Array.from(fullKey.slice(0, 32)),
+            chainCode: Uint8Array.from(fullKey.slice(32))
         };
     }
 
@@ -30,25 +32,33 @@ export class Slip0010 {
      * @param path The path.
      * @returns The key and chain code.
      */
-    public static derivePath(seed: Buffer, path: Bip32Path): {
-        privateKey: Buffer;
-        chainCode: Buffer;
+    public static derivePath(seed: Uint8Array, path: Bip32Path): {
+        privateKey: Uint8Array;
+        chainCode: Uint8Array;
     } {
         let { privateKey, chainCode } = Slip0010.getMasterKeyFromSeed(seed);
         const segments = path.numberSegments();
 
         for (let i = 0; i < segments.length; i++) {
-            const indexBuffer = Buffer.allocUnsafe(4);
-            indexBuffer.writeUInt32BE(0x80000000 + segments[i], 0);
+            const indexValue = 0x80000000 + segments[i];
 
-            const data = Buffer.concat([Buffer.alloc(1, 0), privateKey, indexBuffer]);
+            const data = new Uint8Array(1 + privateKey.length + 4);
 
-            const fullKey = createHmac("sha512", chainCode)
+            data[0] = 0;
+            data.set(privateKey, 1);
+            data[privateKey.length + 1] = indexValue >>> 24;
+            data[privateKey.length + 2] = indexValue >>> 16;
+            data[privateKey.length + 3] = indexValue >>> 8;
+            data[privateKey.length + 4] = indexValue & 0xFF;
+
+            // TS definition for create only accepts string
+            // in reality it accepts bytes, which is what we want to send
+            const fullKey = new HmacSha512(chainCode)
                 .update(data)
                 .digest();
 
-            privateKey = fullKey.slice(0, 32);
-            chainCode = fullKey.slice(32);
+            privateKey = Uint8Array.from(fullKey.slice(0, 32));
+            chainCode = Uint8Array.from(fullKey.slice(32));
         }
         return {
             privateKey,
@@ -62,11 +72,15 @@ export class Slip0010 {
      * @param withZeroByte Include a zero bute prefix.
      * @returns The public key.
      */
-    public static getPublicKey(privateKey: Buffer, withZeroByte: boolean = true): Buffer {
+    public static getPublicKey(privateKey: Uint8Array, withZeroByte: boolean = true): Uint8Array {
         const keyPair = nacl.sign.keyPair.fromSeed(privateKey);
-        const signPk = Buffer.from(keyPair.secretKey.slice(32));
-        return withZeroByte
-            ? Buffer.concat([Buffer.alloc(1, 0), signPk])
-            : signPk;
+        const signPk = keyPair.secretKey.slice(32);
+        if (withZeroByte) {
+            const arr = new Uint8Array(1 + signPk.length);
+            arr[0] = 0;
+            arr.set(signPk, 1);
+            return arr;
+        }
+        return signPk;
     }
 }

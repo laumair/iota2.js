@@ -2,6 +2,7 @@ import { IClient } from "../api/models/IClient";
 import { Bip32Path } from "../crypto/bip32Path";
 import { Ed25519 } from "../crypto/ed25519";
 import { ISeed } from "../models/ISeed";
+import { Converter } from "../utils/converter";
 
 /**
  * Get all the unspent addresses.
@@ -36,8 +37,8 @@ export async function getUnspentAddresses(
         const addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
         basePath.pop();
 
-        const addr = Ed25519.publicKeyToAddress(addressKeyPair.publicKey);
-        const addressResponse = await client.address(addr);
+        const address = Converter.bytesToHex(Ed25519.publicKeyToAddress(addressKeyPair.publicKey));
+        const addressResponse = await client.address(address);
 
         // If there are no outputs for the address we have reached the
         // end of the used addresses
@@ -45,7 +46,7 @@ export async function getUnspentAddresses(
             finished = true;
         } else {
             allUnspent.push({
-                address: addr,
+                address,
                 index: localStartIndex,
                 balance: addressResponse.balance
             });

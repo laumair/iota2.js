@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IClient } from "../api/models/IClient";
 /**
  * Retrieve a data message.
@@ -8,5 +7,5 @@ import { IClient } from "../api/models/IClient";
  */
 export declare function retrieveData(client: IClient, messageId: string): Promise<{
     index: string;
-    data: Buffer;
+    data: Uint8Array;
 } | undefined>;

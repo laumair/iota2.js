@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { IClient } from "../api/models/IClient";
 import { IMessage } from "../models/IMessage";
 /**
@@ -8,7 +7,7 @@ import { IMessage } from "../models/IMessage";
  * @param indexationData The index data.
  * @returns The id of the message created and the message.
  */
-export declare function sendData(client: IClient, indexationKey: string, indexationData: Buffer): Promise<{
+export declare function sendData(client: IClient, indexationKey: string, indexationData: Uint8Array): Promise<{
     message: IMessage;
     messageId: string;
 }>;
