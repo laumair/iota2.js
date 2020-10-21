@@ -1,1046 +1,1178 @@
-## Members
+**[@iota/iota2.js](README.md)**
 
-<dl>
-<dt><a href="#ClientError">ClientError</a></dt>
-<dd><p>Class to handle http errors.</p>
-</dd>
-<dt><a href="#SingleNodeClient">SingleNodeClient</a></dt>
-<dd><p>Client for API communication.</p>
-</dd>
-<dt><a href="#Bip32Path">Bip32Path</a></dt>
-<dd><p>Class to help with bip32 paths.</p>
-</dd>
-<dt><a href="#Blake2b">Blake2b</a></dt>
-<dd><p>Class to help with Blake2B Signature scheme.
-TypeScript conversion from <a href="https://github.com/dcposch/blakejs">https://github.com/dcposch/blakejs</a></p>
-</dd>
-<dt><a href="#Ed25519">Ed25519</a></dt>
-<dd><p>Class to help with Ed25519 Signature scheme.</p>
-</dd>
-<dt><a href="#Ed25519Seed">Ed25519Seed</a></dt>
-<dd><p>Class to help with seeds.</p>
-</dd>
-<dt><a href="#HmacSha512">HmacSha512</a></dt>
-<dd><p>Class to help with HmacSha512 scheme.
-TypeScript conversion from <a href="https://github.com/emn178/js-sha512">https://github.com/emn178/js-sha512</a></p>
-</dd>
-<dt><a href="#Sha512">Sha512</a></dt>
-<dd><p>Class to help with Sha512 scheme.
-TypeScript conversion from <a href="https://github.com/emn178/js-sha512">https://github.com/emn178/js-sha512</a></p>
-</dd>
-<dt><a href="#Slip0010">Slip0010</a></dt>
-<dd><p>Class to help with slip0010 key derivation.
-<a href="https://github.com/satoshilabs/slips/blob/master/slip-0010.md">https://github.com/satoshilabs/slips/blob/master/slip-0010.md</a></p>
-</dd>
-<dt><a href="#ArrayHelper">ArrayHelper</a></dt>
-<dd><p>Array helper methods.</p>
-</dd>
-<dt><a href="#Converter">Converter</a></dt>
-<dd><p>Convert arrays to and from different formats.</p>
-</dd>
-<dt><a href="#ReadStream">ReadStream</a></dt>
-<dd><p>Keep track of the read index within a stream.</p>
-</dd>
-<dt><a href="#WriteStream">WriteStream</a></dt>
-<dd><p>Keep track of the write index within a stream.</p>
-</dd>
-</dl>
+> Globals
+
+# @iota/iota2.js
+
+## Index
+
+### Classes
+
+* [ArrayHelper](classes/arrayhelper.md)
+* [Bip32Path](classes/bip32path.md)
+* [Blake2b](classes/blake2b.md)
+* [ClientError](classes/clienterror.md)
+* [Converter](classes/converter.md)
+* [Ed25519](classes/ed25519.md)
+* [Ed25519Seed](classes/ed25519seed.md)
+* [HmacSha512](classes/hmacsha512.md)
+* [ReadStream](classes/readstream.md)
+* [Sha512](classes/sha512.md)
+* [SingleNodeClient](classes/singlenodeclient.md)
+* [Slip0010](classes/slip0010.md)
+* [WriteStream](classes/writestream.md)
+
+### Interfaces
+
+* [IAddress](interfaces/iaddress.md)
+* [IAddressOutputs](interfaces/iaddressoutputs.md)
+* [IChildren](interfaces/ichildren.md)
+* [IClient](interfaces/iclient.md)
+* [IEd25519Address](interfaces/ied25519address.md)
+* [IEd25519Signature](interfaces/ied25519signature.md)
+* [IIndexationPayload](interfaces/iindexationpayload.md)
+* [IInfo](interfaces/iinfo.md)
+* [IKeyPair](interfaces/ikeypair.md)
+* [IMessage](interfaces/imessage.md)
+* [IMessageId](interfaces/imessageid.md)
+* [IMessageMetadata](interfaces/imessagemetadata.md)
+* [IMessages](interfaces/imessages.md)
+* [IMilestone](interfaces/imilestone.md)
+* [IMilestonePayload](interfaces/imilestonepayload.md)
+* [IOutput](interfaces/ioutput.md)
+* [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md)
+* [IResponse](interfaces/iresponse.md)
+* [ISeed](interfaces/iseed.md)
+* [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)
+* [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)
+* [ITips](interfaces/itips.md)
+* [ITransactionEssence](interfaces/itransactionessence.md)
+* [ITransactionPayload](interfaces/itransactionpayload.md)
+* [ITypeBase](interfaces/itypebase.md)
+* [IUTXOInput](interfaces/iutxoinput.md)
+
+### Functions
+
+* [deserializeAddress](README.md#deserializeaddress)
+* [deserializeEd25519Address](README.md#deserializeed25519address)
+* [deserializeEd25519Signature](README.md#deserializeed25519signature)
+* [deserializeIndexationPayload](README.md#deserializeindexationpayload)
+* [deserializeInput](README.md#deserializeinput)
+* [deserializeInputs](README.md#deserializeinputs)
+* [deserializeMessage](README.md#deserializemessage)
+* [deserializeMilestonePayload](README.md#deserializemilestonepayload)
+* [deserializeOutput](README.md#deserializeoutput)
+* [deserializeOutputs](README.md#deserializeoutputs)
+* [deserializePayload](README.md#deserializepayload)
+* [deserializeReferenceUnlockBlock](README.md#deserializereferenceunlockblock)
+* [deserializeSigLockedSingleOutput](README.md#deserializesiglockedsingleoutput)
+* [deserializeSignature](README.md#deserializesignature)
+* [deserializeSignatureUnlockBlock](README.md#deserializesignatureunlockblock)
+* [deserializeTransactionEssence](README.md#deserializetransactionessence)
+* [deserializeTransactionPayload](README.md#deserializetransactionpayload)
+* [deserializeUTXOInput](README.md#deserializeutxoinput)
+* [deserializeUnlockBlock](README.md#deserializeunlockblock)
+* [deserializeUnlockBlocks](README.md#deserializeunlockblocks)
+* [getAddresses](README.md#getaddresses)
+* [getAddressesKeyPairs](README.md#getaddresseskeypairs)
+* [getBalance](README.md#getbalance)
+* [getUnspentAddress](README.md#getunspentaddress)
+* [getUnspentAddresses](README.md#getunspentaddresses)
+* [isHex](README.md#ishex)
+* [logAddress](README.md#logaddress)
+* [logInput](README.md#loginput)
+* [logMessage](README.md#logmessage)
+* [logOutput](README.md#logoutput)
+* [logPayload](README.md#logpayload)
+* [logSignature](README.md#logsignature)
+* [logUnlockBlock](README.md#logunlockblock)
+* [logger](README.md#logger)
+* [retrieveData](README.md#retrievedata)
+* [send](README.md#send)
+* [sendAdvanced](README.md#sendadvanced)
+* [sendData](README.md#senddata)
+* [serializeAddress](README.md#serializeaddress)
+* [serializeEd25519Address](README.md#serializeed25519address)
+* [serializeEd25519Signature](README.md#serializeed25519signature)
+* [serializeIndexationPayload](README.md#serializeindexationpayload)
+* [serializeInput](README.md#serializeinput)
+* [serializeInputs](README.md#serializeinputs)
+* [serializeMessage](README.md#serializemessage)
+* [serializeMilestonePayload](README.md#serializemilestonepayload)
+* [serializeOutput](README.md#serializeoutput)
+* [serializeOutputs](README.md#serializeoutputs)
+* [serializePayload](README.md#serializepayload)
+* [serializeReferenceUnlockBlock](README.md#serializereferenceunlockblock)
+* [serializeSigLockedSingleOutput](README.md#serializesiglockedsingleoutput)
+* [serializeSignature](README.md#serializesignature)
+* [serializeSignatureUnlockBlock](README.md#serializesignatureunlockblock)
+* [serializeTransactionEssence](README.md#serializetransactionessence)
+* [serializeTransactionPayload](README.md#serializetransactionpayload)
+* [serializeUTXOInput](README.md#serializeutxoinput)
+* [serializeUnlockBlock](README.md#serializeunlockblock)
+* [serializeUnlockBlocks](README.md#serializeunlockblocks)
+* [setLogger](README.md#setlogger)
 
 ## Functions
 
-<dl>
-<dt><a href="#deserializeAddress">deserializeAddress(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the address from binary.</p>
-</dd>
-<dt><a href="#serializeAddress">serializeAddress(writeStream, object)</a></dt>
-<dd><p>Serialize the address to binary.</p>
-</dd>
-<dt><a href="#deserializeEd25519Address">deserializeEd25519Address(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the Ed25519 address from binary.</p>
-</dd>
-<dt><a href="#serializeEd25519Address">serializeEd25519Address(writeStream, object)</a></dt>
-<dd><p>Serialize the ed25519 address to binary.</p>
-</dd>
-<dt><a href="#isHex">isHex(value)</a> ⇒</dt>
-<dd><p>Is the data hex format.</p>
-</dd>
-<dt><a href="#deserializeInputs">deserializeInputs(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the inputs from binary.</p>
-</dd>
-<dt><a href="#serializeInputs">serializeInputs(writeStream, objects)</a></dt>
-<dd><p>Serialize the inputs to binary.</p>
-</dd>
-<dt><a href="#deserializeInput">deserializeInput(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the input from binary.</p>
-</dd>
-<dt><a href="#serializeInput">serializeInput(writeStream, object)</a></dt>
-<dd><p>Serialize the input to binary.</p>
-</dd>
-<dt><a href="#deserializeUTXOInput">deserializeUTXOInput(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the utxo input from binary.</p>
-</dd>
-<dt><a href="#serializeUTXOInput">serializeUTXOInput(writeStream, object)</a></dt>
-<dd><p>Serialize the utxo input to binary.</p>
-</dd>
-<dt><a href="#deserializeMessage">deserializeMessage(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the message from binary.</p>
-</dd>
-<dt><a href="#serializeMessage">serializeMessage(writeStream, object)</a></dt>
-<dd><p>Serialize the message essence to binary.</p>
-</dd>
-<dt><a href="#deserializeOutputs">deserializeOutputs(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the outputs from binary.</p>
-</dd>
-<dt><a href="#serializeOutputs">serializeOutputs(writeStream, objects)</a></dt>
-<dd><p>Serialize the outputs to binary.</p>
-</dd>
-<dt><a href="#deserializeOutput">deserializeOutput(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the output from binary.</p>
-</dd>
-<dt><a href="#serializeOutput">serializeOutput(writeStream, object)</a></dt>
-<dd><p>Serialize the output to binary.</p>
-</dd>
-<dt><a href="#deserializeSigLockedSingleOutput">deserializeSigLockedSingleOutput(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the signature locked single output from binary.</p>
-</dd>
-<dt><a href="#serializeSigLockedSingleOutput">serializeSigLockedSingleOutput(writeStream, object)</a></dt>
-<dd><p>Serialize the signature locked single output to binary.</p>
-</dd>
-<dt><a href="#deserializePayload">deserializePayload(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the payload from binary.</p>
-</dd>
-<dt><a href="#serializePayload">serializePayload(writeStream, object)</a></dt>
-<dd><p>Serialize the payload essence to binary.</p>
-</dd>
-<dt><a href="#deserializeTransactionPayload">deserializeTransactionPayload(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the transaction payload from binary.</p>
-</dd>
-<dt><a href="#serializeTransactionPayload">serializeTransactionPayload(writeStream, object)</a></dt>
-<dd><p>Serialize the transaction payload essence to binary.</p>
-</dd>
-<dt><a href="#deserializeMilestonePayload">deserializeMilestonePayload(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the milestone payload from binary.</p>
-</dd>
-<dt><a href="#serializeMilestonePayload">serializeMilestonePayload(writeStream, object)</a></dt>
-<dd><p>Serialize the milestone payload essence to binary.</p>
-</dd>
-<dt><a href="#deserializeIndexationPayload">deserializeIndexationPayload(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the indexation payload from binary.</p>
-</dd>
-<dt><a href="#serializeIndexationPayload">serializeIndexationPayload(writeStream, object)</a></dt>
-<dd><p>Serialize the indexation payload essence to binary.</p>
-</dd>
-<dt><a href="#deserializeSignature">deserializeSignature(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the signature from binary.</p>
-</dd>
-<dt><a href="#serializeSignature">serializeSignature(writeStream, object)</a></dt>
-<dd><p>Serialize the signature to binary.</p>
-</dd>
-<dt><a href="#deserializeEd25519Signature">deserializeEd25519Signature(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the Ed25519 signature from binary.</p>
-</dd>
-<dt><a href="#serializeEd25519Signature">serializeEd25519Signature(writeStream, object)</a></dt>
-<dd><p>Serialize the Ed25519 signature to binary.</p>
-</dd>
-<dt><a href="#deserializeTransactionEssence">deserializeTransactionEssence(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the transaction essence from binary.</p>
-</dd>
-<dt><a href="#serializeTransactionEssence">serializeTransactionEssence(writeStream, object)</a></dt>
-<dd><p>Serialize the transaction essence to binary.</p>
-</dd>
-<dt><a href="#deserializeUnlockBlocks">deserializeUnlockBlocks(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the unlock blocks from binary.</p>
-</dd>
-<dt><a href="#serializeUnlockBlocks">serializeUnlockBlocks(writeStream, objects)</a></dt>
-<dd><p>Serialize the unlock blocks to binary.</p>
-</dd>
-<dt><a href="#deserializeUnlockBlock">deserializeUnlockBlock(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the unlock block from binary.</p>
-</dd>
-<dt><a href="#serializeUnlockBlock">serializeUnlockBlock(writeStream, object)</a></dt>
-<dd><p>Serialize the unlock block to binary.</p>
-</dd>
-<dt><a href="#deserializeSignatureUnlockBlock">deserializeSignatureUnlockBlock(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the signature unlock block from binary.</p>
-</dd>
-<dt><a href="#serializeSignatureUnlockBlock">serializeSignatureUnlockBlock(writeStream, object)</a></dt>
-<dd><p>Serialize the signature unlock block to binary.</p>
-</dd>
-<dt><a href="#deserializeReferenceUnlockBlock">deserializeReferenceUnlockBlock(readStream)</a> ⇒</dt>
-<dd><p>Deserialize the reference unlock block from binary.</p>
-</dd>
-<dt><a href="#serializeReferenceUnlockBlock">serializeReferenceUnlockBlock(writeStream, object)</a></dt>
-<dd><p>Serialize the reference unlock block to binary.</p>
-</dd>
-<dt><a href="#getAddresses">getAddresses(seed, basePath, startIndex, count)</a> ⇒</dt>
-<dd><p>Generate a list of address key pairs.</p>
-</dd>
-<dt><a href="#getAddressesKeyPairs">getAddressesKeyPairs(seed, basePath, startIndex, count)</a> ⇒</dt>
-<dd><p>Generate a list of address key pairs.</p>
-</dd>
-<dt><a href="#getBalance">getBalance(client, seed, basePath, startIndex)</a> ⇒</dt>
-<dd><p>Get the balance for a list of addresses.</p>
-</dd>
-<dt><a href="#getUnspentAddress">getUnspentAddress(client, seed, basePath, startIndex)</a> ⇒</dt>
-<dd><p>Get the first unspent address.</p>
-</dd>
-<dt><a href="#getUnspentAddresses">getUnspentAddresses(client, seed, basePath, startIndex, countLimit)</a> ⇒</dt>
-<dd><p>Get all the unspent addresses.</p>
-</dd>
-<dt><a href="#retrieveData">retrieveData(client, messageId)</a> ⇒</dt>
-<dd><p>Retrieve a data message.</p>
-</dd>
-<dt><a href="#send">send(client, seed, basePath, address, amount, startIndex)</a> ⇒</dt>
-<dd><p>Send a transfer from the balance on the seed.</p>
-</dd>
-<dt><a href="#sendAdvanced">sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey, indexationData)</a> ⇒</dt>
-<dd><p>Send a transfer from the balance on the seed.</p>
-</dd>
-<dt><a href="#sendData">sendData(client, indexationKey, indexationData)</a> ⇒</dt>
-<dd><p>Send a data message.</p>
-</dd>
-<dt><a href="#logger">logger(message, data)</a> ⇒</dt>
-<dd><p>The logger used by the log methods.</p>
-</dd>
-<dt><a href="#setLogger">setLogger(log)</a></dt>
-<dd><p>Set the logger for output.</p>
-</dd>
-<dt><a href="#logMessage">logMessage(prefix, message)</a></dt>
-<dd><p>Log a message to the console.</p>
-</dd>
-<dt><a href="#logPayload">logPayload(prefix, unknownPayload)</a></dt>
-<dd><p>Log a message to the console.</p>
-</dd>
-<dt><a href="#logAddress">logAddress(prefix, unknownAddress)</a></dt>
-<dd><p>Log an address to the console.</p>
-</dd>
-<dt><a href="#logSignature">logSignature(prefix, unknownSignature)</a></dt>
-<dd><p>Log signature to the console.</p>
-</dd>
-<dt><a href="#logInput">logInput(prefix, unknownInput)</a></dt>
-<dd><p>Log input to the console.</p>
-</dd>
-<dt><a href="#logOutput">logOutput(prefix, unknownOutput)</a></dt>
-<dd><p>Log output to the console.</p>
-</dd>
-<dt><a href="#logUnlockBlock">logUnlockBlock(prefix, unknownUnlockBlock)</a></dt>
-<dd><p>Log unlock block to the console.</p>
-</dd>
-</dl>
+### deserializeAddress
 
-<a name="ClientError"></a>
+▸ **deserializeAddress**(`readStream`: [ReadStream](classes/readstream.md)): [IEd25519Address](interfaces/ied25519address.md)
 
-## ClientError
-Class to handle http errors.
-
-**Kind**: global variable  
-<a name="SingleNodeClient"></a>
-
-## SingleNodeClient
-Client for API communication.
-
-**Kind**: global variable  
-<a name="Bip32Path"></a>
-
-## Bip32Path
-Class to help with bip32 paths.
-
-**Kind**: global variable  
-<a name="Blake2b"></a>
-
-## Blake2b
-Class to help with Blake2B Signature scheme.TypeScript conversion from https://github.com/dcposch/blakejs
-
-**Kind**: global variable  
-<a name="Ed25519"></a>
-
-## Ed25519
-Class to help with Ed25519 Signature scheme.
-
-**Kind**: global variable  
-<a name="Ed25519Seed"></a>
-
-## Ed25519Seed
-Class to help with seeds.
-
-**Kind**: global variable  
-<a name="HmacSha512"></a>
-
-## HmacSha512
-Class to help with HmacSha512 scheme.TypeScript conversion from https://github.com/emn178/js-sha512
-
-**Kind**: global variable  
-<a name="Sha512"></a>
-
-## Sha512
-Class to help with Sha512 scheme.TypeScript conversion from https://github.com/emn178/js-sha512
-
-**Kind**: global variable  
-<a name="Slip0010"></a>
-
-## Slip0010
-Class to help with slip0010 key derivation.https://github.com/satoshilabs/slips/blob/master/slip-0010.md
-
-**Kind**: global variable  
-<a name="ArrayHelper"></a>
-
-## ArrayHelper
-Array helper methods.
-
-**Kind**: global variable  
-<a name="Converter"></a>
-
-## Converter
-Convert arrays to and from different formats.
-
-**Kind**: global variable  
-<a name="ReadStream"></a>
-
-## ReadStream
-Keep track of the read index within a stream.
-
-**Kind**: global variable  
-<a name="WriteStream"></a>
-
-## WriteStream
-Keep track of the write index within a stream.
-
-**Kind**: global variable  
-<a name="deserializeAddress"></a>
-
-## deserializeAddress(readStream) ⇒
 Deserialize the address from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
 
-<a name="serializeAddress"></a>
+**Returns:** [IEd25519Address](interfaces/ied25519address.md)
 
-## serializeAddress(writeStream, object)
-Serialize the address to binary.
+The deserialized object.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
+### deserializeEd25519Address
 
-<a name="deserializeEd25519Address"></a>
+▸ **deserializeEd25519Address**(`readStream`: [ReadStream](classes/readstream.md)): [IEd25519Address](interfaces/ied25519address.md)
 
-## deserializeEd25519Address(readStream) ⇒
 Deserialize the Ed25519 address from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
 
-<a name="serializeEd25519Address"></a>
+**Returns:** [IEd25519Address](interfaces/ied25519address.md)
 
-## serializeEd25519Address(writeStream, object)
-Serialize the ed25519 address to binary.
+The deserialized object.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
+### deserializeEd25519Signature
 
-<a name="isHex"></a>
+▸ **deserializeEd25519Signature**(`readStream`: [ReadStream](classes/readstream.md)): [IEd25519Signature](interfaces/ied25519signature.md)
 
-## isHex(value) ⇒
-Is the data hex format.
-
-**Kind**: global function  
-**Returns**: true if the string is hex.  
-
-| Param | Description |
-| --- | --- |
-| value | The value to test. |
-
-<a name="deserializeInputs"></a>
-
-## deserializeInputs(readStream) ⇒
-Deserialize the inputs from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeInputs"></a>
-
-## serializeInputs(writeStream, objects)
-Serialize the inputs to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| objects | The objects to serialize. |
-
-<a name="deserializeInput"></a>
-
-## deserializeInput(readStream) ⇒
-Deserialize the input from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeInput"></a>
-
-## serializeInput(writeStream, object)
-Serialize the input to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeUTXOInput"></a>
-
-## deserializeUTXOInput(readStream) ⇒
-Deserialize the utxo input from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeUTXOInput"></a>
-
-## serializeUTXOInput(writeStream, object)
-Serialize the utxo input to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeMessage"></a>
-
-## deserializeMessage(readStream) ⇒
-Deserialize the message from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized message.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The message to deserialize. |
-
-<a name="serializeMessage"></a>
-
-## serializeMessage(writeStream, object)
-Serialize the message essence to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeOutputs"></a>
-
-## deserializeOutputs(readStream) ⇒
-Deserialize the outputs from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeOutputs"></a>
-
-## serializeOutputs(writeStream, objects)
-Serialize the outputs to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| objects | The objects to serialize. |
-
-<a name="deserializeOutput"></a>
-
-## deserializeOutput(readStream) ⇒
-Deserialize the output from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeOutput"></a>
-
-## serializeOutput(writeStream, object)
-Serialize the output to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeSigLockedSingleOutput"></a>
-
-## deserializeSigLockedSingleOutput(readStream) ⇒
-Deserialize the signature locked single output from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeSigLockedSingleOutput"></a>
-
-## serializeSigLockedSingleOutput(writeStream, object)
-Serialize the signature locked single output to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializePayload"></a>
-
-## deserializePayload(readStream) ⇒
-Deserialize the payload from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializePayload"></a>
-
-## serializePayload(writeStream, object)
-Serialize the payload essence to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeTransactionPayload"></a>
-
-## deserializeTransactionPayload(readStream) ⇒
-Deserialize the transaction payload from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeTransactionPayload"></a>
-
-## serializeTransactionPayload(writeStream, object)
-Serialize the transaction payload essence to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeMilestonePayload"></a>
-
-## deserializeMilestonePayload(readStream) ⇒
-Deserialize the milestone payload from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeMilestonePayload"></a>
-
-## serializeMilestonePayload(writeStream, object)
-Serialize the milestone payload essence to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeIndexationPayload"></a>
-
-## deserializeIndexationPayload(readStream) ⇒
-Deserialize the indexation payload from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeIndexationPayload"></a>
-
-## serializeIndexationPayload(writeStream, object)
-Serialize the indexation payload essence to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeSignature"></a>
-
-## deserializeSignature(readStream) ⇒
-Deserialize the signature from binary.
-
-**Kind**: global function  
-**Returns**: The deserialized object.  
-
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
-
-<a name="serializeSignature"></a>
-
-## serializeSignature(writeStream, object)
-Serialize the signature to binary.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
-
-<a name="deserializeEd25519Signature"></a>
-
-## deserializeEd25519Signature(readStream) ⇒
 Deserialize the Ed25519 signature from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
 
-<a name="serializeEd25519Signature"></a>
+**Returns:** [IEd25519Signature](interfaces/ied25519signature.md)
 
-## serializeEd25519Signature(writeStream, object)
-Serialize the Ed25519 signature to binary.
+The deserialized object.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
+### deserializeIndexationPayload
 
-<a name="deserializeTransactionEssence"></a>
+▸ **deserializeIndexationPayload**(`readStream`: [ReadStream](classes/readstream.md)): [IIndexationPayload](interfaces/iindexationpayload.md)
 
-## deserializeTransactionEssence(readStream) ⇒
-Deserialize the transaction essence from binary.
+Deserialize the indexation payload from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
 
-<a name="serializeTransactionEssence"></a>
+**Returns:** [IIndexationPayload](interfaces/iindexationpayload.md)
 
-## serializeTransactionEssence(writeStream, object)
-Serialize the transaction essence to binary.
+The deserialized object.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
+### deserializeInput
 
-<a name="deserializeUnlockBlocks"></a>
+▸ **deserializeInput**(`readStream`: [ReadStream](classes/readstream.md)): [IUTXOInput](interfaces/iutxoinput.md)
 
-## deserializeUnlockBlocks(readStream) ⇒
-Deserialize the unlock blocks from binary.
+Deserialize the input from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
 
-<a name="serializeUnlockBlocks"></a>
+**Returns:** [IUTXOInput](interfaces/iutxoinput.md)
 
-## serializeUnlockBlocks(writeStream, objects)
-Serialize the unlock blocks to binary.
+The deserialized object.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| objects | The objects to serialize. |
+### deserializeInputs
 
-<a name="deserializeUnlockBlock"></a>
+▸ **deserializeInputs**(`readStream`: [ReadStream](classes/readstream.md)): [IUTXOInput](interfaces/iutxoinput.md)[]
 
-## deserializeUnlockBlock(readStream) ⇒
-Deserialize the unlock block from binary.
+Deserialize the inputs from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
 
-<a name="serializeUnlockBlock"></a>
+**Returns:** [IUTXOInput](interfaces/iutxoinput.md)[]
 
-## serializeUnlockBlock(writeStream, object)
-Serialize the unlock block to binary.
+The deserialized object.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
+### deserializeMessage
 
-<a name="deserializeSignatureUnlockBlock"></a>
+▸ **deserializeMessage**(`readStream`: [ReadStream](classes/readstream.md)): [IMessage](interfaces/imessage.md)
 
-## deserializeSignatureUnlockBlock(readStream) ⇒
-Deserialize the signature unlock block from binary.
+Deserialize the message from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The message to deserialize. |
 
-<a name="serializeSignatureUnlockBlock"></a>
+**Returns:** [IMessage](interfaces/imessage.md)
 
-## serializeSignatureUnlockBlock(writeStream, object)
-Serialize the signature unlock block to binary.
+The deserialized message.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
+### deserializeMilestonePayload
 
-<a name="deserializeReferenceUnlockBlock"></a>
+▸ **deserializeMilestonePayload**(`readStream`: [ReadStream](classes/readstream.md)): [IMilestonePayload](interfaces/imilestonepayload.md)
 
-## deserializeReferenceUnlockBlock(readStream) ⇒
+Deserialize the milestone payload from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [IMilestonePayload](interfaces/imilestonepayload.md)
+
+The deserialized object.
+
+___
+
+### deserializeOutput
+
+▸ **deserializeOutput**(`readStream`: [ReadStream](classes/readstream.md)): [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)
+
+Deserialize the output from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)
+
+The deserialized object.
+
+___
+
+### deserializeOutputs
+
+▸ **deserializeOutputs**(`readStream`: [ReadStream](classes/readstream.md)): [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)[]
+
+Deserialize the outputs from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)[]
+
+The deserialized object.
+
+___
+
+### deserializePayload
+
+▸ **deserializePayload**(`readStream`: [ReadStream](classes/readstream.md)): [IIndexationPayload](interfaces/iindexationpayload.md) \| [IMilestonePayload](interfaces/imilestonepayload.md) \| [ITransactionPayload](interfaces/itransactionpayload.md) \| undefined
+
+Deserialize the payload from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [IIndexationPayload](interfaces/iindexationpayload.md) \| [IMilestonePayload](interfaces/imilestonepayload.md) \| [ITransactionPayload](interfaces/itransactionpayload.md) \| undefined
+
+The deserialized object.
+
+___
+
+### deserializeReferenceUnlockBlock
+
+▸ **deserializeReferenceUnlockBlock**(`readStream`: [ReadStream](classes/readstream.md)): [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md)
+
 Deserialize the reference unlock block from binary.
 
-**Kind**: global function  
-**Returns**: The deserialized object.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| readStream | The stream to read the data from. |
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
 
-<a name="serializeReferenceUnlockBlock"></a>
+**Returns:** [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md)
 
-## serializeReferenceUnlockBlock(writeStream, object)
-Serialize the reference unlock block to binary.
+The deserialized object.
 
-**Kind**: global function  
+___
 
-| Param | Description |
-| --- | --- |
-| writeStream | The stream to write the data to. |
-| object | The object to serialize. |
+### deserializeSigLockedSingleOutput
 
-<a name="getAddresses"></a>
+▸ **deserializeSigLockedSingleOutput**(`readStream`: [ReadStream](classes/readstream.md)): [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)
 
-## getAddresses(seed, basePath, startIndex, count) ⇒
+Deserialize the signature locked single output from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)
+
+The deserialized object.
+
+___
+
+### deserializeSignature
+
+▸ **deserializeSignature**(`readStream`: [ReadStream](classes/readstream.md)): [IEd25519Signature](interfaces/ied25519signature.md)
+
+Deserialize the signature from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [IEd25519Signature](interfaces/ied25519signature.md)
+
+The deserialized object.
+
+___
+
+### deserializeSignatureUnlockBlock
+
+▸ **deserializeSignatureUnlockBlock**(`readStream`: [ReadStream](classes/readstream.md)): [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)
+
+Deserialize the signature unlock block from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)
+
+The deserialized object.
+
+___
+
+### deserializeTransactionEssence
+
+▸ **deserializeTransactionEssence**(`readStream`: [ReadStream](classes/readstream.md)): [ITransactionEssence](interfaces/itransactionessence.md)
+
+Deserialize the transaction essence from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [ITransactionEssence](interfaces/itransactionessence.md)
+
+The deserialized object.
+
+___
+
+### deserializeTransactionPayload
+
+▸ **deserializeTransactionPayload**(`readStream`: [ReadStream](classes/readstream.md)): [ITransactionPayload](interfaces/itransactionpayload.md)
+
+Deserialize the transaction payload from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [ITransactionPayload](interfaces/itransactionpayload.md)
+
+The deserialized object.
+
+___
+
+### deserializeUTXOInput
+
+▸ **deserializeUTXOInput**(`readStream`: [ReadStream](classes/readstream.md)): [IUTXOInput](interfaces/iutxoinput.md)
+
+Deserialize the utxo input from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [IUTXOInput](interfaces/iutxoinput.md)
+
+The deserialized object.
+
+___
+
+### deserializeUnlockBlock
+
+▸ **deserializeUnlockBlock**(`readStream`: [ReadStream](classes/readstream.md)): [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)
+
+Deserialize the unlock block from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)
+
+The deserialized object.
+
+___
+
+### deserializeUnlockBlocks
+
+▸ **deserializeUnlockBlocks**(`readStream`: [ReadStream](classes/readstream.md)): ([IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md))[]
+
+Deserialize the unlock blocks from binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`readStream` | [ReadStream](classes/readstream.md) | The stream to read the data from. |
+
+**Returns:** ([IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md))[]
+
+The deserialized object.
+
+___
+
+### getAddresses
+
+▸ **getAddresses**(`seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `startIndex?`: number, `count?`: number): string[]
+
 Generate a list of address key pairs.
 
-**Kind**: global function  
-**Returns**: A list of the signature key pairs for the addresses.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| seed | The seed. |
-| basePath | The base path to start looking for addresses. |
-| startIndex | The start index to generate from, defaults to 0. |
-| count | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
+Name | Type | Default value | Description |
+------ | ------ | ------ | ------ |
+`seed` | [ISeed](interfaces/iseed.md) | - | The seed. |
+`basePath` | [Bip32Path](classes/bip32path.md) | - | The base path to start looking for addresses. |
+`startIndex` | number | 0 | The start index to generate from, defaults to 0. |
+`count` | number | DEFAULT\_CHUNK\_SIZE | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
 
-<a name="getAddressesKeyPairs"></a>
+**Returns:** string[]
 
-## getAddressesKeyPairs(seed, basePath, startIndex, count) ⇒
+A list of the signature key pairs for the addresses.
+
+___
+
+### getAddressesKeyPairs
+
+▸ **getAddressesKeyPairs**(`seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `startIndex?`: number, `count?`: number): [IKeyPair](interfaces/ikeypair.md)[]
+
 Generate a list of address key pairs.
 
-**Kind**: global function  
-**Returns**: A list of the signature key pairs for the addresses.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| seed | The seed. |
-| basePath | The base path to start looking for addresses. |
-| startIndex | The start index to generate from, defaults to 0. |
-| count | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
+Name | Type | Default value | Description |
+------ | ------ | ------ | ------ |
+`seed` | [ISeed](interfaces/iseed.md) | - | The seed. |
+`basePath` | [Bip32Path](classes/bip32path.md) | - | The base path to start looking for addresses. |
+`startIndex` | number | 0 | The start index to generate from, defaults to 0. |
+`count` | number | DEFAULT\_CHUNK\_SIZE | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
 
-<a name="getBalance"></a>
+**Returns:** [IKeyPair](interfaces/ikeypair.md)[]
 
-## getBalance(client, seed, basePath, startIndex) ⇒
+A list of the signature key pairs for the addresses.
+
+___
+
+### getBalance
+
+▸ **getBalance**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `startIndex?`: number): Promise\<number>
+
 Get the balance for a list of addresses.
 
-**Kind**: global function  
-**Returns**: The balance.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| seed | The seed. |
-| basePath | The base path to start looking for addresses. |
-| startIndex | The start index to generate from, defaults to 0. |
+Name | Type | Default value | Description |
+------ | ------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | - | The client to send the transfer with. |
+`seed` | [ISeed](interfaces/iseed.md) | - | The seed. |
+`basePath` | [Bip32Path](classes/bip32path.md) | - | The base path to start looking for addresses. |
+`startIndex` | number | 0 | The start index to generate from, defaults to 0. |
 
-<a name="getUnspentAddress"></a>
+**Returns:** Promise\<number>
 
-## getUnspentAddress(client, seed, basePath, startIndex) ⇒
+The balance.
+
+___
+
+### getUnspentAddress
+
+▸ **getUnspentAddress**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `startIndex?`: undefined \| number): Promise\<{ address: string ; balance: number ; index: number  } \| undefined>
+
 Get the first unspent address.
 
-**Kind**: global function  
-**Returns**: The first unspent address.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| seed | The seed to use for address generation. |
-| basePath | The base path to start looking for addresses. |
-| startIndex | Optional start index for the wallet count address, defaults to 0. |
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
+`basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
+`startIndex?` | undefined \| number | Optional start index for the wallet count address, defaults to 0. |
 
-<a name="getUnspentAddresses"></a>
+**Returns:** Promise\<{ address: string ; balance: number ; index: number  } \| undefined>
 
-## getUnspentAddresses(client, seed, basePath, startIndex, countLimit) ⇒
+The first unspent address.
+
+___
+
+### getUnspentAddresses
+
+▸ **getUnspentAddresses**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `startIndex?`: undefined \| number, `countLimit?`: undefined \| number): Promise\<{ address: string ; balance: number ; index: number  }[]>
+
 Get all the unspent addresses.
 
-**Kind**: global function  
-**Returns**: All the unspent addresses.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| seed | The seed to use for address generation. |
-| basePath | The base path to start looking for addresses. |
-| startIndex | Optional start index for the wallet count address, defaults to 0. |
-| countLimit | Limit the number of items to find. |
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
+`basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
+`startIndex?` | undefined \| number | Optional start index for the wallet count address, defaults to 0. |
+`countLimit?` | undefined \| number | Limit the number of items to find. |
 
-<a name="retrieveData"></a>
+**Returns:** Promise\<{ address: string ; balance: number ; index: number  }[]>
 
-## retrieveData(client, messageId) ⇒
-Retrieve a data message.
+All the unspent addresses.
 
-**Kind**: global function  
-**Returns**: The message index and data.  
+___
 
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| messageId | The message id of the data to get. |
+### isHex
 
-<a name="send"></a>
+▸ **isHex**(`value`: string): boolean
 
-## send(client, seed, basePath, address, amount, startIndex) ⇒
-Send a transfer from the balance on the seed.
+Is the data hex format.
 
-**Kind**: global function  
-**Returns**: The id of the message created and the contructed message.  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| seed | The seed to use for address generation. |
-| basePath | The base path to start looking for addresses. |
-| address | The address to send the funds to. |
-| amount | The amount to send. |
-| startIndex | The start index for the wallet count address, defaults to 0. |
+Name | Type | Description |
+------ | ------ | ------ |
+`value` | string | The value to test. |
 
-<a name="sendAdvanced"></a>
+**Returns:** boolean
 
-## sendAdvanced(client, seed, basePath, outputs, startIndex, indexationKey, indexationData) ⇒
-Send a transfer from the balance on the seed.
+true if the string is hex.
 
-**Kind**: global function  
-**Returns**: The id of the message created and the remainder address if one was needed.  
+___
 
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| seed | The seed to use for address generation. |
-| basePath | The base path to start looking for addresses. |
-| outputs | The outputs to send. |
-| startIndex | Optional start index for the wallet count address, defaults to 0. |
-| indexationKey | Optional indexation key. |
-| indexationData | Optional index data. |
+### logAddress
 
-<a name="sendData"></a>
+▸ **logAddress**(`prefix`: string, `unknownAddress?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
 
-## sendData(client, indexationKey, indexationData) ⇒
-Send a data message.
-
-**Kind**: global function  
-**Returns**: The id of the message created and the message.  
-
-| Param | Description |
-| --- | --- |
-| client | The client to send the transfer with. |
-| indexationKey | The index name. |
-| indexationData | The index data. |
-
-<a name="logger"></a>
-
-## logger(message, data) ⇒
-The logger used by the log methods.
-
-**Kind**: global function  
-**Returns**: Nothing.  
-
-| Param | Description |
-| --- | --- |
-| message | The message to output. |
-| data | The data to output. |
-
-<a name="setLogger"></a>
-
-## setLogger(log)
-Set the logger for output.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| log | The logger. |
-
-<a name="logMessage"></a>
-
-## logMessage(prefix, message)
-Log a message to the console.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| prefix | The prefix for the output. |
-| message | The message to log. |
-
-<a name="logPayload"></a>
-
-## logPayload(prefix, unknownPayload)
-Log a message to the console.
-
-**Kind**: global function  
-
-| Param | Description |
-| --- | --- |
-| prefix | The prefix for the output. |
-| unknownPayload | The payload. |
-
-<a name="logAddress"></a>
-
-## logAddress(prefix, unknownAddress)
 Log an address to the console.
 
-**Kind**: global function  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| prefix | The prefix for the output. |
-| unknownAddress | The address to log. |
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`unknownAddress?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The address to log.  |
 
-<a name="logSignature"></a>
+**Returns:** void
 
-## logSignature(prefix, unknownSignature)
-Log signature to the console.
+___
 
-**Kind**: global function  
+### logInput
 
-| Param | Description |
-| --- | --- |
-| prefix | The prefix for the output. |
-| unknownSignature | The signature to log. |
+▸ **logInput**(`prefix`: string, `unknownInput?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
 
-<a name="logInput"></a>
-
-## logInput(prefix, unknownInput)
 Log input to the console.
 
-**Kind**: global function  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| prefix | The prefix for the output. |
-| unknownInput | The input to log. |
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`unknownInput?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The input to log.  |
 
-<a name="logOutput"></a>
+**Returns:** void
 
-## logOutput(prefix, unknownOutput)
+___
+
+### logMessage
+
+▸ **logMessage**(`prefix`: string, `message`: [IMessage](interfaces/imessage.md)): void
+
+Log a message to the console.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`message` | [IMessage](interfaces/imessage.md) | The message to log.  |
+
+**Returns:** void
+
+___
+
+### logOutput
+
+▸ **logOutput**(`prefix`: string, `unknownOutput?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
+
 Log output to the console.
 
-**Kind**: global function  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| prefix | The prefix for the output. |
-| unknownOutput | The output to log. |
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`unknownOutput?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The output to log.  |
 
-<a name="logUnlockBlock"></a>
+**Returns:** void
 
-## logUnlockBlock(prefix, unknownUnlockBlock)
+___
+
+### logPayload
+
+▸ **logPayload**(`prefix`: string, `unknownPayload?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
+
+Log a message to the console.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`unknownPayload?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The payload.  |
+
+**Returns:** void
+
+___
+
+### logSignature
+
+▸ **logSignature**(`prefix`: string, `unknownSignature?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
+
+Log signature to the console.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`unknownSignature?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The signature to log.  |
+
+**Returns:** void
+
+___
+
+### logUnlockBlock
+
+▸ **logUnlockBlock**(`prefix`: string, `unknownUnlockBlock?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
+
 Log unlock block to the console.
 
-**Kind**: global function  
+#### Parameters:
 
-| Param | Description |
-| --- | --- |
-| prefix | The prefix for the output. |
-| unknownUnlockBlock | The unlock block to log. |
+Name | Type | Description |
+------ | ------ | ------ |
+`prefix` | string | The prefix for the output. |
+`unknownUnlockBlock?` | [ITypeBase](interfaces/itypebase.md)\<unknown> | The unlock block to log.  |
 
+**Returns:** void
+
+___
+
+### logger
+
+▸ `Let`**logger**(`message`: string, `data`: unknown): void
+
+The logger used by the log methods.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`message` | string | The message to output. |
+`data` | unknown | The data to output. |
+
+**Returns:** void
+
+Nothing.
+
+___
+
+### retrieveData
+
+▸ **retrieveData**(`client`: [IClient](interfaces/iclient.md), `messageId`: string): Promise\<{ data: Uint8Array ; index: string  } \| undefined>
+
+Retrieve a data message.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`messageId` | string | The message id of the data to get. |
+
+**Returns:** Promise\<{ data: Uint8Array ; index: string  } \| undefined>
+
+The message index and data.
+
+___
+
+### send
+
+▸ **send**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `address`: string, `amount`: number, `startIndex?`: undefined \| number): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+Send a transfer from the balance on the seed.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
+`basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
+`address` | string | The address to send the funds to. |
+`amount` | number | The amount to send. |
+`startIndex?` | undefined \| number | The start index for the wallet count address, defaults to 0. |
+
+**Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+The id of the message created and the contructed message.
+
+___
+
+### sendAdvanced
+
+▸ **sendAdvanced**(`client`: [IClient](interfaces/iclient.md), `seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `outputs`: { address: string ; amount: number  }[], `startIndex?`: undefined \| number, `indexationKey?`: undefined \| string, `indexationData?`: Uint8Array): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+Send a transfer from the balance on the seed.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`seed` | [ISeed](interfaces/iseed.md) | The seed to use for address generation. |
+`basePath` | [Bip32Path](classes/bip32path.md) | The base path to start looking for addresses. |
+`outputs` | { address: string ; amount: number  }[] | The outputs to send. |
+`startIndex?` | undefined \| number | Optional start index for the wallet count address, defaults to 0. |
+`indexationKey?` | undefined \| string | Optional indexation key. |
+`indexationData?` | Uint8Array | Optional index data. |
+
+**Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+The id of the message created and the remainder address if one was needed.
+
+___
+
+### sendData
+
+▸ **sendData**(`client`: [IClient](interfaces/iclient.md), `indexationKey`: string, `indexationData`: Uint8Array): Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+Send a data message.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`client` | [IClient](interfaces/iclient.md) | The client to send the transfer with. |
+`indexationKey` | string | The index name. |
+`indexationData` | Uint8Array | The index data. |
+
+**Returns:** Promise\<{ message: [IMessage](interfaces/imessage.md) ; messageId: string  }>
+
+The id of the message created and the message.
+
+___
+
+### serializeAddress
+
+▸ **serializeAddress**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IEd25519Address](interfaces/ied25519address.md)): void
+
+Serialize the address to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IEd25519Address](interfaces/ied25519address.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeEd25519Address
+
+▸ **serializeEd25519Address**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IEd25519Address](interfaces/ied25519address.md)): void
+
+Serialize the ed25519 address to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IEd25519Address](interfaces/ied25519address.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeEd25519Signature
+
+▸ **serializeEd25519Signature**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IEd25519Signature](interfaces/ied25519signature.md)): void
+
+Serialize the Ed25519 signature to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IEd25519Signature](interfaces/ied25519signature.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeIndexationPayload
+
+▸ **serializeIndexationPayload**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IIndexationPayload](interfaces/iindexationpayload.md)): void
+
+Serialize the indexation payload essence to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IIndexationPayload](interfaces/iindexationpayload.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeInput
+
+▸ **serializeInput**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IUTXOInput](interfaces/iutxoinput.md)): void
+
+Serialize the input to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IUTXOInput](interfaces/iutxoinput.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeInputs
+
+▸ **serializeInputs**(`writeStream`: [WriteStream](classes/writestream.md), `objects`: [IUTXOInput](interfaces/iutxoinput.md)[]): void
+
+Serialize the inputs to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`objects` | [IUTXOInput](interfaces/iutxoinput.md)[] | The objects to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeMessage
+
+▸ **serializeMessage**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IMessage](interfaces/imessage.md)): void
+
+Serialize the message essence to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IMessage](interfaces/imessage.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeMilestonePayload
+
+▸ **serializeMilestonePayload**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IMilestonePayload](interfaces/imilestonepayload.md)): void
+
+Serialize the milestone payload essence to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IMilestonePayload](interfaces/imilestonepayload.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeOutput
+
+▸ **serializeOutput**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)): void
+
+Serialize the output to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeOutputs
+
+▸ **serializeOutputs**(`writeStream`: [WriteStream](classes/writestream.md), `objects`: [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)[]): void
+
+Serialize the outputs to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`objects` | [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)[] | The objects to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializePayload
+
+▸ **serializePayload**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IIndexationPayload](interfaces/iindexationpayload.md) \| [IMilestonePayload](interfaces/imilestonepayload.md) \| [ITransactionPayload](interfaces/itransactionpayload.md) \| undefined): void
+
+Serialize the payload essence to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IIndexationPayload](interfaces/iindexationpayload.md) \| [IMilestonePayload](interfaces/imilestonepayload.md) \| [ITransactionPayload](interfaces/itransactionpayload.md) \| undefined | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeReferenceUnlockBlock
+
+▸ **serializeReferenceUnlockBlock**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md)): void
+
+Serialize the reference unlock block to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeSigLockedSingleOutput
+
+▸ **serializeSigLockedSingleOutput**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md)): void
+
+Serialize the signature locked single output to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [ISigLockedSingleOutput](interfaces/isiglockedsingleoutput.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeSignature
+
+▸ **serializeSignature**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IEd25519Signature](interfaces/ied25519signature.md)): void
+
+Serialize the signature to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IEd25519Signature](interfaces/ied25519signature.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeSignatureUnlockBlock
+
+▸ **serializeSignatureUnlockBlock**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)): void
+
+Serialize the signature unlock block to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeTransactionEssence
+
+▸ **serializeTransactionEssence**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [ITransactionEssence](interfaces/itransactionessence.md)): void
+
+Serialize the transaction essence to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [ITransactionEssence](interfaces/itransactionessence.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeTransactionPayload
+
+▸ **serializeTransactionPayload**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [ITransactionPayload](interfaces/itransactionpayload.md)): void
+
+Serialize the transaction payload essence to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [ITransactionPayload](interfaces/itransactionpayload.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeUTXOInput
+
+▸ **serializeUTXOInput**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IUTXOInput](interfaces/iutxoinput.md)): void
+
+Serialize the utxo input to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IUTXOInput](interfaces/iutxoinput.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeUnlockBlock
+
+▸ **serializeUnlockBlock**(`writeStream`: [WriteStream](classes/writestream.md), `object`: [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md)): void
+
+Serialize the unlock block to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`object` | [IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md) | The object to serialize.  |
+
+**Returns:** void
+
+___
+
+### serializeUnlockBlocks
+
+▸ **serializeUnlockBlocks**(`writeStream`: [WriteStream](classes/writestream.md), `objects`: ([IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md))[]): void
+
+Serialize the unlock blocks to binary.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`writeStream` | [WriteStream](classes/writestream.md) | The stream to write the data to. |
+`objects` | ([IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md))[] | The objects to serialize.  |
+
+**Returns:** void
+
+___
+
+### setLogger
+
+▸ **setLogger**(`log`: (message: string, data?: unknown) => void): void
+
+Set the logger for output.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`log` | (message: string, data?: unknown) => void | The logger.  |
+
+**Returns:** void

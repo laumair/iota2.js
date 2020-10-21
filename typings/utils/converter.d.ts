@@ -3,14 +3,6 @@
  */
 export declare class Converter {
     /**
-     * Lookup table for encoding.
-     */
-    private static ENCODE_LOOKUP;
-    /**
-     * Lookup table for decoding.
-     */
-    private static DECODE_LOOKUP;
-    /**
      * Encode a raw array to text string.
      * @param array The bytes to encode.
      * @param startIndex The index to start in the bytes.
@@ -52,8 +44,4 @@ export declare class Converter {
      * @returns The ascii version of the bytes.
      */
     static hexToAscii(hex: string): string;
-    /**
-     * Build the static lookup tables.
-     */
-    private static buildHexLookups;
 }

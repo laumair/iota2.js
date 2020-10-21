@@ -1,17 +1,17 @@
+import { ClientError } from "../api/clientError";
+import { IAddress } from "../api/models/IAddress";
+import { IAddressOutputs } from "../api/models/IAddressOutputs";
+import { IChildren } from "../api/models/IChildren";
 import { IClient } from "../api/models/IClient";
+import { IInfo } from "../api/models/IInfo";
 import { IMessageId } from "../api/models/IMessageId";
+import { IMessageMetadata } from "../api/models/IMessageMetadata";
+import { IMessages } from "../api/models/IMessages";
+import { IMilestone } from "../api/models/IMilestone";
+import { IOutput } from "../api/models/IOutput";
+import { IResponse } from "../api/models/IResponse";
+import { ITips } from "../api/models/ITips";
 import { IMessage } from "../models/IMessage";
-import { ClientError } from "./clientError";
-import { IAddress } from "./models/IAddress";
-import { IAddressOutputs } from "./models/IAddressOutputs";
-import { IChildren } from "./models/IChildren";
-import { IInfo } from "./models/IInfo";
-import { IMessageMetadata } from "./models/IMessageMetadata";
-import { IMessages } from "./models/IMessages";
-import { IMilestone } from "./models/IMilestone";
-import { IOutput } from "./models/IOutput";
-import { IResponse } from "./models/IResponse";
-import { ITips } from "./models/ITips";
 
 
 /**
@@ -20,6 +20,7 @@ import { ITips } from "./models/ITips";
 export class SingleNodeClient implements IClient {
     /**
      * The endpoint for the API.
+     * @internal
      */
     private readonly _endpoint: string;
 
@@ -191,7 +192,7 @@ export class SingleNodeClient implements IClient {
      * Perform a request and just return the status.
      * @param route The route of the request.
      * @returns The response.
-     * @private
+     * @internal
      */
     private async fetchStatus(route: string): Promise<number> {
         const response = await fetch(
@@ -210,7 +211,7 @@ export class SingleNodeClient implements IClient {
      * @param route The route of the request.
      * @param requestData Request to send to the endpoint.
      * @returns The response.
-     * @private
+     * @internal
      */
     private async fetchJson<T, U>(method: "get" | "post", route: string, requestData?: T): Promise<U> {
         const response = await fetch(
@@ -244,7 +245,7 @@ export class SingleNodeClient implements IClient {
      * @param route The route of the request.
      * @param requestData Request to send to the endpoint.
      * @returns The response.
-     * @private
+     * @internal
      */
     private async fetchBinary<T>(
         method: "get" | "post",

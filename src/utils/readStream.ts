@@ -8,11 +8,13 @@ import { Converter } from "./converter";
 export class ReadStream {
     /**
      * The storage.
+     * @internal
      */
     private readonly _storage: Uint8Array;
 
     /**
      * The current read index.
+     * @internal
      */
     private _readIndex: number;
 

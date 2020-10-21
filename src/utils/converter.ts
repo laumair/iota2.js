@@ -5,11 +5,13 @@
 export class Converter {
     /**
      * Lookup table for encoding.
+     * @internal
      */
     private static ENCODE_LOOKUP: string[] | undefined;
 
     /**
      * Lookup table for decoding.
+     * @internal
      */
     private static DECODE_LOOKUP: number[] | undefined;
 
@@ -128,6 +130,7 @@ export class Converter {
 
     /**
      * Build the static lookup tables.
+     * @internal
      */
     private static buildHexLookups(): void {
         if (!Converter.ENCODE_LOOKUP || !Converter.DECODE_LOOKUP) {

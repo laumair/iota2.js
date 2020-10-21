@@ -3,22 +3,6 @@
  */
 export declare class Ed25519 {
     /**
-     * Version for signature scheme.
-     */
-    static VERSION: number;
-    /**
-     * Public Key size.
-     */
-    static PUBLIC_KEY_SIZE: number;
-    /**
-     * Signature size for signing scheme.
-     */
-    static SIGNATURE_SIZE: number;
-    /**
-     * Address size.
-     */
-    static ADDRESS_LENGTH: number;
-    /**
      * Privately sign the data.
      * @param privateKey The private key to sign with.
      * @param data The data to sign.

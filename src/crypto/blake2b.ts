@@ -6,16 +6,19 @@
 export class Blake2b {
     /**
      * Blake2b 256.
+     * @internal
      */
     public static SIZE_256: number = 32;
 
     /**
      * Blake2b 512.
+     * @internal
      */
     public static SIZE_512: number = 64;
 
     /**
      * Initialization Vector.
+     * @internal
      */
     private static readonly BLAKE2B_IV32 = new Uint32Array([
         0xF3BCC908, 0x6A09E667, 0x84CAA73B, 0xBB67AE85,
@@ -26,6 +29,7 @@ export class Blake2b {
 
     /**
      * Initialization Vector.
+     * @internal
      */
     private static readonly SIGMA8 = [
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -46,21 +50,25 @@ export class Blake2b {
      * These are offsets into a uint64 buffer.
      * Multiply them all by 2 to make them offsets into a uint32 buffer,
      * because this is Javascript and we don't have uint64s
+     * @internal
      */
     private static readonly SIGMA82 = new Uint8Array(Blake2b.SIGMA8.map(x => x * 2));
 
     /**
      * The V vector.
+     * @internal
      */
     private _v: Uint32Array;
 
     /**
      * The M vector.
+     * @internal
      */
     private _m: Uint32Array;
 
     /**
      * Create a new instance of Blake2b.
+     * @internal
      */
     constructor() {
         this._v = new Uint32Array(32);
@@ -101,6 +109,7 @@ export class Blake2b {
      * @param ctx.c Number.
      * @param ctx.outlen The output length.
      * @param last Is this the last block.
+     * @internal
      */
     private compress(ctx: {
         b: Uint8Array;
@@ -155,6 +164,7 @@ export class Blake2b {
      * @param outlen Output length between 1 and 64 bytes.
      * @param key Optional key.
      * @returns The initialized context.
+     * @internal
      */
     private init(outlen: number, key?: Uint8Array): {
         b: Uint8Array;
@@ -205,6 +215,7 @@ export class Blake2b {
      * @param ctx.c Number.
      * @param ctx.outlen The output length.
      * @param input The data to hash.
+     * @internal
      */
     private update(ctx: {
         b: Uint8Array;
@@ -232,6 +243,7 @@ export class Blake2b {
      * @param ctx.c Number.
      * @param ctx.outlen The output length.
      * @returns The final data.
+     * @internal
      */
     private final(ctx: {
         b: Uint8Array;
@@ -261,6 +273,7 @@ export class Blake2b {
      * @param v The array.
      * @param a The a index.
      * @param b The b index.
+     * @internal
      */
     private add64AA(v: Uint32Array, a: number, b: number): void {
         const o0 = v[a] + v[b];
@@ -279,6 +292,7 @@ export class Blake2b {
      * @param a The index to use.
      * @param b0 Is the low 32 bits.
      * @param b1 Represents the high 32 bits.
+     * @internal
      */
     private add64AC(v: Uint32Array, a: number, b0: number, b1: number): void {
         let o0 = v[a] + b0;
@@ -298,6 +312,7 @@ export class Blake2b {
      * @param arr The array to read from .
      * @param i The index to start reading from.
      * @returns The value.
+     * @internal
      */
     private b2bGet32(arr: ArrayLike<number>, i: number): number {
         return (arr[i] ^
@@ -315,6 +330,7 @@ export class Blake2b {
      * @param d The d value.
      * @param ix The ix value.
      * @param iy The iy value.
+     * @internal
      */
     private b2bG(a: number, b: number, c: number, d: number, ix: number, iy: number): void {
         const x0 = this._m[ix];

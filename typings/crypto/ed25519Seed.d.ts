@@ -6,14 +6,6 @@ import { Bip32Path } from "./bip32Path";
  */
 export declare class Ed25519Seed implements ISeed {
     /**
-     * SeedSize is the size, in bytes, of private key seeds.
-     */
-    static SEED_SIZE_BYTES: number;
-    /**
-     * The secret key for the seed.
-     */
-    private _secretKey;
-    /**
      * Create a seed from the bytes.
      * @param bytes The binary representation of the seed.
      * @returns The seed.

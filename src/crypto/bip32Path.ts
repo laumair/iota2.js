@@ -4,6 +4,7 @@
 export class Bip32Path {
     /**
      * The path.
+     * @internal
      */
     private readonly _path: string[];
 

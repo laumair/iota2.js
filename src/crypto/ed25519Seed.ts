@@ -10,11 +10,13 @@ import { Slip0010 } from "./slip0010";
 export class Ed25519Seed implements ISeed {
     /**
      * SeedSize is the size, in bytes, of private key seeds.
+     * @internal
      */
     public static SEED_SIZE_BYTES: number = 32;
 
     /**
      * The secret key for the seed.
+     * @internal
      */
     private _secretKey: Uint8Array = new Uint8Array();
 

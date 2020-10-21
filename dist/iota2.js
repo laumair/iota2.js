@@ -130,356 +130,6 @@
 
 	});
 
-	var singleNodeClient = createCommonjsModule(function (module, exports) {
-	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
-	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-	    return new (P || (P = Promise))(function (resolve, reject) {
-	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-	        step((generator = generator.apply(thisArg, _arguments || [])).next());
-	    });
-	};
-	var __generator = (commonjsGlobal && commonjsGlobal.__generator) || function (thisArg, body) {
-	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-	    function verb(n) { return function (v) { return step([n, v]); }; }
-	    function step(op) {
-	        if (f) throw new TypeError("Generator is already executing.");
-	        while (_) try {
-	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-	            if (y = 0, t) op = [op[0] & 2, t.value];
-	            switch (op[0]) {
-	                case 0: case 1: t = op; break;
-	                case 4: _.label++; return { value: op[1], done: false };
-	                case 5: _.label++; y = op[1]; op = [0]; continue;
-	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-	                default:
-	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-	                    if (t[2]) _.ops.pop();
-	                    _.trys.pop(); continue;
-	            }
-	            op = body.call(thisArg, _);
-	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-	    }
-	};
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.SingleNodeClient = void 0;
-
-	/**
-	 * Client for API communication.
-	 */
-	var SingleNodeClient = /** @class */ (function () {
-	    /**
-	     * Create a new instance of client.
-	     * @param endpoint The endpoint.
-	     */
-	    function SingleNodeClient(endpoint) {
-	        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
-	            throw new Error("The endpoint is not in the correct format");
-	        }
-	        this._endpoint = endpoint.replace(/\/+$/, "");
-	    }
-	    /**
-	     * Get the health of the node.
-	     * @returns True if the node is healthy.
-	     */
-	    SingleNodeClient.prototype.health = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var status;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.fetchStatus("/health")];
-	                    case 1:
-	                        status = _a.sent();
-	                        if (status === 200) {
-	                            return [2 /*return*/, true];
-	                        }
-	                        else if (status === 503) {
-	                            return [2 /*return*/, false];
-	                        }
-	                        throw new clientError.ClientError("Unexpected response code", "/health", status);
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Get the info about the node.
-	     * @returns The node information.
-	     */
-	    SingleNodeClient.prototype.info = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/info")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the tips from the node.
-	     * @returns The tips.
-	     */
-	    SingleNodeClient.prototype.tips = function () {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/tips")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the message data by id.
-	     * @param messageId The message to get the data for.
-	     * @returns The message data.
-	     */
-	    SingleNodeClient.prototype.message = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the message metadata by id.
-	     * @param messageId The message to get the metadata for.
-	     * @returns The message metadata.
-	     */
-	    SingleNodeClient.prototype.messageMetadata = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/metadata")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the message raw data by id.
-	     * @param messageId The message to get the data for.
-	     * @returns The message raw data.
-	     */
-	    SingleNodeClient.prototype.messageRaw = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchBinary("get", "/api/v1/messages/" + messageId + "/raw")];
-	            });
-	        });
-	    };
-	    /**
-	     * Submit message.
-	     * @param message The message to submit.
-	     * @returns The messageId.
-	     */
-	    SingleNodeClient.prototype.messageSubmit = function (message) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message)];
-	                    case 1:
-	                        response = _a.sent();
-	                        return [2 /*return*/, response.messageId];
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Submit message in raw format.
-	     * @param message The message to submit.
-	     * @returns The messageId.
-	     */
-	    SingleNodeClient.prototype.messageSubmitRaw = function (message) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
-	                    case 1:
-	                        response = _a.sent();
-	                        return [2 /*return*/, response.messageId];
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Find messages by index.
-	     * @param indexationKey The index value.
-	     * @returns The messageId.
-	     */
-	    SingleNodeClient.prototype.messagesFind = function (indexationKey) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages?index=" + encodeURIComponent(indexationKey))];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the children of a message.
-	     * @param messageId The id of the message to get the children for.
-	     * @returns The messages children.
-	     */
-	    SingleNodeClient.prototype.messageChildren = function (messageId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/children")];
-	            });
-	        });
-	    };
-	    /**
-	     * Find an output by its identifier.
-	     * @param outputId The id of the output to get.
-	     * @returns The output details.
-	     */
-	    SingleNodeClient.prototype.output = function (outputId) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/outputs/" + outputId)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the address details.
-	     * @param address The address to get the details for.
-	     * @returns The address details.
-	     */
-	    SingleNodeClient.prototype.address = function (address) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address)];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the address outputs.
-	     * @param address The address to get the outputs for.
-	     * @returns The address outputs.
-	     */
-	    SingleNodeClient.prototype.addressOutputs = function (address) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address + "/outputs")];
-	            });
-	        });
-	    };
-	    /**
-	     * Get the requested milestone.
-	     * @param index The index of the milestone to get.
-	     * @returns The milestone details.
-	     */
-	    SingleNodeClient.prototype.milestone = function (index) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            return __generator(this, function (_a) {
-	                return [2 /*return*/, this.fetchJson("get", "/api/v1/milestones/" + index)];
-	            });
-	        });
-	    };
-	    /**
-	     * Perform a request and just return the status.
-	     * @param route The route of the request.
-	     * @returns The response.
-	     * @private
-	     */
-	    SingleNodeClient.prototype.fetchStatus = function (route) {
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response;
-	            return __generator(this, function (_a) {
-	                switch (_a.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
-	                            method: "get"
-	                        })];
-	                    case 1:
-	                        response = _a.sent();
-	                        return [2 /*return*/, response.status];
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Perform a request in json format.
-	     * @param method The http method.
-	     * @param route The route of the request.
-	     * @param requestData Request to send to the endpoint.
-	     * @returns The response.
-	     * @private
-	     */
-	    SingleNodeClient.prototype.fetchJson = function (method, route, requestData) {
-	        var _a, _b, _c;
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response, responseData;
-	            return __generator(this, function (_d) {
-	                switch (_d.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
-	                            method: method,
-	                            headers: {
-	                                "Content-Type": "application/json"
-	                            },
-	                            body: requestData ? JSON.stringify(requestData) : undefined
-	                        })];
-	                    case 1:
-	                        response = _d.sent();
-	                        return [4 /*yield*/, response.json()];
-	                    case 2:
-	                        responseData = _d.sent();
-	                        if (response.ok && !responseData.error) {
-	                            return [2 /*return*/, responseData.data];
-	                        }
-	                        throw new clientError.ClientError((_b = (_a = responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData.error) === null || _c === void 0 ? void 0 : _c.code);
-	                }
-	            });
-	        });
-	    };
-	    /**
-	     * Perform a request for binary data.
-	     * @param method The http method.
-	     * @param route The route of the request.
-	     * @param requestData Request to send to the endpoint.
-	     * @returns The response.
-	     * @private
-	     */
-	    SingleNodeClient.prototype.fetchBinary = function (method, route, requestData) {
-	        var _a, _b, _c;
-	        return __awaiter(this, void 0, void 0, function () {
-	            var response, responseData, _d;
-	            return __generator(this, function (_e) {
-	                switch (_e.label) {
-	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
-	                            method: method,
-	                            headers: {
-	                                "Content-Type": "application/octet-stream"
-	                            },
-	                            body: requestData
-	                        })];
-	                    case 1:
-	                        response = _e.sent();
-	                        if (!response.ok) return [3 /*break*/, 5];
-	                        if (!(method === "get")) return [3 /*break*/, 3];
-	                        _d = Uint8Array.bind;
-	                        return [4 /*yield*/, response.arrayBuffer()];
-	                    case 2: return [2 /*return*/, new (_d.apply(Uint8Array, [void 0, _e.sent()]))()];
-	                    case 3: return [4 /*yield*/, response.json()];
-	                    case 4:
-	                        responseData = _e.sent();
-	                        if (!(responseData === null || responseData === void 0 ? void 0 : responseData.error)) {
-	                            return [2 /*return*/, responseData === null || responseData === void 0 ? void 0 : responseData.data];
-	                        }
-	                        _e.label = 5;
-	                    case 5:
-	                        if (!!responseData) return [3 /*break*/, 7];
-	                        return [4 /*yield*/, response.json()];
-	                    case 6:
-	                        responseData = _e.sent();
-	                        _e.label = 7;
-	                    case 7: throw new clientError.ClientError((_b = (_a = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _c === void 0 ? void 0 : _c.code);
-	                }
-	            });
-	        });
-	    };
-	    return SingleNodeClient;
-	}());
-	exports.SingleNodeClient = SingleNodeClient;
-
-	});
-
 	var arrayHelper = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.ArrayHelper = void 0;
@@ -524,6 +174,7 @@
 	var Blake2b = /** @class */ (function () {
 	    /**
 	     * Create a new instance of Blake2b.
+	     * @internal
 	     */
 	    function Blake2b() {
 	        this._v = new Uint32Array(32);
@@ -561,6 +212,7 @@
 	     * @param ctx.c Number.
 	     * @param ctx.outlen The output length.
 	     * @param last Is this the last block.
+	     * @internal
 	     */
 	    Blake2b.prototype.compress = function (ctx, last) {
 	        var i = 0;
@@ -602,6 +254,7 @@
 	     * @param outlen Output length between 1 and 64 bytes.
 	     * @param key Optional key.
 	     * @returns The initialized context.
+	     * @internal
 	     */
 	    Blake2b.prototype.init = function (outlen, key) {
 	        if (outlen <= 0 || outlen > 64) {
@@ -641,6 +294,7 @@
 	     * @param ctx.c Number.
 	     * @param ctx.outlen The output length.
 	     * @param input The data to hash.
+	     * @internal
 	     */
 	    Blake2b.prototype.update = function (ctx, input) {
 	        for (var i = 0; i < input.length; i++) {
@@ -661,6 +315,7 @@
 	     * @param ctx.c Number.
 	     * @param ctx.outlen The output length.
 	     * @returns The final data.
+	     * @internal
 	     */
 	    Blake2b.prototype.final = function (ctx) {
 	        ctx.t += ctx.c; // mark last block offset
@@ -681,6 +336,7 @@
 	     * @param v The array.
 	     * @param a The a index.
 	     * @param b The b index.
+	     * @internal
 	     */
 	    Blake2b.prototype.add64AA = function (v, a, b) {
 	        var o0 = v[a] + v[b];
@@ -698,6 +354,7 @@
 	     * @param a The index to use.
 	     * @param b0 Is the low 32 bits.
 	     * @param b1 Represents the high 32 bits.
+	     * @internal
 	     */
 	    Blake2b.prototype.add64AC = function (v, a, b0, b1) {
 	        var o0 = v[a] + b0;
@@ -716,6 +373,7 @@
 	     * @param arr The array to read from .
 	     * @param i The index to start reading from.
 	     * @returns The value.
+	     * @internal
 	     */
 	    Blake2b.prototype.b2bGet32 = function (arr, i) {
 	        return (arr[i] ^
@@ -732,6 +390,7 @@
 	     * @param d The d value.
 	     * @param ix The ix value.
 	     * @param iy The iy value.
+	     * @internal
 	     */
 	    Blake2b.prototype.b2bG = function (a, b, c, d, ix, iy) {
 	        var x0 = this._m[ix];
@@ -767,14 +426,17 @@
 	    };
 	    /**
 	     * Blake2b 256.
+	     * @internal
 	     */
 	    Blake2b.SIZE_256 = 32;
 	    /**
 	     * Blake2b 512.
+	     * @internal
 	     */
 	    Blake2b.SIZE_512 = 64;
 	    /**
 	     * Initialization Vector.
+	     * @internal
 	     */
 	    Blake2b.BLAKE2B_IV32 = new Uint32Array([
 	        0xF3BCC908, 0x6A09E667, 0x84CAA73B, 0xBB67AE85,
@@ -784,6 +446,7 @@
 	    ]);
 	    /**
 	     * Initialization Vector.
+	     * @internal
 	     */
 	    Blake2b.SIGMA8 = [
 	        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
@@ -803,6 +466,7 @@
 	     * These are offsets into a uint64 buffer.
 	     * Multiply them all by 2 to make them offsets into a uint32 buffer,
 	     * because this is Javascript and we don't have uint64s
+	     * @internal
 	     */
 	    Blake2b.SIGMA82 = new Uint8Array(Blake2b.SIGMA8.map(function (x) { return x * 2; }));
 	    return Blake2b;
@@ -879,19 +543,18 @@
 	        return arrayHelper.ArrayHelper.equal(Ed25519.publicKeyToAddress(publicKey), address);
 	    };
 	    /**
-	     * Version for signature scheme.
-	     */
-	    Ed25519.VERSION = 1;
-	    /**
 	     * Public Key size.
+	     * @internal
 	     */
 	    Ed25519.PUBLIC_KEY_SIZE = 32;
 	    /**
 	     * Signature size for signing scheme.
+	     * @internal
 	     */
 	    Ed25519.SIGNATURE_SIZE = 64;
 	    /**
 	     * Address size.
+	     * @internal
 	     */
 	    Ed25519.ADDRESS_LENGTH = blake2b.Blake2b.SIZE_256;
 	    return Ed25519;
@@ -1730,6 +1393,356 @@
 
 	});
 
+	var singleNodeClient = createCommonjsModule(function (module, exports) {
+	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
+	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+	    return new (P || (P = Promise))(function (resolve, reject) {
+	        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+	        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+	        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+	        step((generator = generator.apply(thisArg, _arguments || [])).next());
+	    });
+	};
+	var __generator = (commonjsGlobal && commonjsGlobal.__generator) || function (thisArg, body) {
+	    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+	    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+	    function verb(n) { return function (v) { return step([n, v]); }; }
+	    function step(op) {
+	        if (f) throw new TypeError("Generator is already executing.");
+	        while (_) try {
+	            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+	            if (y = 0, t) op = [op[0] & 2, t.value];
+	            switch (op[0]) {
+	                case 0: case 1: t = op; break;
+	                case 4: _.label++; return { value: op[1], done: false };
+	                case 5: _.label++; y = op[1]; op = [0]; continue;
+	                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+	                default:
+	                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+	                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+	                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+	                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+	                    if (t[2]) _.ops.pop();
+	                    _.trys.pop(); continue;
+	            }
+	            op = body.call(thisArg, _);
+	        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+	        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+	    }
+	};
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.SingleNodeClient = void 0;
+
+	/**
+	 * Client for API communication.
+	 */
+	var SingleNodeClient = /** @class */ (function () {
+	    /**
+	     * Create a new instance of client.
+	     * @param endpoint The endpoint.
+	     */
+	    function SingleNodeClient(endpoint) {
+	        if (!/^https?:\/\/\w+(\.\w+)*(:\d+)?(\/.*)?$/.test(endpoint)) {
+	            throw new Error("The endpoint is not in the correct format");
+	        }
+	        this._endpoint = endpoint.replace(/\/+$/, "");
+	    }
+	    /**
+	     * Get the health of the node.
+	     * @returns True if the node is healthy.
+	     */
+	    SingleNodeClient.prototype.health = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var status;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0: return [4 /*yield*/, this.fetchStatus("/health")];
+	                    case 1:
+	                        status = _a.sent();
+	                        if (status === 200) {
+	                            return [2 /*return*/, true];
+	                        }
+	                        else if (status === 503) {
+	                            return [2 /*return*/, false];
+	                        }
+	                        throw new clientError.ClientError("Unexpected response code", "/health", status);
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Get the info about the node.
+	     * @returns The node information.
+	     */
+	    SingleNodeClient.prototype.info = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/info")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the tips from the node.
+	     * @returns The tips.
+	     */
+	    SingleNodeClient.prototype.tips = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/tips")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the message data by id.
+	     * @param messageId The message to get the data for.
+	     * @returns The message data.
+	     */
+	    SingleNodeClient.prototype.message = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the message metadata by id.
+	     * @param messageId The message to get the metadata for.
+	     * @returns The message metadata.
+	     */
+	    SingleNodeClient.prototype.messageMetadata = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/metadata")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the message raw data by id.
+	     * @param messageId The message to get the data for.
+	     * @returns The message raw data.
+	     */
+	    SingleNodeClient.prototype.messageRaw = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchBinary("get", "/api/v1/messages/" + messageId + "/raw")];
+	            });
+	        });
+	    };
+	    /**
+	     * Submit message.
+	     * @param message The message to submit.
+	     * @returns The messageId.
+	     */
+	    SingleNodeClient.prototype.messageSubmit = function (message) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0: return [4 /*yield*/, this.fetchJson("post", "/api/v1/messages", message)];
+	                    case 1:
+	                        response = _a.sent();
+	                        return [2 /*return*/, response.messageId];
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Submit message in raw format.
+	     * @param message The message to submit.
+	     * @returns The messageId.
+	     */
+	    SingleNodeClient.prototype.messageSubmitRaw = function (message) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0: return [4 /*yield*/, this.fetchBinary("post", "/api/v1/messages", message)];
+	                    case 1:
+	                        response = _a.sent();
+	                        return [2 /*return*/, response.messageId];
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Find messages by index.
+	     * @param indexationKey The index value.
+	     * @returns The messageId.
+	     */
+	    SingleNodeClient.prototype.messagesFind = function (indexationKey) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages?index=" + encodeURIComponent(indexationKey))];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the children of a message.
+	     * @param messageId The id of the message to get the children for.
+	     * @returns The messages children.
+	     */
+	    SingleNodeClient.prototype.messageChildren = function (messageId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/messages/" + messageId + "/children")];
+	            });
+	        });
+	    };
+	    /**
+	     * Find an output by its identifier.
+	     * @param outputId The id of the output to get.
+	     * @returns The output details.
+	     */
+	    SingleNodeClient.prototype.output = function (outputId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/outputs/" + outputId)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the address details.
+	     * @param address The address to get the details for.
+	     * @returns The address details.
+	     */
+	    SingleNodeClient.prototype.address = function (address) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the address outputs.
+	     * @param address The address to get the outputs for.
+	     * @returns The address outputs.
+	     */
+	    SingleNodeClient.prototype.addressOutputs = function (address) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/addresses/" + address + "/outputs")];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the requested milestone.
+	     * @param index The index of the milestone to get.
+	     * @returns The milestone details.
+	     */
+	    SingleNodeClient.prototype.milestone = function (index) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/milestones/" + index)];
+	            });
+	        });
+	    };
+	    /**
+	     * Perform a request and just return the status.
+	     * @param route The route of the request.
+	     * @returns The response.
+	     * @internal
+	     */
+	    SingleNodeClient.prototype.fetchStatus = function (route) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response;
+	            return __generator(this, function (_a) {
+	                switch (_a.label) {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                            method: "get"
+	                        })];
+	                    case 1:
+	                        response = _a.sent();
+	                        return [2 /*return*/, response.status];
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Perform a request in json format.
+	     * @param method The http method.
+	     * @param route The route of the request.
+	     * @param requestData Request to send to the endpoint.
+	     * @returns The response.
+	     * @internal
+	     */
+	    SingleNodeClient.prototype.fetchJson = function (method, route, requestData) {
+	        var _a, _b, _c;
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response, responseData;
+	            return __generator(this, function (_d) {
+	                switch (_d.label) {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                            method: method,
+	                            headers: {
+	                                "Content-Type": "application/json"
+	                            },
+	                            body: requestData ? JSON.stringify(requestData) : undefined
+	                        })];
+	                    case 1:
+	                        response = _d.sent();
+	                        return [4 /*yield*/, response.json()];
+	                    case 2:
+	                        responseData = _d.sent();
+	                        if (response.ok && !responseData.error) {
+	                            return [2 /*return*/, responseData.data];
+	                        }
+	                        throw new clientError.ClientError((_b = (_a = responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData.error) === null || _c === void 0 ? void 0 : _c.code);
+	                }
+	            });
+	        });
+	    };
+	    /**
+	     * Perform a request for binary data.
+	     * @param method The http method.
+	     * @param route The route of the request.
+	     * @param requestData Request to send to the endpoint.
+	     * @returns The response.
+	     * @internal
+	     */
+	    SingleNodeClient.prototype.fetchBinary = function (method, route, requestData) {
+	        var _a, _b, _c;
+	        return __awaiter(this, void 0, void 0, function () {
+	            var response, responseData, _d;
+	            return __generator(this, function (_e) {
+	                switch (_e.label) {
+	                    case 0: return [4 /*yield*/, fetch("" + this._endpoint + route, {
+	                            method: method,
+	                            headers: {
+	                                "Content-Type": "application/octet-stream"
+	                            },
+	                            body: requestData
+	                        })];
+	                    case 1:
+	                        response = _e.sent();
+	                        if (!response.ok) return [3 /*break*/, 5];
+	                        if (!(method === "get")) return [3 /*break*/, 3];
+	                        _d = Uint8Array.bind;
+	                        return [4 /*yield*/, response.arrayBuffer()];
+	                    case 2: return [2 /*return*/, new (_d.apply(Uint8Array, [void 0, _e.sent()]))()];
+	                    case 3: return [4 /*yield*/, response.json()];
+	                    case 4:
+	                        responseData = _e.sent();
+	                        if (!(responseData === null || responseData === void 0 ? void 0 : responseData.error)) {
+	                            return [2 /*return*/, responseData === null || responseData === void 0 ? void 0 : responseData.data];
+	                        }
+	                        _e.label = 5;
+	                    case 5:
+	                        if (!!responseData) return [3 /*break*/, 7];
+	                        return [4 /*yield*/, response.json()];
+	                    case 6:
+	                        responseData = _e.sent();
+	                        _e.label = 7;
+	                    case 7: throw new clientError.ClientError((_b = (_a = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _a === void 0 ? void 0 : _a.message) !== null && _b !== void 0 ? _b : response.statusText, route, response.status, (_c = responseData === null || responseData === void 0 ? void 0 : responseData.error) === null || _c === void 0 ? void 0 : _c.code);
+	                }
+	            });
+	        });
+	    };
+	    return SingleNodeClient;
+	}());
+	exports.SingleNodeClient = SingleNodeClient;
+
+	});
+
 	var bip32Path = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Bip32Path = void 0;
@@ -1901,6 +1914,7 @@
 	    };
 	    /**
 	     * Build the static lookup tables.
+	     * @internal
 	     */
 	    Converter.buildHexLookups = function () {
 	        if (!Converter.ENCODE_LOOKUP || !Converter.DECODE_LOOKUP) {
@@ -1943,6 +1957,7 @@
 	        if (bits === void 0) { bits = 512; }
 	        /**
 	         * Blocks.
+	         * @internal
 	         */
 	        this._blocks = [];
 	        this._blocks = [
@@ -2096,7 +2111,7 @@
 	            }
 	        }
 	        if (this._bytes > 4294967295) {
-	            this._hBytes += this._bytes / 4294967296 << 0;
+	            this._hBytes += Math.trunc(this._bytes / 4294967296);
 	            this._bytes %= 4294967296;
 	        }
 	        return this;
@@ -2146,6 +2161,7 @@
 	    };
 	    /**
 	     * Finalize the hash.
+	     * @internal
 	     */
 	    Sha512.prototype.finalize = function () {
 	        if (this._finalized) {
@@ -2201,6 +2217,7 @@
 	    };
 	    /**
 	     * Perform the hash.
+	     * @internal
 	     */
 	    Sha512.prototype.hash = function () {
 	        var h0h = this._h0h;
@@ -2488,14 +2505,17 @@
 	    };
 	    /**
 	     * Extra constants.
+	     * @internal
 	     */
 	    Sha512.EXTRA = [-2147483648, 8388608, 32768, 128];
 	    /**
 	     * Shift constants.
+	     * @internal
 	     */
 	    Sha512.SHIFT = [24, 16, 8, 0];
 	    /**
 	     * K.
+	     * @internal
 	     */
 	    Sha512.K = Uint32Array.from([
 	        0x428A2F98, 0xD728AE22, 0x71374491, 0x23EF65CD,
@@ -2577,6 +2597,15 @@
 	        this._sha512.update(iKeyPad);
 	    }
 	    /**
+	     * Update the hash with the data.
+	     * @param message The data to update the hash with.
+	     * @returns The instance for chaining.
+	     */
+	    HmacSha512.prototype.update = function (message) {
+	        this._sha512.update(message);
+	        return this;
+	    };
+	    /**
 	     * Get the digest.
 	     * @returns The digest.
 	     */
@@ -2586,15 +2615,6 @@
 	        finalSha512.update(this._oKeyPad);
 	        finalSha512.update(innerHash);
 	        return finalSha512.digest();
-	    };
-	    /**
-	     * Update the hash with the data.
-	     * @param message The data to update the hash with.
-	     * @returns The instance for chaining.
-	     */
-	    HmacSha512.prototype.update = function (message) {
-	        this._sha512.update(message);
-	        return this;
 	    };
 	    return HmacSha512;
 	}());
@@ -2734,6 +2754,7 @@
 	    function Ed25519Seed() {
 	        /**
 	         * The secret key for the seed.
+	         * @internal
 	         */
 	        this._secretKey = new Uint8Array();
 	    }
@@ -2783,6 +2804,7 @@
 	    };
 	    /**
 	     * SeedSize is the size, in bytes, of private key seeds.
+	     * @internal
 	     */
 	    Ed25519Seed.SEED_SIZE_BYTES = 32;
 	    return Ed25519Seed;
@@ -2795,6 +2817,59 @@
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.DEFAULT_CHUNK_SIZE = void 0;
 	exports.DEFAULT_CHUNK_SIZE = 20;
+
+	});
+
+	var getAddressesKeyPairs_1 = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.getAddressesKeyPairs = void 0;
+
+	/**
+	 * Generate a list of address key pairs.
+	 * @param seed The seed.
+	 * @param basePath The base path to start looking for addresses.
+	 * @param startIndex The start index to generate from, defaults to 0.
+	 * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
+	 * @returns A list of the signature key pairs for the addresses.
+	 */
+	function getAddressesKeyPairs(seed, basePath, startIndex, count) {
+	    if (startIndex === void 0) { startIndex = 0; }
+	    if (count === void 0) { count = common$1.DEFAULT_CHUNK_SIZE; }
+	    var keyPairs = [];
+	    for (var i = startIndex; i < startIndex + count; i++) {
+	        basePath.push(i);
+	        var newSeed = seed.generateSeedFromPath(basePath);
+	        keyPairs.push(newSeed.keyPair());
+	        basePath.pop();
+	    }
+	    return keyPairs;
+	}
+	exports.getAddressesKeyPairs = getAddressesKeyPairs;
+
+	});
+
+	var getAddresses_1 = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.getAddresses = void 0;
+
+
+
+
+	/**
+	 * Generate a list of address key pairs.
+	 * @param seed The seed.
+	 * @param basePath The base path to start looking for addresses.
+	 * @param startIndex The start index to generate from, defaults to 0.
+	 * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
+	 * @returns A list of the signature key pairs for the addresses.
+	 */
+	function getAddresses(seed, basePath, startIndex, count) {
+	    if (startIndex === void 0) { startIndex = 0; }
+	    if (count === void 0) { count = common$1.DEFAULT_CHUNK_SIZE; }
+	    return getAddressesKeyPairs_1.getAddressesKeyPairs(seed, basePath, startIndex, count)
+	        .map(function (kp) { return converter.Converter.bytesToHex(ed25519.Ed25519.publicKeyToAddress(kp.publicKey)); });
+	}
+	exports.getAddresses = getAddresses;
 
 	});
 
@@ -2959,59 +3034,6 @@
 	    });
 	}
 	exports.getBalance = getBalance;
-
-	});
-
-	var getAddressesKeyPairs_1 = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.getAddressesKeyPairs = void 0;
-
-	/**
-	 * Generate a list of address key pairs.
-	 * @param seed The seed.
-	 * @param basePath The base path to start looking for addresses.
-	 * @param startIndex The start index to generate from, defaults to 0.
-	 * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
-	 * @returns A list of the signature key pairs for the addresses.
-	 */
-	function getAddressesKeyPairs(seed, basePath, startIndex, count) {
-	    if (startIndex === void 0) { startIndex = 0; }
-	    if (count === void 0) { count = common$1.DEFAULT_CHUNK_SIZE; }
-	    var keyPairs = [];
-	    for (var i = startIndex; i < startIndex + count; i++) {
-	        basePath.push(i);
-	        var newSeed = seed.generateSeedFromPath(basePath);
-	        keyPairs.push(newSeed.keyPair());
-	        basePath.pop();
-	    }
-	    return keyPairs;
-	}
-	exports.getAddressesKeyPairs = getAddressesKeyPairs;
-
-	});
-
-	var getAddresses_1 = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.getAddresses = void 0;
-
-
-
-
-	/**
-	 * Generate a list of address key pairs.
-	 * @param seed The seed.
-	 * @param basePath The base path to start looking for addresses.
-	 * @param startIndex The start index to generate from, defaults to 0.
-	 * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
-	 * @returns A list of the signature key pairs for the addresses.
-	 */
-	function getAddresses(seed, basePath, startIndex, count) {
-	    if (startIndex === void 0) { startIndex = 0; }
-	    if (count === void 0) { count = common$1.DEFAULT_CHUNK_SIZE; }
-	    return getAddressesKeyPairs_1.getAddressesKeyPairs(seed, basePath, startIndex, count)
-	        .map(function (kp) { return converter.Converter.bytesToHex(ed25519.Ed25519.publicKeyToAddress(kp.publicKey)); });
-	}
-	exports.getAddresses = getAddresses;
 
 	});
 
@@ -3304,6 +3326,7 @@
 	    };
 	    /**
 	     * Chunk size to expand the storage.
+	     * @internal
 	     */
 	    WriteStream.CHUNK_SIZE = 4096;
 	    return WriteStream;
@@ -4110,7 +4133,6 @@
 	__exportStar(IOutput, exports);
 	__exportStar(IResponse, exports);
 	__exportStar(ITips, exports);
-	__exportStar(singleNodeClient, exports);
 	__exportStar(address, exports);
 	__exportStar(common, exports);
 	__exportStar(input, exports);
@@ -4120,6 +4142,7 @@
 	__exportStar(signature, exports);
 	__exportStar(transaction, exports);
 	__exportStar(unlockBlock, exports);
+	__exportStar(singleNodeClient, exports);
 	__exportStar(bip32Path, exports);
 	__exportStar(blake2b, exports);
 	__exportStar(ed25519, exports);
@@ -4128,11 +4151,11 @@
 	__exportStar(sha512, exports);
 	__exportStar(slip0010, exports);
 	__exportStar(common$1, exports);
-	__exportStar(getBalance_1, exports);
 	__exportStar(getAddresses_1, exports);
 	__exportStar(getAddressesKeyPairs_1, exports);
-	__exportStar(getUnspentAddresses_1, exports);
+	__exportStar(getBalance_1, exports);
 	__exportStar(getUnspentAddress_1, exports);
+	__exportStar(getUnspentAddresses_1, exports);
 	__exportStar(retrieveData_1, exports);
 	__exportStar(send_1, exports);
 	__exportStar(sendAdvanced_1, exports);

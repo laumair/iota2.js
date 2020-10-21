@@ -6,16 +6,19 @@
 export class Sha512 {
     /**
      * Extra constants.
+     * @internal
      */
     private static readonly EXTRA = [-2147483648, 8388608, 32768, 128];
 
     /**
      * Shift constants.
+     * @internal
      */
     private static readonly SHIFT = [24, 16, 8, 0];
 
     /**
      * K.
+     * @internal
      */
     private static readonly K: Uint32Array = Uint32Array.from([
         0x428A2F98, 0xD728AE22, 0x71374491, 0x23EF65CD,
@@ -62,126 +65,151 @@ export class Sha512 {
 
     /**
      * Blocks.
+     * @internal
      */
     private readonly _blocks: number[] = [];
 
     /**
      * Bits.
+     * @internal
      */
     private readonly _bits: number;
 
     /**
      * H0 High.
+     * @internal
      */
     private _h0h: number;
 
     /**
      * H0 Low.
+     * @internal
      */
     private _h0l: number;
 
     /**
      * H1 High.
+     * @internal
      */
     private _h1h: number;
 
     /**
      * H1 Low.
+     * @internal
      */
     private _h1l: number;
 
     /**
      * H2 High.
+     * @internal
      */
     private _h2h: number;
 
     /**
      * H2 Low.
+     * @internal
      */
     private _h2l: number;
 
     /**
      * H2 High.
+     * @internal
      */
     private _h3h: number;
 
     /**
      * H3 Low.
+     * @internal
      */
     private _h3l: number;
 
     /**
      * H4 High.
+     * @internal
      */
     private _h4h: number;
 
     /**
      * H4 Low.
+     * @internal
      */
     private _h4l: number;
 
     /**
      * H5 High.
+     * @internal
      */
     private _h5h: number;
 
     /**
      * H5 Low.
+     * @internal
      */
     private _h5l: number;
 
     /**
      * H6 High.
+     * @internal
      */
     private _h6h: number;
 
     /**
      * H6 Low.
+     * @internal
      */
     private _h6l: number;
 
     /**
      * H7 High.
+     * @internal
      */
     private _h7h: number;
 
     /**
      * H7 Low.
+     * @internal
      */
     private _h7l: number;
 
     /**
      * Block.
+     * @internal
      */
     private _block: number;
 
     /**
      * Start.
+     * @internal
      */
     private _start: number;
 
     /**
      * Bytes.
+     * @internal
      */
     private _bytes: number;
 
     /**
      * h Bytes.
+     * @internal
      */
     private _hBytes: number;
 
     /**
      * Last byte index.
+     * @internal
      */
     private _lastByteIndex: number;
 
     /**
      * Is it finalized.
+     * @internal
      */
     private _finalized: boolean;
 
     /**
      * Is it hashed.
+     * @internal
      */
     private _hashed: boolean;
 
@@ -343,7 +371,7 @@ export class Sha512 {
             }
         }
         if (this._bytes > 4294967295) {
-            this._hBytes += this._bytes / 4294967296 << 0;
+            this._hBytes += Math.trunc(this._bytes / 4294967296);
             this._bytes %= 4294967296;
         }
 
@@ -409,6 +437,7 @@ export class Sha512 {
 
     /**
      * Finalize the hash.
+     * @internal
      */
     private finalize(): void {
         if (this._finalized) {
@@ -465,6 +494,7 @@ export class Sha512 {
 
     /**
      * Perform the hash.
+     * @internal
      */
     private hash(): void {
         const h0h = this._h0h;

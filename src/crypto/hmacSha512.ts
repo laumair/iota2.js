@@ -8,16 +8,19 @@ import { Sha512 } from "./sha512";
 export class HmacSha512 {
     /**
      * The instance for hashing.
+     * @internal
      */
     private readonly _sha512: Sha512;
 
     /**
      * The number of bits.
+     * @internal
      */
     private readonly _bits: number;
 
     /**
      * The o key pad.
+     * @internal
      */
     private readonly _oKeyPad: Uint8Array;
 
@@ -47,6 +50,16 @@ export class HmacSha512 {
     }
 
     /**
+     * Update the hash with the data.
+     * @param message The data to update the hash with.
+     * @returns The instance for chaining.
+     */
+    public update(message: Uint8Array): HmacSha512 {
+        this._sha512.update(message);
+        return this;
+    }
+
+    /**
      * Get the digest.
      * @returns The digest.
      */
@@ -59,15 +72,5 @@ export class HmacSha512 {
         finalSha512.update(innerHash);
 
         return finalSha512.digest();
-    }
-
-    /**
-     * Update the hash with the data.
-     * @param message The data to update the hash with.
-     * @returns The instance for chaining.
-     */
-    public update(message: Uint8Array): HmacSha512 {
-        this._sha512.update(message);
-        return this;
     }
 }

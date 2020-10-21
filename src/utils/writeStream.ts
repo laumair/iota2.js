@@ -8,16 +8,19 @@ import { Converter } from "./converter";
 export class WriteStream {
     /**
      * Chunk size to expand the storage.
+     * @internal
      */
     private static readonly CHUNK_SIZE: number = 4096;
 
     /**
      * The storage.
+     * @internal
      */
     private _storage: Uint8Array;
 
     /**
      * The current write index.
+     * @internal
      */
     private _writeIndex: number;
 

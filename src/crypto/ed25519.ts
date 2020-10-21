@@ -7,22 +7,20 @@ import { Blake2b } from "./blake2b";
  */
 export class Ed25519 {
     /**
-     * Version for signature scheme.
-     */
-    public static VERSION: number = 1;
-
-    /**
      * Public Key size.
+     * @internal
      */
     public static PUBLIC_KEY_SIZE: number = 32;
 
     /**
      * Signature size for signing scheme.
+     * @internal
      */
     public static SIGNATURE_SIZE: number = 64;
 
     /**
      * Address size.
+     * @internal
      */
     public static ADDRESS_LENGTH: number = Blake2b.SIZE_256;
 

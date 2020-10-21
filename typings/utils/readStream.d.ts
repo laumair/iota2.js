@@ -3,14 +3,6 @@
  */
 export declare class ReadStream {
     /**
-     * The storage.
-     */
-    private readonly _storage;
-    /**
-     * The current read index.
-     */
-    private _readIndex;
-    /**
      * Create a new instance of ReadStream.
      * @param storage The data to access.
      * @param readStartIndex The index to start the reading from.

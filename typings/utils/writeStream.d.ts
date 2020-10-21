@@ -3,18 +3,6 @@
  */
 export declare class WriteStream {
     /**
-     * Chunk size to expand the storage.
-     */
-    private static readonly CHUNK_SIZE;
-    /**
-     * The storage.
-     */
-    private _storage;
-    /**
-     * The current write index.
-     */
-    private _writeIndex;
-    /**
      * Create a new instance of ReadStream.
      */
     constructor();

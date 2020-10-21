@@ -1,22 +1,18 @@
+import { IAddress } from "../api/models/IAddress";
+import { IAddressOutputs } from "../api/models/IAddressOutputs";
+import { IChildren } from "../api/models/IChildren";
 import { IClient } from "../api/models/IClient";
+import { IInfo } from "../api/models/IInfo";
+import { IMessageMetadata } from "../api/models/IMessageMetadata";
+import { IMessages } from "../api/models/IMessages";
+import { IMilestone } from "../api/models/IMilestone";
+import { IOutput } from "../api/models/IOutput";
+import { ITips } from "../api/models/ITips";
 import { IMessage } from "../models/IMessage";
-import { IAddress } from "./models/IAddress";
-import { IAddressOutputs } from "./models/IAddressOutputs";
-import { IChildren } from "./models/IChildren";
-import { IInfo } from "./models/IInfo";
-import { IMessageMetadata } from "./models/IMessageMetadata";
-import { IMessages } from "./models/IMessages";
-import { IMilestone } from "./models/IMilestone";
-import { IOutput } from "./models/IOutput";
-import { ITips } from "./models/ITips";
 /**
  * Client for API communication.
  */
 export declare class SingleNodeClient implements IClient {
-    /**
-     * The endpoint for the API.
-     */
-    private readonly _endpoint;
     /**
      * Create a new instance of client.
      * @param endpoint The endpoint.
@@ -103,29 +99,4 @@ export declare class SingleNodeClient implements IClient {
      * @returns The milestone details.
      */
     milestone(index: number): Promise<IMilestone>;
-    /**
-     * Perform a request and just return the status.
-     * @param route The route of the request.
-     * @returns The response.
-     * @private
-     */
-    private fetchStatus;
-    /**
-     * Perform a request in json format.
-     * @param method The http method.
-     * @param route The route of the request.
-     * @param requestData Request to send to the endpoint.
-     * @returns The response.
-     * @private
-     */
-    private fetchJson;
-    /**
-     * Perform a request for binary data.
-     * @param method The http method.
-     * @param route The route of the request.
-     * @param requestData Request to send to the endpoint.
-     * @returns The response.
-     * @private
-     */
-    private fetchBinary;
 }

@@ -3,10 +3,6 @@
  */
 export declare class Bip32Path {
     /**
-     * The path.
-     */
-    private readonly _path;
-    /**
      * Create a new instance of Bip32Path.
      * @param initialPath Initial path to create.
      */

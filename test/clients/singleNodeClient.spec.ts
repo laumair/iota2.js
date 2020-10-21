@@ -1,4 +1,4 @@
-import { SingleNodeClient } from "../../src/api/singleNodeClient";
+import { SingleNodeClient } from "../../src/clients/singleNodeClient";
 
 describe("Client", () => {
     test("Can fail to construct with invalid endpoint", async () => {
