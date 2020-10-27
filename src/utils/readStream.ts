@@ -73,6 +73,25 @@ export class ReadStream {
     }
 
     /**
+     * Read an array of byte from the stream.
+     * @param name The name of the data we are trying to read.
+     * @param length The length of the array to read.
+     * @param moveIndex Move the index pointer on.
+     * @returns The value.
+     */
+    public readBytes(name: string, length: number, moveIndex: boolean = true): Uint8Array {
+        if (!this.hasRemaining(length)) {
+            throw new Error(`${name} length ${length
+                } exceeds the remaining data ${this.unused()}`);
+        }
+        const val = this._storage.slice(this._readIndex, this._readIndex + length);
+        if (moveIndex) {
+            this._readIndex += length;
+        }
+        return val;
+    }
+
+    /**
      * Read a byte from the stream.
      * @param name The name of the data we are trying to read.
      * @param moveIndex Move the index pointer on.

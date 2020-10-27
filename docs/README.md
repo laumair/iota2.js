@@ -17,6 +17,7 @@
 * [Ed25519Seed](classes/ed25519seed.md)
 * [HmacSha512](classes/hmacsha512.md)
 * [ReadStream](classes/readstream.md)
+* [Sha3](classes/sha3.md)
 * [Sha512](classes/sha512.md)
 * [SingleNodeClient](classes/singlenodeclient.md)
 * [Slip0010](classes/slip0010.md)

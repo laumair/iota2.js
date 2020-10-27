@@ -44,6 +44,13 @@ export declare class WriteStream {
      */
     writeFixedHex(name: string, length: number, val: string): void;
     /**
+     * Write fixed length stream.
+     * @param name The name of the data we are trying to write.
+     * @param length The length of the data to write.
+     * @param val The data to write.
+     */
+    writeBytes(name: string, length: number, val: Uint8Array): void;
+    /**
      * Write a byte to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.

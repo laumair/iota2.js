@@ -13,6 +13,7 @@ async function run() {
     console.log("Node Info");
     console.log("\tName:", info.name);
     console.log("\tVersion:", info.version);
+    console.log("\tNetwork Id:", info.networkId);
     console.log("\tIs Healthy:", info.isHealthy);
     console.log("\tCoordinator Public Key:", info.coordinatorPublicKey);
     console.log("\tLatest Milestone Message Id:", info.latestMilestoneMessageId);

@@ -15,6 +15,10 @@ export interface IInfo {
      */
     isHealthy: boolean;
     /**
+     * The network id.
+     */
+    networkId: number;
+    /**
      * The public key of the coordinator.
      */
     coordinatorPublicKey: string;

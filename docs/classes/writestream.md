@@ -25,6 +25,7 @@ Keep track of the write index within a stream.
 * [setWriteIndex](writestream.md#setwriteindex)
 * [unused](writestream.md#unused)
 * [writeByte](writestream.md#writebyte)
+* [writeBytes](writestream.md#writebytes)
 * [writeFixedHex](writestream.md#writefixedhex)
 * [writeString](writestream.md#writestring)
 * [writeUInt16](writestream.md#writeuint16)
@@ -131,6 +132,24 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `name` | string | The name of the data we are trying to write. |
 `val` | number | The data to write.  |
+
+**Returns:** void
+
+___
+
+### writeBytes
+
+▸ **writeBytes**(`name`: string, `length`: number, `val`: Uint8Array): void
+
+Write fixed length stream.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`name` | string | The name of the data we are trying to write. |
+`length` | number | The length of the data to write. |
+`val` | Uint8Array | The data to write.  |
 
 **Returns:** void
 

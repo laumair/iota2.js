@@ -21,6 +21,7 @@ Keep track of the read index within a stream.
 * [hasRemaining](readstream.md#hasremaining)
 * [length](readstream.md#length)
 * [readByte](readstream.md#readbyte)
+* [readBytes](readstream.md#readbytes)
 * [readFixedHex](readstream.md#readfixedhex)
 * [readString](readstream.md#readstring)
 * [readUInt16](readstream.md#readuint16)
@@ -91,6 +92,26 @@ Name | Type | Default value | Description |
 `moveIndex` | boolean | true | Move the index pointer on. |
 
 **Returns:** number
+
+The value.
+
+___
+
+### readBytes
+
+▸ **readBytes**(`name`: string, `length`: number, `moveIndex?`: boolean): Uint8Array
+
+Read an array of byte from the stream.
+
+#### Parameters:
+
+Name | Type | Default value | Description |
+------ | ------ | ------ | ------ |
+`name` | string | - | The name of the data we are trying to read. |
+`length` | number | - | The length of the array to read. |
+`moveIndex` | boolean | true | Move the index pointer on. |
+
+**Returns:** Uint8Array
 
 The value.
 

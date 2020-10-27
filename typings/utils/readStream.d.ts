@@ -33,6 +33,14 @@ export declare class ReadStream {
      */
     readFixedHex(name: string, length: number, moveIndex?: boolean): string;
     /**
+     * Read an array of byte from the stream.
+     * @param name The name of the data we are trying to read.
+     * @param length The length of the array to read.
+     * @param moveIndex Move the index pointer on.
+     * @returns The value.
+     */
+    readBytes(name: string, length: number, moveIndex?: boolean): Uint8Array;
+    /**
      * Read a byte from the stream.
      * @param name The name of the data we are trying to read.
      * @param moveIndex Move the index pointer on.

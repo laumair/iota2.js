@@ -20,6 +20,7 @@ Response from the /info endpoint.
 * [latestMilestoneIndex](iinfo.md#latestmilestoneindex)
 * [latestMilestoneMessageId](iinfo.md#latestmilestonemessageid)
 * [name](iinfo.md#name)
+* [networkId](iinfo.md#networkid)
 * [pruningIndex](iinfo.md#pruningindex)
 * [solidMilestoneIndex](iinfo.md#solidmilestoneindex)
 * [solidMilestoneMessageId](iinfo.md#solidmilestonemessageid)
@@ -72,6 +73,14 @@ ___
 •  **name**: string
 
 The name of the node software.
+
+___
+
+### networkId
+
+•  **networkId**: number
+
+The network id.
 
 ___
 

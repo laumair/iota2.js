@@ -103,6 +103,19 @@ export class WriteStream {
     }
 
     /**
+     * Write fixed length stream.
+     * @param name The name of the data we are trying to write.
+     * @param length The length of the data to write.
+     * @param val The data to write.
+     */
+    public writeBytes(name: string, length: number, val: Uint8Array): void {
+        this.expand(length);
+
+        this._storage.set(val, this._writeIndex);
+        this._writeIndex += length;
+    }
+
+    /**
      * Write a byte to the stream.
      * @param name The name of the data we are trying to write.
      * @param val The data to write.
