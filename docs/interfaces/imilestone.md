@@ -14,17 +14,17 @@ Milestone.
 
 ### Properties
 
-* [messageId](imilestone.md#messageid)
+* [milestoneId](imilestone.md#milestoneid)
 * [milestoneIndex](imilestone.md#milestoneindex)
 * [timestamp](imilestone.md#timestamp)
 
 ## Properties
 
-### messageId
+### milestoneId
 
-•  **messageId**: string
+•  **milestoneId**: string
 
-The message Id of the milestone.
+The milestone Id of the milestone.
 
 ___
 

@@ -15,10 +15,9 @@ async function run() {
     console.log("\tVersion:", info.version);
     console.log("\tNetwork Id:", info.networkId);
     console.log("\tIs Healthy:", info.isHealthy);
-    console.log("\tCoordinator Public Key:", info.coordinatorPublicKey);
-    console.log("\tLatest Milestone Message Id:", info.latestMilestoneMessageId);
+    console.log("\tLatest Milestone Id:", info.latestMilestoneId);
     console.log("\tLatest Milestone Index:", info.latestMilestoneIndex);
-    console.log("\tSolid Milestone Message Id:", info.solidMilestoneMessageId);
+    console.log("\tSolid Milestone Id:", info.solidMilestoneId);
     console.log("\tSolid Milestone Index:", info.solidMilestoneIndex);
     console.log("\tPruning Index:", info.pruningIndex);
     console.log("\tFeatures:", info.features);
@@ -90,14 +89,9 @@ async function run() {
 
     const milestone = await client.milestone(info.latestMilestoneIndex);
     console.log("Milestone");
-    console.log("\tMessage Index:", milestone.milestoneIndex);
-    console.log("\tMessage Id:", milestone.messageId);
+    console.log("\tMilestone Index:", milestone.milestoneIndex);
+    console.log("\tMilestone Id:", milestone.milestoneId);
     console.log("\tTimestamp:", milestone.timestamp);
-    console.log();
-
-    const milestoneMessage = await client.message(milestone.messageId);
-    console.log("Milestone Message");
-    logMessage("", milestoneMessage);
     console.log();
 
     const output = await client.output("00000000000000000000000000000000000000000000000000000000000000000000");

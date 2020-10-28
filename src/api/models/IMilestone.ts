@@ -8,9 +8,9 @@ export interface IMilestone {
     milestoneIndex: number;
 
     /**
-     * The message Id of the milestone.
+     * The milestone Id of the milestone.
      */
-    messageId: string;
+    milestoneId: string;
 
     /**
      * The timestamp of the milestone.

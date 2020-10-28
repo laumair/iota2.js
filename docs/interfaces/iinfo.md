@@ -14,27 +14,18 @@ Response from the /info endpoint.
 
 ### Properties
 
-* [coordinatorPublicKey](iinfo.md#coordinatorpublickey)
 * [features](iinfo.md#features)
 * [isHealthy](iinfo.md#ishealthy)
+* [latestMilestoneId](iinfo.md#latestmilestoneid)
 * [latestMilestoneIndex](iinfo.md#latestmilestoneindex)
-* [latestMilestoneMessageId](iinfo.md#latestmilestonemessageid)
 * [name](iinfo.md#name)
 * [networkId](iinfo.md#networkid)
 * [pruningIndex](iinfo.md#pruningindex)
+* [solidMilestoneId](iinfo.md#solidmilestoneid)
 * [solidMilestoneIndex](iinfo.md#solidmilestoneindex)
-* [solidMilestoneMessageId](iinfo.md#solidmilestonemessageid)
 * [version](iinfo.md#version)
 
 ## Properties
-
-### coordinatorPublicKey
-
-•  **coordinatorPublicKey**: string
-
-The public key of the coordinator.
-
-___
 
 ### features
 
@@ -52,19 +43,19 @@ Is the node healthy.
 
 ___
 
+### latestMilestoneId
+
+•  **latestMilestoneId**: string
+
+The latest milestone Id.
+
+___
+
 ### latestMilestoneIndex
 
 •  **latestMilestoneIndex**: number
 
 The latest milestone message index;
-
-___
-
-### latestMilestoneMessageId
-
-•  **latestMilestoneMessageId**: string
-
-The latest milestone message Id.
 
 ___
 
@@ -92,19 +83,19 @@ The pruning index;
 
 ___
 
+### solidMilestoneId
+
+•  **solidMilestoneId**: string
+
+The latest solid milestone Id.
+
+___
+
 ### solidMilestoneIndex
 
 •  **solidMilestoneIndex**: number
 
 The latest solid milestone message index;
-
-___
-
-### solidMilestoneMessageId
-
-•  **solidMilestoneMessageId**: string
-
-The latest solid milestone message Id.
 
 ___
 

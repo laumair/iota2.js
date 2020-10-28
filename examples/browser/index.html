@@ -32,10 +32,9 @@
             consoleLog("\tVersion:", info.version);
             consoleLog("\tIs Healthy:", info.isHealthy);
             consoleLog("\tNetwork Id:", info.networkId);
-            consoleLog("\tCoordinator Public Key:", info.coordinatorPublicKey);
-            consoleLog("\tLatest Milestone Message Id:", info.latestMilestoneMessageId);
+            consoleLog("\tLatest Milestone Id:", info.latestMilestoneId);
             consoleLog("\tLatest Milestone Index:", info.latestMilestoneIndex);
-            consoleLog("\tSolid Milestone Message Id:", info.solidMilestoneMessageId);
+            consoleLog("\tSolid Milestone Id:", info.solidMilestoneId);
             consoleLog("\tSolid Milestone Index:", info.solidMilestoneIndex);
             consoleLog("\tPruning Index:", info.pruningIndex);
             consoleLog("\tFeatures:", info.features);
@@ -108,14 +107,9 @@
 
             const milestone = await client.milestone(info.latestMilestoneIndex);
             consoleLog("Milestone");
-            consoleLog("\tMessage Index:", milestone.milestoneIndex);
-            consoleLog("\tMessage Id:", milestone.messageId);
+            consoleLog("\tMilestone Index:", milestone.milestoneIndex);
+            consoleLog("\tMilestone Id:", milestone.milestoneId);
             consoleLog("\tTimestamp:", milestone.timestamp);
-            consoleLog();
-
-            const milestoneMessage = await client.message(milestone.messageId);
-            consoleLog("Milestone Message");
-            Iota2.logMessage("", milestoneMessage);
             consoleLog();
 
             const output = await client.output("00000000000000000000000000000000000000000000000000000000000000000000");
@@ -186,8 +180,8 @@
         }
 
         run()
-            .then(() => consoleLog("Done"));
-            //.catch((err) => consoleLog(err.toString()));
+            .then(() => consoleLog("Done"))
+            .catch((err) => consoleLog(err.toString()));
 
     </script>
 </body>

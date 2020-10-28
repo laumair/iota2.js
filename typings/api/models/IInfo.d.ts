@@ -19,21 +19,17 @@ export interface IInfo {
      */
     networkId: number;
     /**
-     * The public key of the coordinator.
+     * The latest milestone Id.
      */
-    coordinatorPublicKey: string;
-    /**
-     * The latest milestone message Id.
-     */
-    latestMilestoneMessageId: string;
+    latestMilestoneId: string;
     /**
      * The latest milestone message index;
      */
     latestMilestoneIndex: number;
     /**
-     * The latest solid milestone message Id.
+     * The latest solid milestone Id.
      */
-    solidMilestoneMessageId: string;
+    solidMilestoneId: string;
     /**
      * The latest solid milestone message index;
      */
