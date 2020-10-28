@@ -59,10 +59,10 @@ export interface IClient {
     messageSubmitRaw(message: Uint8Array): Promise<string>;
     /**
      * Find messages by index.
-     * @param idnexationKey The index value.
+     * @param indexationKey The index value.
      * @returns The messageId.
      */
-    messagesFind(idnexationKey: string): Promise<IMessages>;
+    messagesFind(indexationKey: string): Promise<IMessages>;
     /**
      * Get the children of a message.
      * @param messageId The id of the message to get the children for.

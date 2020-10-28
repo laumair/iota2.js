@@ -205,7 +205,7 @@ ___
 
 ### messagesFind
 
-▸ **messagesFind**(`idnexationKey`: string): Promise\<[IMessages](imessages.md)>
+▸ **messagesFind**(`indexationKey`: string): Promise\<[IMessages](imessages.md)>
 
 Find messages by index.
 
@@ -213,7 +213,7 @@ Find messages by index.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`idnexationKey` | string | The index value. |
+`indexationKey` | string | The index value. |
 
 **Returns:** Promise\<[IMessages](imessages.md)>
 
