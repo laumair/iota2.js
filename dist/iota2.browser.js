@@ -3290,7 +3290,7 @@
 
 
 
-	exports.MIN_TRANSACTION_ESSENCE_LENGTH = common.UINT32_SIZE + (2 * common.ARRAY_LENGTH) + common.UINT32_SIZE;
+	exports.MIN_TRANSACTION_ESSENCE_LENGTH = common.SMALL_TYPE_LENGTH + (2 * common.ARRAY_LENGTH) + common.UINT32_SIZE;
 	/**
 	 * Deserialize the transaction essence from binary.
 	 * @param readStream The stream to read the data from.
@@ -3300,7 +3300,7 @@
 	    if (!readStream.hasRemaining(exports.MIN_TRANSACTION_ESSENCE_LENGTH)) {
 	        throw new Error("Transaction essence data is " + readStream.length() + " in length which is less than the minimimum size required of " + exports.MIN_TRANSACTION_ESSENCE_LENGTH);
 	    }
-	    var type = readStream.readUInt32("transactionEssence.type");
+	    var type = readStream.readByte("transactionEssence.type");
 	    if (type !== 0) {
 	        throw new Error("Type mismatch in transactionEssence " + type);
 	    }
@@ -3324,7 +3324,7 @@
 	 * @param object The object to serialize.
 	 */
 	function serializeTransactionEssence(writeStream, object) {
-	    writeStream.writeUInt32("transactionEssence.type", object.type);
+	    writeStream.writeByte("transactionEssence.type", object.type);
 	    input.serializeInputs(writeStream, object.inputs);
 	    output.serializeOutputs(writeStream, object.outputs);
 	    payload.serializePayload(writeStream, object.payload);
@@ -3631,7 +3631,7 @@
 	    if (type !== 0) {
 	        throw new Error("Type mismatch in payloadTransaction " + type);
 	    }
-	    var essenceType = readStream.readUInt32("payloadTransaction.essenceType", false);
+	    var essenceType = readStream.readByte("payloadTransaction.essenceType", false);
 	    var essence;
 	    var unlockBlocks;
 	    if (essenceType === 0) {
@@ -5625,66 +5625,6 @@
 
 	});
 
-	var common$1 = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.DEFAULT_CHUNK_SIZE = void 0;
-	exports.DEFAULT_CHUNK_SIZE = 20;
-
-	});
-
-	var getAddressesKeyPairs_1 = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.getAddressesKeyPairs = void 0;
-
-	/**
-	 * Generate a list of address key pairs.
-	 * @param seed The seed.
-	 * @param basePath The base path to start looking for addresses.
-	 * @param startIndex The start index to generate from, defaults to 0.
-	 * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
-	 * @returns A list of the signature key pairs for the addresses.
-	 */
-	function getAddressesKeyPairs(seed, basePath, startIndex, count) {
-	    if (startIndex === void 0) { startIndex = 0; }
-	    if (count === void 0) { count = common$1.DEFAULT_CHUNK_SIZE; }
-	    var keyPairs = [];
-	    for (var i = startIndex; i < startIndex + count; i++) {
-	        basePath.push(i);
-	        var newSeed = seed.generateSeedFromPath(basePath);
-	        keyPairs.push(newSeed.keyPair());
-	        basePath.pop();
-	    }
-	    return keyPairs;
-	}
-	exports.getAddressesKeyPairs = getAddressesKeyPairs;
-
-	});
-
-	var getAddresses_1 = createCommonjsModule(function (module, exports) {
-	Object.defineProperty(exports, "__esModule", { value: true });
-	exports.getAddresses = void 0;
-
-
-
-
-	/**
-	 * Generate a list of address key pairs.
-	 * @param seed The seed.
-	 * @param basePath The base path to start looking for addresses.
-	 * @param startIndex The start index to generate from, defaults to 0.
-	 * @param count The number of address seeds, defaults to DEFAULT_CHUNK_SIZE.
-	 * @returns A list of the signature key pairs for the addresses.
-	 */
-	function getAddresses(seed, basePath, startIndex, count) {
-	    if (startIndex === void 0) { startIndex = 0; }
-	    if (count === void 0) { count = common$1.DEFAULT_CHUNK_SIZE; }
-	    return getAddressesKeyPairs_1.getAddressesKeyPairs(seed, basePath, startIndex, count)
-	        .map(function (kp) { return converter.Converter.bytesToHex(ed25519.Ed25519.publicKeyToAddress(kp.publicKey)); });
-	}
-	exports.getAddresses = getAddresses;
-
-	});
-
 	var getUnspentAddresses_1 = createCommonjsModule(function (module, exports) {
 	var __awaiter = (commonjsGlobal && commonjsGlobal.__awaiter) || function (thisArg, _arguments, P, generator) {
 	    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -6237,53 +6177,61 @@
 	                    return [4 /*yield*/, client.addressOutputs(address)];
 	                case 2:
 	                    addressOutputIds = _d.sent();
-	                    _i = 0, _a = addressOutputIds.outputIds;
-	                    _d.label = 3;
+	                    if (!(addressOutputIds.count === 0)) return [3 /*break*/, 3];
+	                    finished = true;
+	                    return [3 /*break*/, 7];
 	                case 3:
-	                    if (!(_i < _a.length)) return [3 /*break*/, 6];
+	                    _i = 0, _a = addressOutputIds.outputIds;
+	                    _d.label = 4;
+	                case 4:
+	                    if (!(_i < _a.length)) return [3 /*break*/, 7];
 	                    addressOutputId = _a[_i];
 	                    return [4 /*yield*/, client.output(addressOutputId)];
-	                case 4:
+	                case 5:
 	                    addressOutput = _d.sent();
 	                    if (!addressOutput.isSpent &&
-	                        addressOutput.output.amount !== 0 &&
 	                        consumedBalance < requiredBalance) {
-	                        consumedBalance += addressOutput.output.amount;
-	                        input$1 = {
-	                            type: 0,
-	                            transactionId: addressOutput.transactionId,
-	                            transactionOutputIndex: addressOutput.outputIndex
-	                        };
-	                        writeStream$1 = new writeStream.WriteStream();
-	                        input.serializeInput(writeStream$1, input$1);
-	                        inputsAndSignatureKeyPairs.push({
-	                            input: input$1,
-	                            addressKeyPair: addressKeyPair,
-	                            serialized: writeStream$1.finalHex()
-	                        });
-	                        if (consumedBalance >= requiredBalance) {
-	                            // We didn't use all the balance from the last input
-	                            // so return the rest to the same address.
-	                            if (consumedBalance - requiredBalance > 0) {
-	                                outputs.push({
-	                                    amount: consumedBalance - requiredBalance,
-	                                    address: address
-	                                });
-	                            }
+	                        if (addressOutput.output.amount === 0) {
 	                            finished = true;
 	                        }
+	                        else {
+	                            consumedBalance += addressOutput.output.amount;
+	                            input$1 = {
+	                                type: 0,
+	                                transactionId: addressOutput.transactionId,
+	                                transactionOutputIndex: addressOutput.outputIndex
+	                            };
+	                            writeStream$1 = new writeStream.WriteStream();
+	                            input.serializeInput(writeStream$1, input$1);
+	                            inputsAndSignatureKeyPairs.push({
+	                                input: input$1,
+	                                addressKeyPair: addressKeyPair,
+	                                serialized: writeStream$1.finalHex()
+	                            });
+	                            if (consumedBalance >= requiredBalance) {
+	                                // We didn't use all the balance from the last input
+	                                // so return the rest to the same address.
+	                                if (consumedBalance - requiredBalance > 0) {
+	                                    outputs.push({
+	                                        amount: consumedBalance - requiredBalance,
+	                                        address: address
+	                                    });
+	                                }
+	                                finished = true;
+	                            }
+	                        }
 	                    }
-	                    _d.label = 5;
-	                case 5:
-	                    _i++;
-	                    return [3 /*break*/, 3];
+	                    _d.label = 6;
 	                case 6:
-	                    localStartIndex++;
-	                    _d.label = 7;
+	                    _i++;
+	                    return [3 /*break*/, 4];
 	                case 7:
-	                    if (!finished) return [3 /*break*/, 1];
+	                    localStartIndex++;
 	                    _d.label = 8;
 	                case 8:
+	                    if (!finished) return [3 /*break*/, 1];
+	                    _d.label = 9;
+	                case 9:
 	                    if (consumedBalance < requiredBalance) {
 	                        throw new Error("There are not enough funds in the inputs for the required balance");
 	                    }
@@ -6354,7 +6302,7 @@
 	                        unlockBlocks: unlockBlocks
 	                    };
 	                    return [4 /*yield*/, client.tips()];
-	                case 9:
+	                case 10:
 	                    tips = _d.sent();
 	                    message = {
 	                        version: 1,
@@ -6364,7 +6312,7 @@
 	                        nonce: 0
 	                    };
 	                    return [4 /*yield*/, client.messageSubmit(message)];
-	                case 10:
+	                case 11:
 	                    messageId = _d.sent();
 	                    return [2 /*return*/, {
 	                            messageId: messageId,
@@ -6992,9 +6940,6 @@
 	__exportStar(sha3, exports);
 	__exportStar(sha512, exports);
 	__exportStar(slip0010, exports);
-	__exportStar(common$1, exports);
-	__exportStar(getAddresses_1, exports);
-	__exportStar(getAddressesKeyPairs_1, exports);
 	__exportStar(getBalance_1, exports);
 	__exportStar(getUnspentAddress_1, exports);
 	__exportStar(getUnspentAddresses_1, exports);
