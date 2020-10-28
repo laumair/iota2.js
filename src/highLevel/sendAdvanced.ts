@@ -61,39 +61,46 @@ export async function sendAdvanced(
         const address = Converter.bytesToHex(Ed25519.publicKeyToAddress(addressKeyPair.publicKey));
         const addressOutputIds = await client.addressOutputs(address);
 
-        for (const addressOutputId of addressOutputIds.outputIds) {
-            const addressOutput = await client.output(addressOutputId);
+        if (addressOutputIds.count === 0) {
+            finished = true;
+        } else {
+            for (const addressOutputId of addressOutputIds.outputIds) {
+                const addressOutput = await client.output(addressOutputId);
 
-            if (!addressOutput.isSpent &&
-                addressOutput.output.amount !== 0 &&
-                consumedBalance < requiredBalance) {
-                consumedBalance += addressOutput.output.amount;
+                if (!addressOutput.isSpent &&
+                    consumedBalance < requiredBalance) {
+                    if (addressOutput.output.amount === 0) {
+                        finished = true;
+                    } else {
+                        consumedBalance += addressOutput.output.amount;
 
-                const input: IUTXOInput = {
-                    type: 0,
-                    transactionId: addressOutput.transactionId,
-                    transactionOutputIndex: addressOutput.outputIndex
-                };
+                        const input: IUTXOInput = {
+                            type: 0,
+                            transactionId: addressOutput.transactionId,
+                            transactionOutputIndex: addressOutput.outputIndex
+                        };
 
-                const writeStream = new WriteStream();
-                serializeInput(writeStream, input);
+                        const writeStream = new WriteStream();
+                        serializeInput(writeStream, input);
 
-                inputsAndSignatureKeyPairs.push({
-                    input,
-                    addressKeyPair,
-                    serialized: writeStream.finalHex()
-                });
-
-                if (consumedBalance >= requiredBalance) {
-                    // We didn't use all the balance from the last input
-                    // so return the rest to the same address.
-                    if (consumedBalance - requiredBalance > 0) {
-                        outputs.push({
-                            amount: consumedBalance - requiredBalance,
-                            address
+                        inputsAndSignatureKeyPairs.push({
+                            input,
+                            addressKeyPair,
+                            serialized: writeStream.finalHex()
                         });
+
+                        if (consumedBalance >= requiredBalance) {
+                            // We didn't use all the balance from the last input
+                            // so return the rest to the same address.
+                            if (consumedBalance - requiredBalance > 0) {
+                                outputs.push({
+                                    amount: consumedBalance - requiredBalance,
+                                    address
+                                });
+                            }
+                            finished = true;
+                        }
                     }
-                    finished = true;
                 }
             }
         }
