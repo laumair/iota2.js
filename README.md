@@ -59,8 +59,6 @@ These API methods are implemented.
 
 There are also high level operations which make use of the API level methods:
 
-* getAddresses - Given a seed, path, start index and count, generate the addresses.
-* getAddressesKeyPairs - Given a seed, path, start index and count, generate the address key pairs.
 * getBalance - Given a seed, path calculate the total balance available on it's addresses.
 * getUnspentAddress - Given a seed, path, and start index find the next unspent address.
 * getUnspentAddresses - Given a seed, path, and start index find all the unspent addresses.

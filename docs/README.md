@@ -74,8 +74,6 @@
 * [deserializeUTXOInput](README.md#deserializeutxoinput)
 * [deserializeUnlockBlock](README.md#deserializeunlockblock)
 * [deserializeUnlockBlocks](README.md#deserializeunlockblocks)
-* [getAddresses](README.md#getaddresses)
-* [getAddressesKeyPairs](README.md#getaddresseskeypairs)
 * [getBalance](README.md#getbalance)
 * [getUnspentAddress](README.md#getunspentaddress)
 * [getUnspentAddresses](README.md#getunspentaddresses)
@@ -473,48 +471,6 @@ Name | Type | Description |
 **Returns:** ([IReferenceUnlockBlock](interfaces/ireferenceunlockblock.md) \| [ISignatureUnlockBlock](interfaces/isignatureunlockblock.md))[]
 
 The deserialized object.
-
-___
-
-### getAddresses
-
-▸ **getAddresses**(`seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `startIndex?`: number, `count?`: number): string[]
-
-Generate a list of address key pairs.
-
-#### Parameters:
-
-Name | Type | Default value | Description |
------- | ------ | ------ | ------ |
-`seed` | [ISeed](interfaces/iseed.md) | - | The seed. |
-`basePath` | [Bip32Path](classes/bip32path.md) | - | The base path to start looking for addresses. |
-`startIndex` | number | 0 | The start index to generate from, defaults to 0. |
-`count` | number | DEFAULT\_CHUNK\_SIZE | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
-
-**Returns:** string[]
-
-A list of the signature key pairs for the addresses.
-
-___
-
-### getAddressesKeyPairs
-
-▸ **getAddressesKeyPairs**(`seed`: [ISeed](interfaces/iseed.md), `basePath`: [Bip32Path](classes/bip32path.md), `startIndex?`: number, `count?`: number): [IKeyPair](interfaces/ikeypair.md)[]
-
-Generate a list of address key pairs.
-
-#### Parameters:
-
-Name | Type | Default value | Description |
------- | ------ | ------ | ------ |
-`seed` | [ISeed](interfaces/iseed.md) | - | The seed. |
-`basePath` | [Bip32Path](classes/bip32path.md) | - | The base path to start looking for addresses. |
-`startIndex` | number | 0 | The start index to generate from, defaults to 0. |
-`count` | number | DEFAULT\_CHUNK\_SIZE | The number of address seeds, defaults to DEFAULT_CHUNK_SIZE. |
-
-**Returns:** [IKeyPair](interfaces/ikeypair.md)[]
-
-A list of the signature key pairs for the addresses.
 
 ___
 
