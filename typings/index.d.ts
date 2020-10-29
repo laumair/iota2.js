@@ -21,6 +21,7 @@ export * from "./binary/signature";
 export * from "./binary/transaction";
 export * from "./binary/unlockBlock";
 export * from "./clients/singleNodeClient";
+export * from "./crypto/bech32";
 export * from "./crypto/bip32Path";
 export * from "./crypto/blake2b";
 export * from "./crypto/ed25519";

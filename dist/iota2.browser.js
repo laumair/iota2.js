@@ -4155,6 +4155,172 @@
 
 	});
 
+	var bech32 = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.Bech32 = void 0;
+	/* eslint-disable no-bitwise */
+	/**
+	 * Class to help with Bech32 encoding/decoding.
+	 * Based on reference implementation https://github.com/sipa/bech32/blob/master/ref/javascript/bech32.js
+	 */
+	var Bech32 = /** @class */ (function () {
+	    function Bech32() {
+	    }
+	    /**
+	     * Encode the buffer.
+	     * @param humanReadablePart The header
+	     * @param data The data to encode.
+	     * @returns The encoded data.
+	     */
+	    Bech32.encode = function (humanReadablePart, data) {
+	        var len = humanReadablePart.length + data.length;
+	        if (len < Bech32.MIN_LENGTH) {
+	            throw new Error("Human readable part + data length is too short, it is " + len + " and the minimum length is " + Bech32.MIN_LENGTH);
+	        }
+	        if (humanReadablePart.length + data.length > Bech32.MAX_LENGTH) {
+	            throw new Error("Human readable part + data length is too long, it is " + len + " and the maximum length is " + Bech32.MAX_LENGTH);
+	        }
+	        var checksum = Bech32.createChecksum(humanReadablePart, data);
+	        var ret = "" + humanReadablePart + Bech32.SEPARATOR;
+	        for (var i = 0; i < data.length; i++) {
+	            ret += Bech32.CHARSET.charAt(data[i]);
+	        }
+	        for (var i = 0; i < checksum.length; i++) {
+	            ret += Bech32.CHARSET.charAt(checksum[i]);
+	        }
+	        return ret;
+	    };
+	    /**
+	     * Decode a bech32 string.
+	     * @param bech The text to decode.
+	     * @returns The decoded data or undefined if it could not be decoded.
+	     */
+	    Bech32.decode = function (bech) {
+	        bech = bech.toLowerCase();
+	        if (bech.length > Bech32.MAX_LENGTH) {
+	            throw new Error("The bech string is too long, it is " + bech.length + " and the maximum length is " + Bech32.MAX_LENGTH);
+	        }
+	        var separatorPos = bech.lastIndexOf(Bech32.SEPARATOR);
+	        if (separatorPos < 1) {
+	            throw new Error("The separator position is " + separatorPos + ", which is too early in the string");
+	        }
+	        if (separatorPos + 7 > bech.length) {
+	            throw new Error("The separator position is " + separatorPos + ", which doesn't leave enough space for data");
+	        }
+	        var data = new Uint8Array(bech.length - separatorPos - 1);
+	        var idx = 0;
+	        for (var p = separatorPos + 1; p < bech.length; p++) {
+	            var d = Bech32.CHARSET.indexOf(bech.charAt(p));
+	            if (d === -1) {
+	                throw new Error("Data contains characters not in the charset " + bech.charAt(p));
+	            }
+	            data[idx++] = Bech32.CHARSET.indexOf(bech.charAt(p));
+	        }
+	        var humanReadablePart = bech.slice(0, separatorPos);
+	        if (!Bech32.verifyChecksum(humanReadablePart, data)) {
+	            return;
+	        }
+	        return { humanReadablePart: humanReadablePart, data: data.slice(0, -6) };
+	    };
+	    /**
+	     * Create the checksum from the human redable part and the data.
+	     * @param humanReadablePart The human readable part.
+	     * @param data The data.
+	     * @returns The checksum.
+	     */
+	    Bech32.createChecksum = function (humanReadablePart, data) {
+	        var expanded = Bech32.humanReadablePartExpand(humanReadablePart);
+	        var values = new Uint8Array(expanded.length + data.length + 6);
+	        values.set(expanded, 0);
+	        values.set(data, expanded.length);
+	        values.set([0, 0, 0, 0, 0, 0], expanded.length + data.length);
+	        var mod = Bech32.polymod(values) ^ 1;
+	        var ret = new Uint8Array(6);
+	        for (var i = 0; i < 6; i++) {
+	            ret[i] = (mod >> 5 * (5 - i)) & 31;
+	        }
+	        return ret;
+	    };
+	    /**
+	     * Verify the checksum given the humarn readable part and data.
+	     * @param humanReadablePart The human redable part to validate the checksum.
+	     * @param data The data to validate the checksum.
+	     * @returns True if the checksum was verified.
+	     */
+	    Bech32.verifyChecksum = function (humanReadablePart, data) {
+	        var expanded = Bech32.humanReadablePartExpand(humanReadablePart);
+	        var values = new Uint8Array(expanded.length + data.length);
+	        values.set(expanded, 0);
+	        values.set(data, expanded.length);
+	        return Bech32.polymod(values) === 1;
+	    };
+	    /**
+	     * Calculate the polymod of the values.
+	     * @param values The values to calculate the polymode for.
+	     * @returns The polymod of the values.
+	     */
+	    Bech32.polymod = function (values) {
+	        var chk = 1;
+	        for (var p = 0; p < values.length; p++) {
+	            var top_1 = chk >> 25;
+	            chk = ((chk & 0x1FFFFFF) << 5) ^ values[p];
+	            for (var i = 0; i < 5; ++i) {
+	                if ((top_1 >> i) & 1) {
+	                    chk ^= Bech32.GENERATOR[i];
+	                }
+	            }
+	        }
+	        return chk;
+	    };
+	    /**
+	     * Expand the human readable part.
+	     * @param humanReadablePart The human readable part to expand.
+	     * @returns The expanded human readable part.
+	     */
+	    Bech32.humanReadablePartExpand = function (humanReadablePart) {
+	        var ret = new Uint8Array((humanReadablePart.length * 2) + 1);
+	        var idx = 0;
+	        for (var i = 0; i < humanReadablePart.length; i++) {
+	            ret[idx++] = humanReadablePart.charCodeAt(i) >> 5;
+	        }
+	        ret[idx++] = 0;
+	        for (var i = 0; i < humanReadablePart.length; i++) {
+	            ret[idx++] = humanReadablePart.charCodeAt(i) & 31;
+	        }
+	        return ret;
+	    };
+	    /**
+	     * The alphabet to use.
+	     */
+	    Bech32.CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+	    /**
+	     * The separator between human readable part and data.
+	     */
+	    Bech32.SEPARATOR = "1";
+	    /**
+	     * The generator constants;
+	     */
+	    Bech32.GENERATOR = Uint32Array.from([
+	        0x3B6A57B2,
+	        0x26508E6D,
+	        0x1EA119FA,
+	        0x3D4233DD,
+	        0x2A1462B3
+	    ]);
+	    /**
+	     * The minimum length for humanReadablePart + data;
+	     */
+	    Bech32.MIN_LENGTH = 8;
+	    /**
+	     * The maximum length for humanReadablePart + data;
+	     */
+	    Bech32.MAX_LENGTH = 90;
+	    return Bech32;
+	}());
+	exports.Bech32 = Bech32;
+
+	});
+
 	var bip32Path = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.Bip32Path = void 0;
@@ -6932,6 +7098,7 @@
 	__exportStar(transaction, exports);
 	__exportStar(unlockBlock, exports);
 	__exportStar(singleNodeClient, exports);
+	__exportStar(bech32, exports);
 	__exportStar(bip32Path, exports);
 	__exportStar(blake2b, exports);
 	__exportStar(ed25519, exports);
