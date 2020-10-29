@@ -1761,17 +1761,19 @@
 	     * @returns The encoded data.
 	     */
 	    Bech32.encode = function (humanReadablePart, data) {
-	        var len = humanReadablePart.length + data.length;
-	        if (len < Bech32.MIN_LENGTH) {
-	            throw new Error("Human readable part + data length is too short, it is " + len + " and the minimum length is " + Bech32.MIN_LENGTH);
-	        }
-	        if (humanReadablePart.length + data.length > Bech32.MAX_LENGTH) {
-	            throw new Error("Human readable part + data length is too long, it is " + len + " and the maximum length is " + Bech32.MAX_LENGTH);
-	        }
-	        var checksum = Bech32.createChecksum(humanReadablePart, data);
+	        return Bech32.encode5BitArray(humanReadablePart, Bech32.to5Bit(data));
+	    };
+	    /**
+	     * Encode the 5 bit data buffer.
+	     * @param humanReadablePart The header
+	     * @param data5Bit The data to encode.
+	     * @returns The encoded data.
+	     */
+	    Bech32.encode5BitArray = function (humanReadablePart, data5Bit) {
+	        var checksum = Bech32.createChecksum(humanReadablePart, data5Bit);
 	        var ret = "" + humanReadablePart + Bech32.SEPARATOR;
-	        for (var i = 0; i < data.length; i++) {
-	            ret += Bech32.CHARSET.charAt(data[i]);
+	        for (var i = 0; i < data5Bit.length; i++) {
+	            ret += Bech32.CHARSET.charAt(data5Bit[i]);
 	        }
 	        for (var i = 0; i < checksum.length; i++) {
 	            ret += Bech32.CHARSET.charAt(checksum[i]);
@@ -1784,11 +1786,23 @@
 	     * @returns The decoded data or undefined if it could not be decoded.
 	     */
 	    Bech32.decode = function (bech) {
+	        var result = Bech32.decodeTo5BitArray(bech);
+	        return result ? {
+	            humanReadablePart: result.humanReadablePart,
+	            data: Bech32.from5Bit(result.data)
+	        } : undefined;
+	    };
+	    /**
+	     * Decode a bech32 string to 5 bit array.
+	     * @param bech The text to decode.
+	     * @returns The decoded data or undefined if it could not be decoded.
+	     */
+	    Bech32.decodeTo5BitArray = function (bech) {
 	        bech = bech.toLowerCase();
-	        if (bech.length > Bech32.MAX_LENGTH) {
-	            throw new Error("The bech string is too long, it is " + bech.length + " and the maximum length is " + Bech32.MAX_LENGTH);
-	        }
 	        var separatorPos = bech.lastIndexOf(Bech32.SEPARATOR);
+	        if (separatorPos === -1) {
+	            throw new Error("There is no separator character " + Bech32.SEPARATOR + " in the data");
+	        }
 	        if (separatorPos < 1) {
 	            throw new Error("The separator position is " + separatorPos + ", which is too early in the string");
 	        }
@@ -1797,18 +1811,34 @@
 	        }
 	        var data = new Uint8Array(bech.length - separatorPos - 1);
 	        var idx = 0;
-	        for (var p = separatorPos + 1; p < bech.length; p++) {
-	            var d = Bech32.CHARSET.indexOf(bech.charAt(p));
+	        for (var i = separatorPos + 1; i < bech.length; i++) {
+	            var d = Bech32.CHARSET.indexOf(bech.charAt(i));
 	            if (d === -1) {
-	                throw new Error("Data contains characters not in the charset " + bech.charAt(p));
+	                throw new Error("Data contains characters not in the charset " + bech.charAt(i));
 	            }
-	            data[idx++] = Bech32.CHARSET.indexOf(bech.charAt(p));
+	            data[idx++] = Bech32.CHARSET.indexOf(bech.charAt(i));
 	        }
 	        var humanReadablePart = bech.slice(0, separatorPos);
 	        if (!Bech32.verifyChecksum(humanReadablePart, data)) {
 	            return;
 	        }
 	        return { humanReadablePart: humanReadablePart, data: data.slice(0, -6) };
+	    };
+	    /**
+	     * Convert the input bytes into 5 bit data.
+	     * @param bytes The bytes to convert.
+	     * @returns The data in 5 bit form.
+	     */
+	    Bech32.to5Bit = function (bytes) {
+	        return Bech32.convertBits(bytes, 8, 5, true);
+	    };
+	    /**
+	     * Convert the 5 bit data to 8 bit.
+	     * @param fiveBit The 5 bit data to convert.
+	     * @returns The 5 bit data converted to 8 bit.
+	     */
+	    Bech32.from5Bit = function (fiveBit) {
+	        return Bech32.convertBits(fiveBit, 5, 8, false);
 	    };
 	    /**
 	     * Create the checksum from the human redable part and the data.
@@ -1844,7 +1874,7 @@
 	    };
 	    /**
 	     * Calculate the polymod of the values.
-	     * @param values The values to calculate the polymode for.
+	     * @param values The values to calculate the polymod for.
 	     * @returns The polymod of the values.
 	     */
 	    Bech32.polymod = function (values) {
@@ -1878,6 +1908,42 @@
 	        return ret;
 	    };
 	    /**
+	     * Convert input data from one bit resolution to another.
+	     * @param data The data to convert.
+	     * @param fromBits The resolution of the input data.
+	     * @param toBits The required resolution of the output data.
+	     * @param padding Include padding in the output.
+	     * @returns The converted data,
+	     */
+	    Bech32.convertBits = function (data, fromBits, toBits, padding) {
+	        var value = 0;
+	        var bits = 0;
+	        var maxV = (1 << toBits) - 1;
+	        var res = [];
+	        for (var i = 0; i < data.length; i++) {
+	            value = (value << fromBits) | data[i];
+	            bits += fromBits;
+	            while (bits >= toBits) {
+	                bits -= toBits;
+	                res.push((value >> bits) & maxV);
+	            }
+	        }
+	        if (padding) {
+	            if (bits > 0) {
+	                res.push((value << (toBits - bits)) & maxV);
+	            }
+	        }
+	        else {
+	            if (bits >= fromBits) {
+	                throw new Error("Excess padding");
+	            }
+	            if ((value << (toBits - bits)) & maxV) {
+	                throw new Error("Non-zero padding");
+	            }
+	        }
+	        return new Uint8Array(res);
+	    };
+	    /**
 	     * The alphabet to use.
 	     */
 	    Bech32.CHARSET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
@@ -1895,14 +1961,6 @@
 	        0x3D4233DD,
 	        0x2A1462B3
 	    ]);
-	    /**
-	     * The minimum length for humanReadablePart + data;
-	     */
-	    Bech32.MIN_LENGTH = 8;
-	    /**
-	     * The maximum length for humanReadablePart + data;
-	     */
-	    Bech32.MAX_LENGTH = 90;
 	    return Bech32;
 	}());
 	exports.Bech32 = Bech32;

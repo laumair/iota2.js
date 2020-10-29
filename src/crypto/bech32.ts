@@ -26,39 +26,28 @@ export class Bech32 {
     ]);
 
     /**
-     * The minimum length for humanReadablePart + data;
-     */
-    private static readonly MIN_LENGTH: number = 8;
-
-    /**
-     * The maximum length for humanReadablePart + data;
-     */
-    private static readonly MAX_LENGTH: number = 90;
-
-    /**
      * Encode the buffer.
      * @param humanReadablePart The header
      * @param data The data to encode.
      * @returns The encoded data.
      */
     public static encode(humanReadablePart: string, data: Uint8Array): string {
-        const len = humanReadablePart.length + data.length;
-        if (len < Bech32.MIN_LENGTH) {
-            throw new Error(`Human readable part + data length is too short, it is ${len
-                } and the minimum length is ${Bech32.MIN_LENGTH}`);
-        }
+        return Bech32.encode5BitArray(humanReadablePart, Bech32.to5Bit(data));
+    }
 
-        if (humanReadablePart.length + data.length > Bech32.MAX_LENGTH) {
-            throw new Error(`Human readable part + data length is too long, it is ${len
-                } and the maximum length is ${Bech32.MAX_LENGTH}`);
-        }
-
-        const checksum = Bech32.createChecksum(humanReadablePart, data);
+    /**
+     * Encode the 5 bit data buffer.
+     * @param humanReadablePart The header
+     * @param data5Bit The data to encode.
+     * @returns The encoded data.
+     */
+    public static encode5BitArray(humanReadablePart: string, data5Bit: Uint8Array): string {
+        const checksum = Bech32.createChecksum(humanReadablePart, data5Bit);
 
         let ret = `${humanReadablePart}${Bech32.SEPARATOR}`;
 
-        for (let i = 0; i < data.length; i++) {
-            ret += Bech32.CHARSET.charAt(data[i]);
+        for (let i = 0; i < data5Bit.length; i++) {
+            ret += Bech32.CHARSET.charAt(data5Bit[i]);
         }
 
         for (let i = 0; i < checksum.length; i++) {
@@ -77,14 +66,29 @@ export class Bech32 {
         humanReadablePart: string;
         data: Uint8Array;
     } | undefined {
+        const result = Bech32.decodeTo5BitArray(bech);
+        return result ? {
+            humanReadablePart: result.humanReadablePart,
+            data: Bech32.from5Bit(result.data)
+        } : undefined;
+    }
+
+    /**
+     * Decode a bech32 string to 5 bit array.
+     * @param bech The text to decode.
+     * @returns The decoded data or undefined if it could not be decoded.
+     */
+    public static decodeTo5BitArray(bech: string): {
+        humanReadablePart: string;
+        data: Uint8Array;
+    } | undefined {
         bech = bech.toLowerCase();
 
-        if (bech.length > Bech32.MAX_LENGTH) {
-            throw new Error(`The bech string is too long, it is ${bech.length
-                } and the maximum length is ${Bech32.MAX_LENGTH}`);
+        const separatorPos = bech.lastIndexOf(Bech32.SEPARATOR);
+        if (separatorPos === -1) {
+            throw new Error(`There is no separator character ${Bech32.SEPARATOR} in the data`);
         }
 
-        const separatorPos = bech.lastIndexOf(Bech32.SEPARATOR);
         if (separatorPos < 1) {
             throw new Error(`The separator position is ${separatorPos}, which is too early in the string`);
         }
@@ -96,12 +100,12 @@ export class Bech32 {
         const data = new Uint8Array(bech.length - separatorPos - 1);
         let idx = 0;
 
-        for (let p = separatorPos + 1; p < bech.length; p++) {
-            const d = Bech32.CHARSET.indexOf(bech.charAt(p));
+        for (let i = separatorPos + 1; i < bech.length; i++) {
+            const d = Bech32.CHARSET.indexOf(bech.charAt(i));
             if (d === -1) {
-                throw new Error(`Data contains characters not in the charset ${bech.charAt(p)}`);
+                throw new Error(`Data contains characters not in the charset ${bech.charAt(i)}`);
             }
-            data[idx++] = Bech32.CHARSET.indexOf(bech.charAt(p));
+            data[idx++] = Bech32.CHARSET.indexOf(bech.charAt(i));
         }
 
         const humanReadablePart = bech.slice(0, separatorPos);
@@ -111,6 +115,24 @@ export class Bech32 {
         }
 
         return { humanReadablePart, data: data.slice(0, -6) };
+    }
+
+    /**
+     * Convert the input bytes into 5 bit data.
+     * @param bytes The bytes to convert.
+     * @returns The data in 5 bit form.
+     */
+    public static to5Bit(bytes: Uint8Array): Uint8Array {
+        return Bech32.convertBits(bytes, 8, 5, true);
+    }
+
+    /**
+     * Convert the 5 bit data to 8 bit.
+     * @param fiveBit The 5 bit data to convert.
+     * @returns The 5 bit data converted to 8 bit.
+     */
+    public static from5Bit(fiveBit: Uint8Array): Uint8Array {
+        return Bech32.convertBits(fiveBit, 5, 8, false);
     }
 
     /**
@@ -154,7 +176,7 @@ export class Bech32 {
 
     /**
      * Calculate the polymod of the values.
-     * @param values The values to calculate the polymode for.
+     * @param values The values to calculate the polymod for.
      * @returns The polymod of the values.
      */
     private static polymod(values: Uint8Array): number {
@@ -187,5 +209,49 @@ export class Bech32 {
             ret[idx++] = humanReadablePart.charCodeAt(i) & 31;
         }
         return ret;
+    }
+
+    /**
+     * Convert input data from one bit resolution to another.
+     * @param data The data to convert.
+     * @param fromBits The resolution of the input data.
+     * @param toBits The required resolution of the output data.
+     * @param padding Include padding in the output.
+     * @returns The converted data,
+     */
+    private static convertBits(
+        data: Uint8Array,
+        fromBits: number,
+        toBits: number,
+        padding: boolean
+    ): Uint8Array {
+        let value = 0;
+        let bits = 0;
+        const maxV = (1 << toBits) - 1;
+        const res = [];
+
+        for (let i = 0; i < data.length; i++) {
+            value = (value << fromBits) | data[i];
+            bits += fromBits;
+
+            while (bits >= toBits) {
+                bits -= toBits;
+                res.push((value >> bits) & maxV);
+            }
+        }
+
+        if (padding) {
+            if (bits > 0) {
+                res.push((value << (toBits - bits)) & maxV);
+            }
+        } else {
+            if (bits >= fromBits) {
+                throw new Error("Excess padding");
+            }
+            if ((value << (toBits - bits)) & maxV) {
+                throw new Error("Non-zero padding");
+            }
+        }
+        return new Uint8Array(res);
     }
 }

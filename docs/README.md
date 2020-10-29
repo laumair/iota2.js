@@ -10,6 +10,7 @@
 
 * [ArrayHelper](classes/arrayhelper.md)
 * [Bech32](classes/bech32.md)
+* [Bech32Helper](classes/bech32helper.md)
 * [Bip32Path](classes/bip32path.md)
 * [Blake2b](classes/blake2b.md)
 * [ClientError](classes/clienterror.md)

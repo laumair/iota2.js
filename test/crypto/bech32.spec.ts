@@ -1,27 +1,10 @@
 /* eslint-disable max-len */
 import { Bech32 } from "../../src/crypto/bech32";
+import { Converter } from "../../src/utils/converter";
 
 describe("Bech32", () => {
-    test("Can fail to encode if the data is too short", () => {
-        const humanReadablePart = "abcdef";
-        const data = new Uint8Array([0]);
-        expect(() => Bech32.encode(humanReadablePart, data)).toThrow("too short");
-    });
-
-    test("Can fail to encode if the data is too long", () => {
-        const humanReadablePart = "abcdef";
-        const data = new Uint8Array(85);
-        expect(() => Bech32.encode(humanReadablePart, data)).toThrow("too long");
-    });
-
-    test("Can perform an encode", () => {
-        const humanReadablePart = "abcdef";
-        const data = new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]);
-        expect(Bech32.encode(humanReadablePart, data)).toEqual("abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw");
-    });
-
-    test("Can fail to decode if the data is too long", () => {
-        expect(() => Bech32.decode("a".repeat(91))).toThrow("too long");
+    test("Can fail to decode if there is no separator", () => {
+        expect(() => Bech32.decode("a".repeat(91))).toThrow("no separator");
     });
 
     test("Can fail to decode if the separator is too early", () => {
@@ -32,25 +15,28 @@ describe("Bech32", () => {
         expect(() => Bech32.decode(`${"a".repeat(84)}1${"a".repeat(5)}`)).toThrow("space for data");
     });
 
-    test("Can fail to decode with invalid characters", () => {
-        const result = Bech32.decode("abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxz");
-
-        expect(result).toBeUndefined();
+    test("Can fail to decode with non 5 bit characters", () => {
+        expect(() => Bech32.decodeTo5BitArray("iot1!aaaaa")).toThrow("not in the charset");
     });
 
     test("Can fail to decode with invalid checksum", () => {
-        const result = Bech32.decode("abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxz");
+        const result = Bech32.decode("iot1q9f0mlq8yxpx2nck8a0slxnzr4ef2ek8f5gqxlzd0wasgp73utryjtzcp99");
 
         expect(result).toBeUndefined();
     });
 
-    test("Can perform a decode", () => {
-        const result = Bech32.decode("abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw");
+    test("Can encode a string", () => {
+        const address = Converter.hexToBytes("0152fdfc072182654f163f5f0f9a621d729566c74d10037c4d7bbb0407d1e2c649");
+        expect(Bech32.encode("iot", address)).toEqual("iot1q9f0mlq8yxpx2nck8a0slxnzr4ef2ek8f5gqxlzd0wasgp73utryjtzcp98");
+    });
+
+    test("Can decode a string", () => {
+        const result = Bech32.decode("iot1q9f0mlq8yxpx2nck8a0slxnzr4ef2ek8f5gqxlzd0wasgp73utryjtzcp98");
 
         expect(result).toBeDefined();
         if (result) {
-            expect(result.humanReadablePart).toEqual("abcdef");
-            expect(result.data).toEqual(new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]));
+            expect(result.humanReadablePart).toEqual("iot");
+            expect(Converter.bytesToHex(result.data)).toEqual("0152fdfc072182654f163f5f0f9a621d729566c74d10037c4d7bbb0407d1e2c649");
         }
     });
 });

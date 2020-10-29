@@ -16,20 +16,19 @@ export declare class Bech32 {
      */
     private static readonly GENERATOR;
     /**
-     * The minimum length for humanReadablePart + data;
-     */
-    private static readonly MIN_LENGTH;
-    /**
-     * The maximum length for humanReadablePart + data;
-     */
-    private static readonly MAX_LENGTH;
-    /**
      * Encode the buffer.
      * @param humanReadablePart The header
      * @param data The data to encode.
      * @returns The encoded data.
      */
     static encode(humanReadablePart: string, data: Uint8Array): string;
+    /**
+     * Encode the 5 bit data buffer.
+     * @param humanReadablePart The header
+     * @param data5Bit The data to encode.
+     * @returns The encoded data.
+     */
+    static encode5BitArray(humanReadablePart: string, data5Bit: Uint8Array): string;
     /**
      * Decode a bech32 string.
      * @param bech The text to decode.
@@ -39,6 +38,27 @@ export declare class Bech32 {
         humanReadablePart: string;
         data: Uint8Array;
     } | undefined;
+    /**
+     * Decode a bech32 string to 5 bit array.
+     * @param bech The text to decode.
+     * @returns The decoded data or undefined if it could not be decoded.
+     */
+    static decodeTo5BitArray(bech: string): {
+        humanReadablePart: string;
+        data: Uint8Array;
+    } | undefined;
+    /**
+     * Convert the input bytes into 5 bit data.
+     * @param bytes The bytes to convert.
+     * @returns The data in 5 bit form.
+     */
+    static to5Bit(bytes: Uint8Array): Uint8Array;
+    /**
+     * Convert the 5 bit data to 8 bit.
+     * @param fiveBit The 5 bit data to convert.
+     * @returns The 5 bit data converted to 8 bit.
+     */
+    static from5Bit(fiveBit: Uint8Array): Uint8Array;
     /**
      * Create the checksum from the human redable part and the data.
      * @param humanReadablePart The human readable part.
@@ -55,7 +75,7 @@ export declare class Bech32 {
     private static verifyChecksum;
     /**
      * Calculate the polymod of the values.
-     * @param values The values to calculate the polymode for.
+     * @param values The values to calculate the polymod for.
      * @returns The polymod of the values.
      */
     private static polymod;
@@ -65,4 +85,13 @@ export declare class Bech32 {
      * @returns The expanded human readable part.
      */
     private static humanReadablePartExpand;
+    /**
+     * Convert input data from one bit resolution to another.
+     * @param data The data to convert.
+     * @param fromBits The resolution of the input data.
+     * @param toBits The required resolution of the output data.
+     * @param padding Include padding in the output.
+     * @returns The converted data,
+     */
+    private static convertBits;
 }

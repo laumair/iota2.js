@@ -16,7 +16,11 @@ Based on reference implementation https://github.com/sipa/bech32/blob/master/ref
 ### Methods
 
 * [decode](bech32.md#decode)
+* [decodeTo5BitArray](bech32.md#decodeto5bitarray)
 * [encode](bech32.md#encode)
+* [encode5BitArray](bech32.md#encode5bitarray)
+* [from5Bit](bech32.md#from5bit)
+* [to5Bit](bech32.md#to5bit)
 
 ## Methods
 
@@ -25,6 +29,24 @@ Based on reference implementation https://github.com/sipa/bech32/blob/master/ref
 ▸ `Static`**decode**(`bech`: string): { data: Uint8Array ; humanReadablePart: string  } \| undefined
 
 Decode a bech32 string.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`bech` | string | The text to decode. |
+
+**Returns:** { data: Uint8Array ; humanReadablePart: string  } \| undefined
+
+The decoded data or undefined if it could not be decoded.
+
+___
+
+### decodeTo5BitArray
+
+▸ `Static`**decodeTo5BitArray**(`bech`: string): { data: Uint8Array ; humanReadablePart: string  } \| undefined
+
+Decode a bech32 string to 5 bit array.
 
 #### Parameters:
 
@@ -54,3 +76,58 @@ Name | Type | Description |
 **Returns:** string
 
 The encoded data.
+
+___
+
+### encode5BitArray
+
+▸ `Static`**encode5BitArray**(`humanReadablePart`: string, `data5Bit`: Uint8Array): string
+
+Encode the 5 bit data buffer.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`humanReadablePart` | string | The header |
+`data5Bit` | Uint8Array | The data to encode. |
+
+**Returns:** string
+
+The encoded data.
+
+___
+
+### from5Bit
+
+▸ `Static`**from5Bit**(`fiveBit`: Uint8Array): Uint8Array
+
+Convert the 5 bit data to 8 bit.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`fiveBit` | Uint8Array | The 5 bit data to convert. |
+
+**Returns:** Uint8Array
+
+The 5 bit data converted to 8 bit.
+
+___
+
+### to5Bit
+
+▸ `Static`**to5Bit**(`bytes`: Uint8Array): Uint8Array
+
+Convert the input bytes into 5 bit data.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`bytes` | Uint8Array | The bytes to convert. |
+
+**Returns:** Uint8Array
+
+The data in 5 bit form.
