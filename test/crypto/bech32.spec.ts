@@ -39,4 +39,32 @@ describe("Bech32", () => {
             expect(Converter.bytesToHex(result.data)).toEqual("0152fdfc072182654f163f5f0f9a621d729566c74d10037c4d7bbb0407d1e2c649");
         }
     });
+
+    test("Can fail to match empty address", () => {
+        expect(Bech32.matches("iot", "")).toEqual(false);
+    });
+
+    test("Can fail to match undefined address", () => {
+        expect(Bech32.matches("iot")).toEqual(false);
+    });
+
+    test("Can fail to match address too short", () => {
+        expect(Bech32.matches("iot", "iot1q9f0m")).toEqual(false);
+    });
+
+    test("Can fail to match address hrp mismatch", () => {
+        expect(Bech32.matches("iot", "iop1q9f0mlq8yxpx2nck8a0slxnzr4ef2ek8f5gqxlzd0wasgp73utryjtzcp98")).toEqual(false);
+    });
+
+    test("Can fail to match address seprator missing", () => {
+        expect(Bech32.matches("iot", "iopq9f0mlq8yxpx2nck8a0slxnzr4ef2ek8f5gqxlzd0wasgp73utryjtzcp98")).toEqual(false);
+    });
+
+    test("Can fail to match address invalid chars", () => {
+        expect(Bech32.matches("iot", "iot1q9f0mlqZyxpx2nck8a0slxnzr4ef2ek8f5gqxlzd0wasgp73utryjtzcp98")).toEqual(false);
+    });
+
+    test("Can match address", () => {
+        expect(Bech32.matches("iot", "iot1q9f0mlq8yxpx2nck8a0slxnzr4ef2ek8f5gqxlzd0wasgp73utryjtzcp98")).toEqual(true);
+    });
 });

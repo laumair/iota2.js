@@ -136,6 +136,20 @@ export class Bech32 {
     }
 
     /**
+     * Does the given string match the bech32 pattern.
+     * @param humanReadablePart The human readable part.
+     * @param bech32Text The text to test.
+     * @returns True if this is potentially a match.
+     */
+    public static matches(humanReadablePart: string, bech32Text?: string): boolean {
+        if (!bech32Text) {
+            return false;
+        }
+        const regEx = new RegExp(`^${humanReadablePart}1[${Bech32.CHARSET}]{6,}$`);
+        return regEx.test(bech32Text);
+    }
+
+    /**
      * Create the checksum from the human redable part and the data.
      * @param humanReadablePart The human readable part.
      * @param data The data.

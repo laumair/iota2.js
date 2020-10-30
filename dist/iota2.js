@@ -1841,6 +1841,19 @@
 	        return Bech32.convertBits(fiveBit, 5, 8, false);
 	    };
 	    /**
+	     * Does the given string match the bech32 pattern.
+	     * @param humanReadablePart The human readable part.
+	     * @param bech32Text The text to test.
+	     * @returns True if this is potentially a match.
+	     */
+	    Bech32.matches = function (humanReadablePart, bech32Text) {
+	        if (!bech32Text) {
+	            return false;
+	        }
+	        var regEx = new RegExp("^" + humanReadablePart + "1[" + Bech32.CHARSET + "]{6,}$");
+	        return regEx.test(bech32Text);
+	    };
+	    /**
 	     * Create the checksum from the human redable part and the data.
 	     * @param humanReadablePart The human readable part.
 	     * @param data The data.
@@ -4361,6 +4374,69 @@
 
 	});
 
+	var bech32Helper = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.Bech32Helper = void 0;
+	/* eslint-disable no-bitwise */
+
+	/**
+	 * Convert address to bech32.
+	 */
+	var Bech32Helper = /** @class */ (function () {
+	    function Bech32Helper() {
+	    }
+	    /**
+	     * Encode an address to bech32.
+	     * @param addressType The address type to encode.
+	     * @param addressBytes The address bytes to encode.
+	     * @returns The array formated as hex.
+	     */
+	    Bech32Helper.toBech32 = function (addressType, addressBytes) {
+	        var addressData = new Uint8Array(1 + addressBytes.length);
+	        addressData[0] = addressType;
+	        addressData.set(addressBytes, 1);
+	        return bech32.Bech32.encode(Bech32Helper.BECH32_HRP, addressData);
+	    };
+	    /**
+	     * Decode an address from bech32.
+	     * @param bech32Text The bech32 text to decode.
+	     * @returns The address type and address bytes or undefined if it cannot be decoded.
+	     */
+	    Bech32Helper.fromBech32 = function (bech32Text) {
+	        var decoded = bech32.Bech32.decode(bech32Text);
+	        if (decoded) {
+	            if (decoded.humanReadablePart !== Bech32Helper.BECH32_HRP) {
+	                throw new Error("The hrp part of the address should be " + Bech32Helper.BECH32_HRP + ", it is " + decoded.humanReadablePart);
+	            }
+	            if (decoded.data.length === 0) {
+	                throw new Error("The data part of the address should be at least length 1, it is 0");
+	            }
+	            var addressType = decoded.data[0];
+	            var addressBytes = decoded.data.slice(1);
+	            return {
+	                addressType: addressType,
+	                addressBytes: addressBytes
+	            };
+	        }
+	    };
+	    /**
+	     * Does the provided string look like it might be an bech32 address with matching hrp.
+	     * @param bech32Text The bech32 text to text.
+	     * @returns True.
+	     */
+	    Bech32Helper.matches = function (bech32Text) {
+	        return bech32.Bech32.matches(Bech32Helper.BECH32_HRP, bech32Text);
+	    };
+	    /**
+	     * The human readable part of the bech32 addresses.
+	     */
+	    Bech32Helper.BECH32_HRP = "iot";
+	    return Bech32Helper;
+	}());
+	exports.Bech32Helper = Bech32Helper;
+
+	});
+
 	var logging = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.logUnlockBlock = exports.logOutput = exports.logInput = exports.logSignature = exports.logAddress = exports.logPayload = exports.logMessage = exports.setLogger = void 0;
@@ -4774,6 +4850,7 @@
 	__exportStar(ITransactionPayload, exports);
 	__exportStar(ITypeBase, exports);
 	__exportStar(IUTXOInput, exports);
+	__exportStar(bech32Helper, exports);
 	__exportStar(converter, exports);
 	__exportStar(logging, exports);
 	__exportStar(readStream, exports);

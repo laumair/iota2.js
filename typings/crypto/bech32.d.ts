@@ -60,6 +60,13 @@ export declare class Bech32 {
      */
     static from5Bit(fiveBit: Uint8Array): Uint8Array;
     /**
+     * Does the given string match the bech32 pattern.
+     * @param humanReadablePart The human readable part.
+     * @param bech32Text The text to test.
+     * @returns True if this is potentially a match.
+     */
+    static matches(humanReadablePart: string, bech32Text?: string): boolean;
+    /**
      * Create the checksum from the human redable part and the data.
      * @param humanReadablePart The human readable part.
      * @param data The data.

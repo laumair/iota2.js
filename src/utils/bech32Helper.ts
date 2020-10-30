@@ -25,7 +25,7 @@ export class Bech32Helper {
 
     /**
      * Decode an address from bech32.
-     * @param bech32Text The bech32 test to decode.
+     * @param bech32Text The bech32 text to decode.
      * @returns The address type and address bytes or undefined if it cannot be decoded.
      */
     public static fromBech32(bech32Text: string): {
@@ -51,5 +51,14 @@ export class Bech32Helper {
                 addressBytes
             };
         }
+    }
+
+    /**
+     * Does the provided string look like it might be an bech32 address with matching hrp.
+     * @param bech32Text The bech32 text to text.
+     * @returns True.
+     */
+    public static matches(bech32Text?: string): boolean {
+        return Bech32.matches(Bech32Helper.BECH32_HRP, bech32Text);
     }
 }

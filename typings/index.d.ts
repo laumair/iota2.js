@@ -51,6 +51,7 @@ export * from "./models/ITransactionEssence";
 export * from "./models/ITransactionPayload";
 export * from "./models/ITypeBase";
 export * from "./models/IUTXOInput";
+export * from "./utils/bech32Helper";
 export * from "./utils/converter";
 export * from "./utils/logging";
 export * from "./utils/readStream";

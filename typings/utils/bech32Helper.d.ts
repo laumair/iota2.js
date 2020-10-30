@@ -15,11 +15,17 @@ export declare class Bech32Helper {
     static toBech32(addressType: number, addressBytes: Uint8Array): string;
     /**
      * Decode an address from bech32.
-     * @param bech32Text The bech32 test to decode.
+     * @param bech32Text The bech32 text to decode.
      * @returns The address type and address bytes or undefined if it cannot be decoded.
      */
     static fromBech32(bech32Text: string): {
         addressType: number;
         addressBytes: Uint8Array;
     } | undefined;
+    /**
+     * Does the provided string look like it might be an bech32 address with matching hrp.
+     * @param bech32Text The bech32 text to text.
+     * @returns True.
+     */
+    static matches(bech32Text?: string): boolean;
 }

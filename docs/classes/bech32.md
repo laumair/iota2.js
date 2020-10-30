@@ -20,6 +20,7 @@ Based on reference implementation https://github.com/sipa/bech32/blob/master/ref
 * [encode](bech32.md#encode)
 * [encode5BitArray](bech32.md#encode5bitarray)
 * [from5Bit](bech32.md#from5bit)
+* [matches](bech32.md#matches)
 * [to5Bit](bech32.md#to5bit)
 
 ## Methods
@@ -113,6 +114,25 @@ Name | Type | Description |
 **Returns:** Uint8Array
 
 The 5 bit data converted to 8 bit.
+
+___
+
+### matches
+
+▸ `Static`**matches**(`humanReadablePart`: string, `bech32Text?`: undefined \| string): boolean
+
+Does the given string match the bech32 pattern.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`humanReadablePart` | string | The human readable part. |
+`bech32Text?` | undefined \| string | The text to test. |
+
+**Returns:** boolean
+
+True if this is potentially a match.
 
 ___
 

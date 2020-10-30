@@ -19,6 +19,7 @@ Convert address to bech32.
 ### Methods
 
 * [fromBech32](bech32helper.md#frombech32)
+* [matches](bech32helper.md#matches)
 * [toBech32](bech32helper.md#tobech32)
 
 ## Properties
@@ -41,11 +42,29 @@ Decode an address from bech32.
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`bech32Text` | string | The bech32 test to decode. |
+`bech32Text` | string | The bech32 text to decode. |
 
 **Returns:** { addressBytes: Uint8Array ; addressType: number  } \| undefined
 
 The address type and address bytes or undefined if it cannot be decoded.
+
+___
+
+### matches
+
+▸ `Static`**matches**(`bech32Text?`: undefined \| string): boolean
+
+Does the provided string look like it might be an bech32 address with matching hrp.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`bech32Text?` | undefined \| string | The bech32 text to text. |
+
+**Returns:** boolean
+
+True.
 
 ___
 
