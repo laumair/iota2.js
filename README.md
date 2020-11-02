@@ -54,6 +54,10 @@ These API methods are implemented.
 * address(address)
 * addressOutputs(address)
 * milestone(index)
+* peers()
+* peerAdd()
+* peerDelete()
+* peer()
 
 ## High level operations
 
@@ -78,6 +82,7 @@ Please find other examples in the [./examples](./examples) folder.
 * Transaction - Demonstrates how to send a transaction and call some of the other higher level functions.
 * Data - Storing and retrieving data on the tangle.
 * Browser - Demonstrates direct inclusion and use of the library in an html page.
+* Peers - Demonstrates peer management.
 
 ## Notes
 

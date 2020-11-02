@@ -35,6 +35,10 @@ Client for API communication.
 * [messagesFind](singlenodeclient.md#messagesfind)
 * [milestone](singlenodeclient.md#milestone)
 * [output](singlenodeclient.md#output)
+* [peer](singlenodeclient.md#peer)
+* [peerAdd](singlenodeclient.md#peeradd)
+* [peerDelete](singlenodeclient.md#peerdelete)
+* [peers](singlenodeclient.md#peers)
 * [tips](singlenodeclient.md#tips)
 
 ## Constructors
@@ -300,6 +304,81 @@ Name | Type | Description |
 **Returns:** Promise\<[IOutput](../interfaces/ioutput.md)>
 
 The output details.
+
+___
+
+### peer
+
+▸ **peer**(`peerId`: string): Promise\<[IPeer](../interfaces/ipeer.md)>
+
+*Implementation of [IClient](../interfaces/iclient.md)*
+
+Get a peer.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`peerId` | string | The peer to delete. |
+
+**Returns:** Promise\<[IPeer](../interfaces/ipeer.md)>
+
+The details for the created peer.
+
+___
+
+### peerAdd
+
+▸ **peerAdd**(`multiAddress`: string, `alias?`: undefined \| string): Promise\<[IPeer](../interfaces/ipeer.md)>
+
+*Implementation of [IClient](../interfaces/iclient.md)*
+
+Add a new peer.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`multiAddress` | string | The address of the peer to add. |
+`alias?` | undefined \| string | An optional alias for the peer. |
+
+**Returns:** Promise\<[IPeer](../interfaces/ipeer.md)>
+
+The details for the created peer.
+
+___
+
+### peerDelete
+
+▸ **peerDelete**(`peerId`: string): Promise\<void>
+
+*Implementation of [IClient](../interfaces/iclient.md)*
+
+Delete a peer.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`peerId` | string | The peer to delete. |
+
+**Returns:** Promise\<void>
+
+Nothing.
+
+___
+
+### peers
+
+▸ **peers**(): Promise\<[IPeer](../interfaces/ipeer.md)[]>
+
+*Implementation of [IClient](../interfaces/iclient.md)*
+
+Get the list of peers.
+
+**Returns:** Promise\<[IPeer](../interfaces/ipeer.md)[]>
+
+The list of peers.
 
 ___
 

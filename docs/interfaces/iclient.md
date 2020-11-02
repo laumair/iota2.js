@@ -31,6 +31,10 @@ Client interface definition for API communication.
 * [messagesFind](iclient.md#messagesfind)
 * [milestone](iclient.md#milestone)
 * [output](iclient.md#output)
+* [peer](iclient.md#peer)
+* [peerAdd](iclient.md#peeradd)
+* [peerDelete](iclient.md#peerdelete)
+* [peers](iclient.md#peers)
 * [tips](iclient.md#tips)
 
 ## Methods
@@ -254,6 +258,73 @@ Name | Type | Description |
 **Returns:** Promise\<[IOutput](ioutput.md)>
 
 The output details.
+
+___
+
+### peer
+
+▸ **peer**(`peerId`: string): Promise\<[IPeer](ipeer.md)>
+
+Get a peer.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`peerId` | string | The peer to delete. |
+
+**Returns:** Promise\<[IPeer](ipeer.md)>
+
+The details for the created peer.
+
+___
+
+### peerAdd
+
+▸ **peerAdd**(`multiAddress`: string, `alias?`: undefined \| string): Promise\<[IPeer](ipeer.md)>
+
+Add a new peer.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`multiAddress` | string | The address of the peer to add. |
+`alias?` | undefined \| string | An optional alias for the peer. |
+
+**Returns:** Promise\<[IPeer](ipeer.md)>
+
+The details for the created peer.
+
+___
+
+### peerDelete
+
+▸ **peerDelete**(`peerId`: string): Promise\<void>
+
+Delete a peer.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`peerId` | string | The peer to delete. |
+
+**Returns:** Promise\<void>
+
+Nothing.
+
+___
+
+### peers
+
+▸ **peers**(): Promise\<[IPeer](ipeer.md)[]>
+
+Get the list of peers.
+
+**Returns:** Promise\<[IPeer](ipeer.md)[]>
+
+The list of peers.
 
 ___
 

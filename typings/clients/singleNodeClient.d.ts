@@ -7,6 +7,7 @@ import { IMessageMetadata } from "../api/models/IMessageMetadata";
 import { IMessages } from "../api/models/IMessages";
 import { IMilestone } from "../api/models/IMilestone";
 import { IOutput } from "../api/models/IOutput";
+import { IPeer } from "../api/models/IPeer";
 import { ITips } from "../api/models/ITips";
 import { IMessage } from "../models/IMessage";
 /**
@@ -99,4 +100,28 @@ export declare class SingleNodeClient implements IClient {
      * @returns The milestone details.
      */
     milestone(index: number): Promise<IMilestone>;
+    /**
+     * Get the list of peers.
+     * @returns The list of peers.
+     */
+    peers(): Promise<IPeer[]>;
+    /**
+     * Add a new peer.
+     * @param multiAddress The address of the peer to add.
+     * @param alias An optional alias for the peer.
+     * @returns The details for the created peer.
+     */
+    peerAdd(multiAddress: string, alias?: string): Promise<IPeer>;
+    /**
+     * Delete a peer.
+     * @param peerId The peer to delete.
+     * @returns Nothing.
+     */
+    peerDelete(peerId: string): Promise<void>;
+    /**
+     * Get a peer.
+     * @param peerId The peer to delete.
+     * @returns The details for the created peer.
+     */
+    peer(peerId: string): Promise<IPeer>;
 }

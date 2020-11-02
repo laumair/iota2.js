@@ -90,6 +90,11 @@
 
 	});
 
+	var IGossipMetrics = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
 	var IInfo = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
@@ -116,6 +121,11 @@
 	});
 
 	var IOutput = createCommonjsModule(function (module, exports) {
+	Object.defineProperty(exports, "__esModule", { value: true });
+
+	});
+
+	var IPeer = createCommonjsModule(function (module, exports) {
 	Object.defineProperty(exports, "__esModule", { value: true });
 
 	});
@@ -1633,6 +1643,58 @@
 	        return __awaiter(this, void 0, void 0, function () {
 	            return __generator(this, function (_a) {
 	                return [2 /*return*/, this.fetchJson("get", "/api/v1/milestones/" + index)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get the list of peers.
+	     * @returns The list of peers.
+	     */
+	    SingleNodeClient.prototype.peers = function () {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers")];
+	            });
+	        });
+	    };
+	    /**
+	     * Add a new peer.
+	     * @param multiAddress The address of the peer to add.
+	     * @param alias An optional alias for the peer.
+	     * @returns The details for the created peer.
+	     */
+	    SingleNodeClient.prototype.peerAdd = function (multiAddress, alias) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("post", "/api/v1/peers", {
+	                        multiAddress: multiAddress,
+	                        alias: alias
+	                    })];
+	            });
+	        });
+	    };
+	    /**
+	     * Delete a peer.
+	     * @param peerId The peer to delete.
+	     * @returns Nothing.
+	     */
+	    SingleNodeClient.prototype.peerDelete = function (peerId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+	                return [2 /*return*/, this.fetchJson("delete", "/api/v1/peers/" + peerId)];
+	            });
+	        });
+	    };
+	    /**
+	     * Get a peer.
+	     * @param peerId The peer to delete.
+	     * @returns The details for the created peer.
+	     */
+	    SingleNodeClient.prototype.peer = function (peerId) {
+	        return __awaiter(this, void 0, void 0, function () {
+	            return __generator(this, function (_a) {
+	                return [2 /*return*/, this.fetchJson("get", "/api/v1/peers/" + peerId)];
 	            });
 	        });
 	    };
@@ -4802,12 +4864,14 @@
 	__exportStar(IAddressOutputs, exports);
 	__exportStar(IChildren, exports);
 	__exportStar(IClient, exports);
+	__exportStar(IGossipMetrics, exports);
 	__exportStar(IInfo, exports);
 	__exportStar(IMessageId, exports);
 	__exportStar(IMessageMetadata, exports);
 	__exportStar(IMessages, exports);
 	__exportStar(IMilestone, exports);
 	__exportStar(IOutput, exports);
+	__exportStar(IPeer, exports);
 	__exportStar(IResponse, exports);
 	__exportStar(ITips, exports);
 	__exportStar(address, exports);

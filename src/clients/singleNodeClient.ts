@@ -9,6 +9,7 @@ import { IMessageMetadata } from "../api/models/IMessageMetadata";
 import { IMessages } from "../api/models/IMessages";
 import { IMilestone } from "../api/models/IMilestone";
 import { IOutput } from "../api/models/IOutput";
+import { IPeer } from "../api/models/IPeer";
 import { IResponse } from "../api/models/IResponse";
 import { ITips } from "../api/models/ITips";
 import { IMessage } from "../models/IMessage";
@@ -189,6 +190,62 @@ export class SingleNodeClient implements IClient {
     }
 
     /**
+     * Get the list of peers.
+     * @returns The list of peers.
+     */
+    public async peers(): Promise<IPeer[]> {
+        return this.fetchJson<unknown, IPeer[]>(
+            "get",
+            "/api/v1/peers"
+        );
+    }
+
+    /**
+     * Add a new peer.
+     * @param multiAddress The address of the peer to add.
+     * @param alias An optional alias for the peer.
+     * @returns The details for the created peer.
+     */
+    public async peerAdd(multiAddress: string, alias?: string): Promise<IPeer> {
+        return this.fetchJson<{
+            multiAddress: string;
+            alias?: string;
+        }, IPeer>(
+            "post",
+            "/api/v1/peers",
+            {
+                multiAddress,
+                alias
+            }
+        );
+    }
+
+    /**
+     * Delete a peer.
+     * @param peerId The peer to delete.
+     * @returns Nothing.
+     */
+    public async peerDelete(peerId: string): Promise<void> {
+        // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+        return this.fetchJson<unknown, void>(
+            "delete",
+            `/api/v1/peers/${peerId}`
+        );
+    }
+
+    /**
+     * Get a peer.
+     * @param peerId The peer to delete.
+     * @returns The details for the created peer.
+     */
+    public async peer(peerId: string): Promise<IPeer> {
+        return this.fetchJson<unknown, IPeer>(
+            "get",
+            `/api/v1/peers/${peerId}`
+        );
+    }
+
+    /**
      * Perform a request and just return the status.
      * @param route The route of the request.
      * @returns The response.
@@ -213,7 +270,7 @@ export class SingleNodeClient implements IClient {
      * @returns The response.
      * @internal
      */
-    private async fetchJson<T, U>(method: "get" | "post", route: string, requestData?: T): Promise<U> {
+    private async fetchJson<T, U>(method: "get" | "post" | "delete", route: string, requestData?: T): Promise<U> {
         const response = await fetch(
             `${this._endpoint}${route}`,
             {
