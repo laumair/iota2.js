@@ -22,7 +22,7 @@ Array helper methods.
 
 ▸ `Static`**equal**(`array1`: ArrayLike\<unknown> \| undefined, `array2`: ArrayLike\<unknown> \| undefined): boolean
 
-Ar the two array equals.
+Are the two array equals.
 
 #### Parameters:
 

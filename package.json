@@ -15,8 +15,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "node-fetch": "^2.6.1",
-        "tweetnacl": "^1.0.3"
+        "node-fetch": "^2.6.1"
     },
     "scripts": {
         "build-clean": "rimraf ./es/*",

@@ -4,6 +4,7 @@ import { serializeOutput } from "../binary/output";
 import { serializeTransactionEssence } from "../binary/transaction";
 import { Bip32Path } from "../crypto/bip32Path";
 import { Ed25519 } from "../crypto/ed25519";
+import { Ed25519Address } from "../crypto/ed25519Address";
 import { IKeyPair } from "../models/IKeyPair";
 import { IMessage } from "../models/IMessage";
 import { IReferenceUnlockBlock } from "../models/IReferenceUnlockBlock";
@@ -58,7 +59,7 @@ export async function sendAdvanced(
         const addressKeyPair = seed.generateSeedFromPath(basePath).keyPair();
         basePath.pop();
 
-        const address = Converter.bytesToHex(Ed25519.publicKeyToAddress(addressKeyPair.publicKey));
+        const address = Converter.bytesToHex(Ed25519Address.publicKeyToAddress(addressKeyPair.publicKey));
         const addressOutputIds = await client.addressOutputs(address);
 
         if (addressOutputIds.count === 0) {
@@ -178,7 +179,7 @@ export async function sendAdvanced(
                     type: 1,
                     publicKey: hexInputAddressPublic,
                     signature: Converter.bytesToHex(
-                        Ed25519.signData(input.addressKeyPair.privateKey, essenceFinal)
+                        Ed25519.sign(input.addressKeyPair.privateKey, essenceFinal)
                     )
                 }
             });

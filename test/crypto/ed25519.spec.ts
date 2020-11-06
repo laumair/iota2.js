@@ -1,38 +1,50 @@
 /* eslint-disable max-len */
 import { Ed25519 } from "../../src/crypto/ed25519";
-import { Ed25519Seed } from "../../src/crypto/ed25519Seed";
 import { Converter } from "../../src/utils/converter";
 
 describe("Ed25519", () => {
-    test("Can sign an address", () => {
-        const seed = Ed25519Seed.fromBytes(new Uint8Array(32).fill(170));
-        const keyPair = seed.keyPair();
-        const signature = Ed25519.publicKeyToAddress(keyPair.publicKey);
-        expect(Converter.bytesToHex(signature)).toEqual("fb2d6244c46d9b483dadef0a0fde4caab6f3a871aad91743ac66f41a6dfd4f48");
+    test("Can generate a key pair from a seed", () => {
+        const seed = new Uint8Array(32).fill(170);
+        const keyPair = Ed25519.keyPairFromSeed(seed);
+
+        expect(Converter.bytesToHex(keyPair.privateKey)).toEqual("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaae734ea6c2b6257de72355e472aa05a4c487e6b463c029ed306df2f01b5636b58");
+        expect(Converter.bytesToHex(keyPair.publicKey)).toEqual("e734ea6c2b6257de72355e472aa05a4c487e6b463c029ed306df2f01b5636b58");
     });
 
-    test("Can verify an address", () => {
-        const seed = Ed25519Seed.fromBytes(new Uint8Array(32).fill(170));
-        const keyPair = seed.keyPair();
-        const signature = Ed25519.publicKeyToAddress(keyPair.publicKey);
-        const verified = Ed25519.verifyAddress(keyPair.publicKey, signature);
+    test("Can generate a signature with a private key", () => {
+        const seed = new Uint8Array(32).fill(170);
+        const keyPair = Ed25519.keyPairFromSeed(seed);
+
+        const data = new Uint8Array(100).fill(100);
+
+        const sig = Ed25519.sign(keyPair.privateKey, data);
+
+        expect(Converter.bytesToHex(sig)).toEqual("359aa3bd52531f40f5fa85a9c8d16f7f55708fea795328ad6ec1a5a503ee3f1e2c8506d44e10329b1051eaeea8371e8f0cb36d45abc6b00717127816bee30b0b");
+    });
+
+    test("Can validate a signature with the public key", () => {
+        const seed = new Uint8Array(32).fill(170);
+        const keyPair = Ed25519.keyPairFromSeed(seed);
+
+        const data = new Uint8Array(100).fill(100);
+
+        const sig = Ed25519.sign(keyPair.privateKey, data);
+
+        const verified = Ed25519.verify(keyPair.publicKey, data, sig);
+
         expect(verified).toEqual(true);
     });
 
-    test("Can sign data", () => {
-        const seed = Ed25519Seed.fromBytes(new Uint8Array(32).fill(170));
-        const keyPair = seed.keyPair();
-        const data = Converter.asciiToBytes("foobar");
-        const signature = Ed25519.signData(keyPair.privateKey, data);
-        expect(Converter.bytesToHex(signature)).toEqual("d03a555a5410547fde362c77f4b3e3e12c12eff398c5956bd35a56cab119f2fb57c329b6158f573b8bba83dc762da210f1af34175ed65d59e3c4d099a34ee201");
-    });
+    test("Can validate a signature with the public key", () => {
+        const seed = new Uint8Array(32).fill(170);
+        const keyPair = Ed25519.keyPairFromSeed(seed);
 
-    test("Can verify data", () => {
-        const seed = Ed25519Seed.fromBytes(new Uint8Array(32).fill(170));
-        const keyPair = seed.keyPair();
-        const data = Converter.asciiToBytes("foobar");
-        const signature = Ed25519.signData(keyPair.privateKey, data);
-        const verified = Ed25519.verifyData(keyPair.publicKey, signature, data);
+        const data = new Uint8Array(100).fill(100);
+
+        const sig = Ed25519.sign(keyPair.privateKey, data);
+
+        const verified = Ed25519.verify(keyPair.publicKey, data, sig);
+
         expect(verified).toEqual(true);
     });
 });

@@ -21,10 +21,10 @@ export default {
         name: 'Iota2',
         compact: process.env.MINIFY,
         globals: {
-            "tweetnacl": "tweetnacl",
-            "node-fetch": "node-fetch"
+            "node-fetch": "node-fetch",
+            "crypto": "crypto"
         }
     },
-    external: (process.env.BROWSER ? [] : ["node-fetch", "tweetnacl"]),
+    external: (process.env.BROWSER ? [] : ["crypto", "node-fetch"]),
     plugins
 }

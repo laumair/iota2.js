@@ -1,4 +1,4 @@
-import { Bip32Path, Converter, Ed25519, Ed25519Seed, getBalance, getUnspentAddress, getUnspentAddresses, IKeyPair, ISeed, sendAdvanced, SingleNodeClient } from "@iota/iota2.js";
+import { Bip32Path, Converter, Ed25519Address, Ed25519Seed, getBalance, getUnspentAddress, getUnspentAddresses, IKeyPair, ISeed, sendAdvanced, SingleNodeClient } from "@iota/iota2.js";
 
 const API_ENDPOINT = "http://localhost:14265";
 
@@ -15,14 +15,14 @@ async function run() {
 
     const genesisAddressPath = new Bip32Path("m/0");
     const firstAddressSeed = genesisSeed.generateSeedFromPath(genesisAddressPath);
-    console.log(`\tAddress for ${genesisAddressPath.toString()}:`, Converter.bytesToHex(Ed25519.publicKeyToAddress(firstAddressSeed.keyPair().publicKey)));
+    console.log(`\tAddress for ${genesisAddressPath.toString()}:`, Converter.bytesToHex(Ed25519Address.publicKeyToAddress(firstAddressSeed.keyPair().publicKey)));
     console.log();
 
     const newSeed: Ed25519Seed = Ed25519Seed.fromBytes(Converter.hexToBytes("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410"));
 
     const newAddressPath = new Bip32Path("m/0");
     const newAddressSeed: ISeed = newSeed.generateSeedFromPath(newAddressPath);
-    const newAddress: string = Converter.bytesToHex(Ed25519.publicKeyToAddress(newAddressSeed.keyPair().publicKey));
+    const newAddress: string = Converter.bytesToHex(Ed25519Address.publicKeyToAddress(newAddressSeed.keyPair().publicKey));
     console.log("New");
     console.log("\tSeed:", Converter.bytesToHex(newSeed.toBytes()));
     console.log(`\tAddress ${newAddressPath.toString()}:`, newAddress);

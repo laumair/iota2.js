@@ -1,7 +1,8 @@
-import * as nacl from "tweetnacl";
 import { IKeyPair } from "../models/IKeyPair";
 import { ISeed } from "../models/ISeed";
+import { RandomHelper } from "../utils/randomHelper";
 import { Bip32Path } from "./bip32Path";
+import { Ed25519 } from "./ed25519";
 import { Slip0010 } from "./slip0010";
 
 /**
@@ -36,7 +37,7 @@ export class Ed25519Seed implements ISeed {
      * @returns The random seed.
      */
     public static random(): Ed25519Seed {
-        return Ed25519Seed.fromBytes(nacl.randomBytes(Ed25519Seed.SEED_SIZE_BYTES));
+        return Ed25519Seed.fromBytes(RandomHelper.generate(Ed25519Seed.SEED_SIZE_BYTES));
     }
 
     /**
@@ -44,11 +45,11 @@ export class Ed25519Seed implements ISeed {
      * @returns The key pair.
      */
     public keyPair(): IKeyPair {
-        const signKeyPair = nacl.sign.keyPair.fromSeed(this._secretKey);
+        const signKeyPair = Ed25519.keyPairFromSeed(this._secretKey);
 
         return {
             publicKey: signKeyPair.publicKey,
-            privateKey: signKeyPair.secretKey
+            privateKey: signKeyPair.privateKey
         };
     }
 

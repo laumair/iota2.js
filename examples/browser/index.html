@@ -147,14 +147,14 @@
 
             const genesisAddressPath = new Iota2.Bip32Path("m/0");
             const firstAddressSeed = genesisSeed.generateSeedFromPath(genesisAddressPath);
-            consoleLog(`\tAddress for ${genesisAddressPath.toString()}:`, Iota2.Converter.bytesToHex(Iota2.Ed25519.publicKeyToAddress(firstAddressSeed.keyPair().publicKey)));
+            consoleLog(`\tAddress for ${genesisAddressPath.toString()}:`, Iota2.Converter.bytesToHex(Iota2.Ed25519Address.publicKeyToAddress(firstAddressSeed.keyPair().publicKey)));
             consoleLog();
 
             const newSeed = Iota2.Ed25519Seed.fromBytes(Iota2.Converter.hexToBytes("e57fb750f3a3a67969ece5bd9ae7eef5b2256a818b2aac458941f7274985a410"));
 
             const newAddressPath = new Iota2.Bip32Path("m/0");
             const newAddressSeed = newSeed.generateSeedFromPath(newAddressPath);
-            const newAddress = Iota2.Converter.bytesToHex(Iota2.Ed25519.publicKeyToAddress(newAddressSeed.keyPair().publicKey));
+            const newAddress = Iota2.Converter.bytesToHex(Iota2.Ed25519Address.publicKeyToAddress(newAddressSeed.keyPair().publicKey));
             consoleLog("New");
             consoleLog("\tSeed:", Iota2.Converter.bytesToHex(newSeed.toBytes()));
             consoleLog(`\tAddress ${newAddressPath.toString()}:`, newAddress);

@@ -13,11 +13,18 @@
 * [Bech32Helper](classes/bech32helper.md)
 * [Bip32Path](classes/bip32path.md)
 * [Blake2b](classes/blake2b.md)
+* [CachedGroupElement](classes/cachedgroupelement.md)
 * [ClientError](classes/clienterror.md)
+* [CompletedGroupElement](classes/completedgroupelement.md)
 * [Converter](classes/converter.md)
-* [Ed25519](classes/ed25519.md)
+* [Ed25519Address](classes/ed25519address.md)
 * [Ed25519Seed](classes/ed25519seed.md)
+* [ExtendedGroupElement](classes/extendedgroupelement.md)
+* [FieldElement](classes/fieldelement.md)
 * [HmacSha512](classes/hmacsha512.md)
+* [PreComputedGroupElement](classes/precomputedgroupelement.md)
+* [ProjectiveGroupElement](classes/projectivegroupelement.md)
+* [RandomHelper](classes/randomhelper.md)
 * [ReadStream](classes/readstream.md)
 * [Sha3](classes/sha3.md)
 * [Sha512](classes/sha512.md)
@@ -56,6 +63,10 @@
 * [ITypeBase](interfaces/itypebase.md)
 * [IUTXOInput](interfaces/iutxoinput.md)
 
+### Variables
+
+* [BIG\_1\_SHIFTL\_20](README.md#big_1_shiftl_20)
+
 ### Functions
 
 * [deserializeAddress](README.md#deserializeaddress)
@@ -82,6 +93,8 @@
 * [getUnspentAddress](README.md#getunspentaddress)
 * [getUnspentAddresses](README.md#getunspentaddresses)
 * [isHex](README.md#ishex)
+* [load3BytesBigInt](README.md#load3bytesbigint)
+* [load4BytesBigInt](README.md#load4bytesbigint)
 * [logAddress](README.md#logaddress)
 * [logInput](README.md#loginput)
 * [logMessage](README.md#logmessage)
@@ -91,6 +104,9 @@
 * [logUnlockBlock](README.md#logunlockblock)
 * [logger](README.md#logger)
 * [retrieveData](README.md#retrievedata)
+* [scalarMinimal](README.md#scalarminimal)
+* [scalarMulAdd](README.md#scalarmuladd)
+* [scalarReduce](README.md#scalarreduce)
 * [send](README.md#send)
 * [sendAdvanced](README.md#sendadvanced)
 * [sendData](README.md#senddata)
@@ -115,6 +131,16 @@
 * [serializeUnlockBlock](README.md#serializeunlockblock)
 * [serializeUnlockBlocks](README.md#serializeunlockblocks)
 * [setLogger](README.md#setlogger)
+
+## Variables
+
+### BIG\_1\_SHIFTL\_20
+
+• `Const` **BIG\_1\_SHIFTL\_20**: bigint = BigInt(1) \<\< BigInt(20)
+
+This is a port of the Go code from https://github.com/hdevalence/ed25519consensus
+which is an extension of https://github.com/golang/crypto/tree/master/ed25519
+which in a port of the “ref10” implementation of ed25519 from SUPERCOP
 
 ## Functions
 
@@ -560,6 +586,44 @@ true if the string is hex.
 
 ___
 
+### load3BytesBigInt
+
+▸ **load3BytesBigInt**(`input`: Uint8Array, `startIndex`: number): bigint
+
+Load 3 bytes from array as bigint.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`input` | Uint8Array | The input array. |
+`startIndex` | number | The start index to read from. |
+
+**Returns:** bigint
+
+The bigint.
+
+___
+
+### load4BytesBigInt
+
+▸ **load4BytesBigInt**(`input`: Uint8Array, `startIndex`: number): bigint
+
+Load 4 bytes from array as bigint.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`input` | Uint8Array | The input array. |
+`startIndex` | number | The start index to read from. |
+
+**Returns:** bigint
+
+The bigint.
+
+___
+
 ### logAddress
 
 ▸ **logAddress**(`prefix`: string, `unknownAddress?`: [ITypeBase](interfaces/itypebase.md)\<unknown>): void
@@ -714,6 +778,70 @@ Name | Type | Description |
 **Returns:** Promise\<{ data: Uint8Array ; index: string  } \| undefined>
 
 The message index and data.
+
+___
+
+### scalarMinimal
+
+▸ **scalarMinimal**(`scalar`: Uint8Array): boolean
+
+Scalar Minimal returns true if the given scalar is less than the order of the Curve
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`scalar` | Uint8Array | The scalar. |
+
+**Returns:** boolean
+
+True if the given scalar is less than the order of the Curve
+
+___
+
+### scalarMulAdd
+
+▸ **scalarMulAdd**(`s`: Uint8Array, `a`: Uint8Array, `b`: Uint8Array, `c`: Uint8Array): void
+
+The scalars are GF(2^252 + 27742317777372353535851937790883648493).
+
+Input:
+  a[0]+256*a[1]+...+256^31*a[31] = a
+  b[0]+256*b[1]+...+256^31*b[31] = b
+  c[0]+256*c[1]+...+256^31*c[31] = c
+
+Output:
+  s[0]+256*s[1]+...+256^31*s[31] = (ab+c) mod l
+  where l = 2^252 + 27742317777372353535851937790883648493.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`s` | Uint8Array | The scalar. |
+`a` | Uint8Array | The a. |
+`b` | Uint8Array | The b. |
+`c` | Uint8Array | The c.  |
+
+**Returns:** void
+
+___
+
+### scalarReduce
+
+▸ **scalarReduce**(`out`: Uint8Array, `s`: Uint8Array): void
+
+Scalar reduce.
+where l = 2^252 + 27742317777372353535851937790883648493.
+
+#### Parameters:
+
+Name | Type | Description |
+------ | ------ | ------ |
+`out` | Uint8Array | s[0]+256*s[1]+...+256^31*s[31] = s mod l |
+`s` | Uint8Array | s[0]+256*s[1]+...+256^63*s[63] = s  |
+
+**Returns:** void
 
 ___
 

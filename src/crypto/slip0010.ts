@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
-import * as nacl from "tweetnacl";
 import { Converter } from "../utils/converter";
 import { Bip32Path } from "./bip32Path";
+import { Ed25519 } from "./ed25519";
 import { HmacSha512 } from "./hmacSha512";
 
 /**
@@ -73,8 +73,8 @@ export class Slip0010 {
      * @returns The public key.
      */
     public static getPublicKey(privateKey: Uint8Array, withZeroByte: boolean = true): Uint8Array {
-        const keyPair = nacl.sign.keyPair.fromSeed(privateKey);
-        const signPk = keyPair.secretKey.slice(32);
+        const keyPair = Ed25519.keyPairFromSeed(privateKey);
+        const signPk = keyPair.privateKey.slice(32);
         if (withZeroByte) {
             const arr = new Uint8Array(1 + signPk.length);
             arr[0] = 0;

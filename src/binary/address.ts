@@ -1,11 +1,11 @@
-import { Ed25519 } from "../crypto/ed25519";
+import { Ed25519Address } from "../crypto/ed25519Address";
 import { IEd25519Address } from "../models/IEd25519Address";
 import { ReadStream } from "../utils/readStream";
 import { WriteStream } from "../utils/writeStream";
 import { SMALL_TYPE_LENGTH } from "./common";
 
 export const MIN_ADDRESS_LENGTH: number = SMALL_TYPE_LENGTH;
-export const MIN_ED25519_ADDRESS_LENGTH: number = MIN_ADDRESS_LENGTH + Ed25519.ADDRESS_LENGTH;
+export const MIN_ED25519_ADDRESS_LENGTH: number = MIN_ADDRESS_LENGTH + Ed25519Address.ADDRESS_LENGTH;
 
 /**
  * Deserialize the address from binary.
@@ -59,7 +59,7 @@ export function deserializeEd25519Address(readStream: ReadStream): IEd25519Addre
         throw new Error(`Type mismatch in ed25519Address ${type}`);
     }
 
-    const address = readStream.readFixedHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH);
+    const address = readStream.readFixedHex("ed25519Address.address", Ed25519Address.ADDRESS_LENGTH);
 
     return {
         type,
@@ -74,5 +74,5 @@ export function deserializeEd25519Address(readStream: ReadStream): IEd25519Addre
  */
 export function serializeEd25519Address(writeStream: WriteStream, object: IEd25519Address): void {
     writeStream.writeByte("ed25519Address.type", object.type);
-    writeStream.writeFixedHex("ed25519Address.address", Ed25519.ADDRESS_LENGTH, object.address);
+    writeStream.writeFixedHex("ed25519Address.address", Ed25519Address.ADDRESS_LENGTH, object.address);
 }
